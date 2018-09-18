@@ -130,7 +130,7 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.3"
-  jpush:
+  jpush_flutter:
     dependency: "direct dev"
     description:
       path: ".."
