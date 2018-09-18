@@ -24,13 +24,13 @@ android: {
 	ndk {
 	//选择要添加的对应 cpu 类型的 .so 库。
 		abiFilters 'armeabi', 'armeabi-v7a', 'x86', 'x86_64', 'mips', 'mips64' // 'arm64-v8a',        
-    }
+        }
 
-    manifestPlaceholders = [
-	     JPUSH_PKGNAME : applicationId,
-    	 JPUSH_APPKEY : "appkey", // NOTE: JPush 上注册的包名对应的 Appkey.
-	     JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
-   ]
+        manifestPlaceholders = [
+                JPUSH_PKGNAME : applicationId,
+      	        JPUSH_APPKEY : "appkey", // NOTE: JPush 上注册的包名对应的 Appkey.
+                JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
+        ]
   }    
 }
 
