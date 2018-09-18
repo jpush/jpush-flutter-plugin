@@ -43,7 +43,10 @@ class _MyAppState extends State<MyApp> {
       
       JPush.addEventHandler(
         onReceiveNotification: (Map<String, dynamic> message) async {
-        print("flutter onReceiveNotification: $message");
+        // print("flutter onReceiveNotification: $message");
+        setState(() {
+            _platformVersion = "setAlias error: $message";
+          });
       },
       onOpenNotification: (Map<String, dynamic> message) async {
         print("flutter onOpenNotification: $message");
@@ -86,6 +89,7 @@ class _MyAppState extends State<MyApp> {
           child: new Column(
             children:[
               new Text('result: $_platformVersion\n'), 
+              
               new FlatButton(
               child: new Text('applyPushAuthority\n'), 
               onPressed: () {

@@ -1,3 +1,26 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.jiguang.jpush">
+    <application>
+        <receiver
+            android:name="com.jiguang.jpush.JPushPlugin$JPushReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.REGISTRATION" />
+                <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED" />
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED" />
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED" />
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_CLICK_ACTION" />
+                <action android:name="cn.jpush.android.intent.CONNECTION" />
+                <category android:name="${applicationId}" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.jiguang.jpush.JPushEventReceiver">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.RECEIVE_MESSAGE" />
+                <category android:name="${applicationId}" />
+            </intent-filter>
+        </receiver>
+    </application>
 </manifest>
