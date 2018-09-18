@@ -56,7 +56,7 @@ class JPush {
     ///
     /// 申请推送权限当，注意这个方法只会向用户弹出一次推送权限请求（如果用户不同意，之后只能用户到设置页面里面勾选相应权限），需要开发者选择合适的时机调用。
     ///
-    static Future applyPushAuthority([NotificationSettingsIOS iosSettings = const NotificationSettingsIOS()]) {
+    static void applyPushAuthority([NotificationSettingsIOS iosSettings = const NotificationSettingsIOS()]) {
 
         if (!Platform.isIOS) {
           return;
