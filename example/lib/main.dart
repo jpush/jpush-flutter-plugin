@@ -24,11 +24,12 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     String platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
-    // JPush.getRegistrationID().then((rid) {
-    //   setState(() {
-    //       _platformVersion = "flutter getRegistrationID: $rid";
-    //     });
-    // });
+    JPush.getRegistrationID().then((rid) {
+      setState(() {
+          _platformVersion = "flutter getRegistrationID: $rid";
+        });
+    });
+    
     JPush.setup(
       appKey: "a1703c14b186a68a66ef86c1",
       channel: "theChannel",
