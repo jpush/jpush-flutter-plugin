@@ -26,7 +26,7 @@ public class JPushPlugin implements MethodCallHandler {
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "jpush");
         channel.setMethodCallHandler(new JPushPlugin(registrar, channel));
-        Log.d("JPushPlugin", "11111  registerWith");
+        
     }
 
     public static JPushPlugin instance;
@@ -38,7 +38,7 @@ public class JPushPlugin implements MethodCallHandler {
     private int sequence;
 
     private JPushPlugin(Registrar registrar, MethodChannel channel) {
-        Log.d("huangmin", "hahahahah initial");
+        
         this.registrar = registrar;
         this.channel = channel;
         this.callbackMap = new HashMap<>();
@@ -85,8 +85,6 @@ public class JPushPlugin implements MethodCallHandler {
     public void setup(MethodCall call, Result result) {
         JPushInterface.setDebugMode(true); 	// 设置开启日志,发布时请关闭日志
         JPushInterface.init(registrar.context());     		// 初始化 JPush
-        Log.d("huangmin123456","fdsfadf");
-
     }
 
     public void setTags(MethodCall call, Result result) {
@@ -186,7 +184,6 @@ public class JPushPlugin implements MethodCallHandler {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("JPushReceive", "11111 onreceive board cast");
             String action = intent.getAction();
             if (action.equals(JPushInterface.ACTION_REGISTRATION_ID)) {
                 String rId = intent.getStringExtra(JPushInterface.EXTRA_REGISTRATION_ID);
@@ -247,7 +244,6 @@ public class JPushPlugin implements MethodCallHandler {
         if (instance == null) {
             return;
         }
-        Log.d("JPushPlugin", "onReceiveMessage  native");
         Map<String, Object> msg= new HashMap<>();
         msg.put("message", message);
         msg.put("extras", extras);
@@ -259,7 +255,7 @@ public class JPushPlugin implements MethodCallHandler {
         if (instance == null) {
             return;
         }
-        Log.d("JPushPlugin", "onOpenNotification  native");
+        
         Map<String, Object> notification= new HashMap<>();
         notification.put("title", title);
         notification.put("alert", alert);
@@ -271,7 +267,6 @@ public class JPushPlugin implements MethodCallHandler {
         if (instance == null) {
             return;
         }
-        Log.d("JPushPlugin", "onReceiveNotification native");
 
         Map<String, Object> notification= new HashMap<>();
         notification.put("title", title);
@@ -284,7 +279,7 @@ public class JPushPlugin implements MethodCallHandler {
         if (instance == null) {
             return;
         }
-        Log.d("JPushPlugin", "transmitReceiveRegistrationId");
+        
         JPushPlugin.instance.channel.invokeMethod("ReceiveRegistrationId", "success congratulation!");
     }
 
