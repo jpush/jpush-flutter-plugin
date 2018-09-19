@@ -11,6 +11,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,7 +31,12 @@ public class JPushPlugin implements MethodCallHandler {
     }
 
     public static JPushPlugin instance;
-    private static Map<String, Object> launchOpenNotification;
+    static List<Map<String, Object>> openNotificationCache = new ArrayList<>();
+
+    private boolean dartIsReady = false;
+    private boolean jpushDidinit = false;
+
+    private List<Result> getRidCache;
 
     private final Registrar registrar;
     private final MethodChannel channel;
@@ -43,6 +49,8 @@ public class JPushPlugin implements MethodCallHandler {
         this.channel = channel;
         this.callbackMap = new HashMap<>();
         this.sequence = 0;
+        this.getRidCache = new ArrayList<>();
+
         instance = this;
     }
 
@@ -83,8 +91,32 @@ public class JPushPlugin implements MethodCallHandler {
     }
 
     public void setup(MethodCall call, Result result) {
+
         JPushInterface.setDebugMode(true); 	// 设置开启日志,发布时请关闭日志
         JPushInterface.init(registrar.context());     		// 初始化 JPush
+        JPushPlugin.instance.dartIsReady = true;
+
+        // try to clean getRid cache
+        scheduleCache();
+    }
+
+    public void scheduleCache() {
+        if (dartIsReady) {
+            // try to shedule notifcation cache
+            for (Map<String, Object> notification: JPushPlugin.openNotificationCache) {
+                JPushPlugin.instance.channel.invokeMethod("onOpenNotification", notification);
+                JPushPlugin.openNotificationCache.remove(notification);
+            }
+        }
+        String rid = JPushInterface.getRegistrationID(registrar.context());
+        boolean ridAvailable = rid != null && !rid.isEmpty();
+        if (ridAvailable && dartIsReady) {
+            // try to schedule get rid cache
+            for (Result res: JPushPlugin.instance.getRidCache) {
+                res.success(rid);
+                JPushPlugin.instance.getRidCache.remove(res);
+            }
+        }
     }
 
     public void setTags(MethodCall call, Result result) {
@@ -93,12 +125,9 @@ public class JPushPlugin implements MethodCallHandler {
         sequence += 1;
         callbackMap.put(sequence, result);
         JPushInterface.setTags(registrar.context(), sequence, tags);
-
     }
 
     public void cleanTags(MethodCall call, Result result) {
-
-
         sequence += 1;
         callbackMap.put(sequence, result);
         JPushInterface.cleanTags(registrar.context(), sequence);
@@ -140,8 +169,6 @@ public class JPushPlugin implements MethodCallHandler {
         JPushInterface.deleteAlias(registrar.context(), sequence);
     }
 
-
-
     public void stopPush(MethodCall call, Result result) {
         JPushInterface.stopPush(registrar.context());
     }
@@ -161,7 +188,11 @@ public class JPushPlugin implements MethodCallHandler {
     public void getRegistrationID(MethodCall call, Result result) {
 
         String rid = JPushInterface.getRegistrationID(registrar.context());
-        result.success(rid);
+        if (rid == null || rid.isEmpty()) {
+            getRidCache.add(result);
+        } else {
+            result.success(rid);
+        }
     }
 
 
@@ -187,7 +218,10 @@ public class JPushPlugin implements MethodCallHandler {
             String action = intent.getAction();
             if (action.equals(JPushInterface.ACTION_REGISTRATION_ID)) {
                 String rId = intent.getStringExtra(JPushInterface.EXTRA_REGISTRATION_ID);
+                Log.d("JPushPlugin","on get registration");
+                Log.d("JPushPlugin", JPushPlugin.instance.getRidCache.toString());
                 JPushPlugin.transmitReceiveRegistrationId(rId);
+
             } else if (action.equals(JPushInterface.ACTION_MESSAGE_RECEIVED)) {
                 handlingMessageReceive(intent);
             } else if (action.equals(JPushInterface.ACTION_NOTIFICATION_RECEIVED)) {
@@ -252,15 +286,23 @@ public class JPushPlugin implements MethodCallHandler {
     }
 
     static void transmitNotificationOpen(String title, String alert, Map<String, Object> extras) {
-        if (instance == null) {
-            return;
-        }
-        
         Map<String, Object> notification= new HashMap<>();
         notification.put("title", title);
         notification.put("alert", alert);
         notification.put("extras", extras);
-        JPushPlugin.instance.channel.invokeMethod("onOpenNotification", notification);
+        JPushPlugin.openNotificationCache.add(notification);
+
+        if (instance == null) {
+            Log.d("JPushPlugin", "the instance is null");
+            return;
+        }
+
+        if (instance.dartIsReady) {
+            Log.d("JPushPlugin", "instance.dartIsReady is true");
+            JPushPlugin.instance.channel.invokeMethod("onOpenNotification", notification);
+            JPushPlugin.openNotificationCache.remove(notification);
+        }
+
     }
 
     static void transmitNotificationReceive(String title, String alert, Map<String, Object> extras) {
@@ -279,8 +321,11 @@ public class JPushPlugin implements MethodCallHandler {
         if (instance == null) {
             return;
         }
-        
-        JPushPlugin.instance.channel.invokeMethod("ReceiveRegistrationId", "success congratulation!");
+
+        JPushPlugin.instance.jpushDidinit = true;
+
+        // try to clean getRid cache
+        JPushPlugin.instance.scheduleCache();
     }
 
 
