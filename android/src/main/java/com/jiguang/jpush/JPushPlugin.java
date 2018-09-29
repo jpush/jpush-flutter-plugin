@@ -204,8 +204,7 @@ public class JPushPlugin implements MethodCallHandler {
     public void sendLocalNotification(MethodCall call, Result result) {
         try {
             HashMap<String, Object> map = call.arguments();
-            Log.d("JPushPlugin", "1111111111111111111");
-//            Log.d("JPushPlugin", map.toString());
+
             JPushLocalNotification ln = new JPushLocalNotification();
             ln.setBuilderId((Integer)map.get("buildId"));
             ln.setNotificationId((Integer)map.get("id"));
