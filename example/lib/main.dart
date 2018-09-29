@@ -12,7 +12,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  String debugLable = 'Unknown';
 
   @override
   void initState() {
@@ -25,9 +25,9 @@ class _MyAppState extends State<MyApp> {
     String platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
     JPush.getRegistrationID().then((rid) {
-      // setState(() {
-      //     _platformVersion = "flutter getRegistrationID: $rid";
-      //   });
+      setState(() {
+          debugLable = "flutter getRegistrationID: $rid";
+        });
     });
 
     JPush.setup(
@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
       onOpenNotification: (Map<String, dynamic> message) async {
         print("flutter onOpenNotification: $message");
         setState(() {
-            _platformVersion = "flutter onOpenNotification: $message";
+            debugLable = "flutter onOpenNotification: $message";
           });
       },
       onReceiveMessage: (Map<String, dynamic> message) async {
@@ -60,10 +60,7 @@ class _MyAppState extends State<MyApp> {
         
       },
       );
-      print("lalallalalal");
 
-      // platformVersion = await JPush.platformVersion;
-      // platformVersion = "$platformVersion fadfa";
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -74,7 +71,7 @@ class _MyAppState extends State<MyApp> {
     if (!mounted) return;
 
     setState(() {
-      _platformVersion = platformVersion;
+      debugLable = platformVersion;
     });
   }
 
@@ -91,19 +88,10 @@ class _MyAppState extends State<MyApp> {
         body: new Center(
           child: new Column(
             children:[
-              new Text('result: $_platformVersion\n'), 
+              new Text('result: $debugLable\n'), 
               new FlatButton(
               child: new Text('sendLocalNotification\n'), 
               onPressed: () {
-                    // @require this.id,
-                    // @require this.title,
-                    // @require this.content,
-                    // @require this.fireTime,
-                    // this.buildId,
-                    // this.extras,
-                    // this.badge,
-                    // this.soundName,
-                    // this.subtitle
                 // 三秒后出发本地推送
                 var fireDate = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch + 3000);
                 var localNotification = LocalNotification(
@@ -118,7 +106,7 @@ class _MyAppState extends State<MyApp> {
                   );
                 JPush.sendLocalNotification(localNotification).then((res) {
                   setState(() {
-                      _platformVersion = res;
+                      debugLable = res;
                     });
                 });
 
@@ -135,12 +123,12 @@ class _MyAppState extends State<MyApp> {
                   JPush.setTags(["lala","haha"]).then((map) {
                     var tags = map['tags'];
                     setState(() {
-                      _platformVersion = "set tags success: $map $tags";
+                      debugLable = "set tags success: $map $tags";
                     });
                   })
                   .catchError((error) {
                     setState(() {
-                      _platformVersion = "set tags error: $error";
+                      debugLable = "set tags error: $error";
                     });
                   }) ;
                 }),
@@ -150,12 +138,12 @@ class _MyAppState extends State<MyApp> {
                     JPush.cleanTags().then((map) {
                     var tags = map['tags'];
                     setState(() {
-                      _platformVersion = "cleanTags success: $map $tags";
+                      debugLable = "cleanTags success: $map $tags";
                     });
                   })
                   .catchError((error) {
                     setState(() {
-                      _platformVersion = "cleanTags error: $error";
+                      debugLable = "cleanTags error: $error";
                     });
                   }) ;
               }),
@@ -166,12 +154,12 @@ class _MyAppState extends State<MyApp> {
                     JPush.addTags(["lala","haha"]).then((map) {
                     var tags = map['tags'];
                     setState(() {
-                      _platformVersion = "addTags success: $map $tags";
+                      debugLable = "addTags success: $map $tags";
                     });
                   })
                   .catchError((error) {
                     setState(() {
-                      _platformVersion = "addTags error: $error";
+                      debugLable = "addTags error: $error";
                     });
                   }) ;
 
@@ -183,12 +171,12 @@ class _MyAppState extends State<MyApp> {
                   JPush.deleteTags(["lala","haha"]).then((map) {
                     var tags = map['tags'];
                     setState(() {
-                      _platformVersion = "deleteTags success: $map $tags";
+                      debugLable = "deleteTags success: $map $tags";
                     });
                   })
                   .catchError((error) {
                     setState(() {
-                      _platformVersion = "deleteTags error: $error";
+                      debugLable = "deleteTags error: $error";
                     });
                   }) ;
 
@@ -199,12 +187,12 @@ class _MyAppState extends State<MyApp> {
                   
                   JPush.getAllTags().then((map) {
                     setState(() {
-                      _platformVersion = "getAllTags success: $map";
+                      debugLable = "getAllTags success: $map";
                     });
                   })
                   .catchError((error) {
                     setState(() {
-                      _platformVersion = "getAllTags error: $error";
+                      debugLable = "getAllTags error: $error";
                     });
                   }) ;
 
@@ -215,12 +203,12 @@ class _MyAppState extends State<MyApp> {
                   
                   JPush.setAlias("thealias11").then((map) {
                     setState(() {
-                      _platformVersion = "setAlias success: $map";
+                      debugLable = "setAlias success: $map";
                     });
                   })
                   .catchError((error) {
                     setState(() {
-                      _platformVersion = "setAlias error: $error";
+                      debugLable = "setAlias error: $error";
                     });
                   }) ;
 
@@ -231,12 +219,12 @@ class _MyAppState extends State<MyApp> {
                   
                   JPush.deleteAlias().then((map) {
                     setState(() {
-                      _platformVersion = "deleteAlias success: $map";
+                      debugLable = "deleteAlias success: $map";
                     });
                   })
                   .catchError((error) {
                     setState(() {
-                      _platformVersion = "deleteAlias error: $error";
+                      debugLable = "deleteAlias error: $error";
                     });
                   }) ;
 
@@ -247,12 +235,12 @@ class _MyAppState extends State<MyApp> {
                   
                   JPush.setBadge(66).then((map) {
                     setState(() {
-                      _platformVersion = "setBadge success: $map";
+                      debugLable = "setBadge success: $map";
                     });
                   })
                   .catchError((error) {
                     setState(() {
-                      _platformVersion = "setBadge error: $error";
+                      debugLable = "setBadge error: $error";
                     });
                   }) ;
 
@@ -284,12 +272,12 @@ class _MyAppState extends State<MyApp> {
                   
                   JPush.getLaunchAppNotification().then((map) {
                     setState(() {
-                      _platformVersion = "getLaunchAppNotification success: $map";
+                      debugLable = "getLaunchAppNotification success: $map";
                     });
                   })
                   .catchError((error) {
                     setState(() {
-                      _platformVersion = "getLaunchAppNotification error: $error";
+                      debugLable = "getLaunchAppNotification error: $error";
                     });
                   });
 
@@ -297,10 +285,7 @@ class _MyAppState extends State<MyApp> {
                 
             ]
           )
-          // new Text('Running on: $_platformVersion\n'),
-          // child: new FlatButton(onPressed: () => {
-
-          // }),
+          
         ),
       ),
     );

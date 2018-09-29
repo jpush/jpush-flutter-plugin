@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'dart:io' show Platform;
 
@@ -54,7 +54,7 @@ class JPush {
     }
 
     ///
-    /// 申请推送权限当，注意这个方法只会向用户弹出一次推送权限请求（如果用户不同意，之后只能用户到设置页面里面勾选相应权限），需要开发者选择合适的时机调用。
+    /// 申请推送权限，注意这个方法只会向用户弹出一次推送权限请求（如果用户不同意，之后只能用户到设置页面里面勾选相应权限），需要开发者选择合适的时机调用。
     ///
     static void applyPushAuthority([NotificationSettingsIOS iosSettings = const NotificationSettingsIOS()]) {
 
@@ -251,7 +251,7 @@ class LocalNotification {
   final int id;
   final String title;
   final String content;
-  final Map<String, dynamic> extras;//?
+  final Map<String, String> extras;//?
   final DateTime fireTime;
   final int badge;//?
   final String soundName;//?

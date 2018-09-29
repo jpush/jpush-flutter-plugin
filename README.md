@@ -51,4 +51,5 @@ import 'package:jpush_flutter/jpush_flutter.dart';
 
 **注意** : 需要先调用 JPush.setup 来初始化插件，才能保证其他功能正常工作。
 
- [参考](./lib/jpush_flutter.dart)
+ [参考](./documents/APIs.md)
+
