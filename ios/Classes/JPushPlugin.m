@@ -143,9 +143,9 @@ static NSMutableArray<FlutterResult>* getRidResults;
     [self getLaunchAppNotification:call result:result];
   } else if([@"getRegistrationID" isEqualToString:call.method]) {
     [self getRegistrationID:call result:result];
-  }
-  
-  else{
+  } else if([@"sendLocalNotification"isEqualToString:call.method]) {
+    [self sendLocalNotification:call result:result];
+  } else{
     result(FlutterMethodNotImplemented);
   }
 }
@@ -303,6 +303,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
   result(@"");
 #elif TARGET_OS_IPHONE//真机
   
+  
   if ([JPUSHService registrationID] != nil && ![[JPUSHService registrationID] isEqualToString:@""]) {
     // 如果已经成功获取 registrationID，从本地获取直接缓存
     result([JPUSHService registrationID]);
@@ -315,6 +316,71 @@ static NSMutableArray<FlutterResult>* getRidResults;
     [getRidResults addObject:result];
   }
 #endif
+}
+
+- (void)sendLocalNotification:(FlutterMethodCall*)call result:(FlutterResult)result {
+  JPushNotificationContent *content = [[JPushNotificationContent alloc] init];
+    NSDictionary *params = call.arguments;
+  if (params[@"title"]) {
+    content.title = params[@"title"];
+  }
+  
+  if (![params[@"subtitle"] isEqualToString:@"<null>"]) {
+    content.subtitle = params[@"subtitle"];
+  }
+  
+  if (params[@"content"]) {
+    content.body = params[@"content"];
+  }
+  
+  if (params[@"badge"]) {
+    content.badge = params[@"badge"];
+  }
+  
+  if (![params[@"action"] isEqualToString:@"<null>"]) {
+    content.action = params[@"action"];
+  }
+  
+  if (![params[@"extra"] isEqualToString:@"<null>"]) {
+    content.userInfo = params[@"extra"];
+  }
+  
+  if (![params[@"sound"] isEqualToString:@"<null>"]) {
+    content.sound = params[@"sound"];
+  }
+  
+  JPushNotificationTrigger *trigger = [[JPushNotificationTrigger alloc] init];
+  if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 10.0) {
+    if (params[@"fireTime"]) {
+      NSNumber *date = params[@"fireTime"];
+      NSTimeInterval currentInterval = [[NSDate date] timeIntervalSince1970];
+      NSTimeInterval interval = [date doubleValue]/1000 - currentInterval;
+      interval = interval>0?interval:0;
+      trigger.timeInterval = interval;
+    }
+  }
+  
+  else {
+    if (params[@"fireTime"]) {
+      NSNumber *date = params[@"fireTime"];
+      trigger.fireDate = [NSDate dateWithTimeIntervalSince1970: [date doubleValue]/1000];
+    }
+  }
+  JPushNotificationRequest *request = [[JPushNotificationRequest alloc] init];
+  request.content = content;
+  request.trigger = trigger;
+  
+  if (params[@"id"]) {
+    NSNumber *identify = params[@"id"];
+    request.requestIdentifier = [identify stringValue];
+  }
+  request.completionHandler = ^(id result) {
+    NSLog(@"result");
+  };
+  
+  [JPUSHService addNotification:request];
+
+  result(@[@[]]);
 }
 
 - (void)dealloc {

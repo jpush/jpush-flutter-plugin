@@ -25,11 +25,11 @@ class _MyAppState extends State<MyApp> {
     String platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
     JPush.getRegistrationID().then((rid) {
-      setState(() {
-          _platformVersion = "flutter getRegistrationID: $rid";
-        });
+      // setState(() {
+      //     _platformVersion = "flutter getRegistrationID: $rid";
+      //   });
     });
-    
+
     JPush.setup(
       appKey: "a1703c14b186a68a66ef86c1",
       channel: "theChannel",
@@ -45,13 +45,15 @@ class _MyAppState extends State<MyApp> {
       JPush.addEventHandler(
         onReceiveNotification: (Map<String, dynamic> message) async {
         // print("flutter onReceiveNotification: $message");
-        setState(() {
-            _platformVersion = "setAlias error: $message";
-          });
+        // setState(() {
+        //     _platformVersion = "flutter onReceiveNotification: $message";
+        //   });
       },
       onOpenNotification: (Map<String, dynamic> message) async {
         print("flutter onOpenNotification: $message");
-        
+        setState(() {
+            _platformVersion = "flutter onOpenNotification: $message";
+          });
       },
       onReceiveMessage: (Map<String, dynamic> message) async {
         print("flutter onReceiveMessage: $message");
@@ -90,11 +92,42 @@ class _MyAppState extends State<MyApp> {
           child: new Column(
             children:[
               new Text('result: $_platformVersion\n'), 
-              
+              new FlatButton(
+              child: new Text('sendLocalNotification\n'), 
+              onPressed: () {
+                    // @require this.id,
+                    // @require this.title,
+                    // @require this.content,
+                    // @require this.fireTime,
+                    // this.buildId,
+                    // this.extras,
+                    // this.badge,
+                    // this.soundName,
+                    // this.subtitle
+                // 三秒后出发本地推送
+                var fireDate = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch + 3000);
+                var localNotification = LocalNotification(
+                    id: 234,
+                    title: 'fadsfa',
+                    buildId: 1,
+                    content: 'fdas',
+                    fireTime: fireDate,
+                    subtitle: 'fasf',
+                    badge: 5,
+                    extras: {"fa": 0}
+                  );
+                JPush.sendLocalNotification(localNotification).then((res) {
+                  setState(() {
+                      _platformVersion = res;
+                    });
+                });
+
+              }),
+
               new FlatButton(
               child: new Text('applyPushAuthority\n'), 
               onPressed: () {
-                
+                JPush.applyPushAuthority(NotificationSettingsIOS(badge: true, alert: true, sound: true));
               }),
               new FlatButton(
                 child: new Text('setTags\n'), 

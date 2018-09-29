@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import org.json.JSONObject;
+
+import cn.jpush.android.data.JPushLocalNotification;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -85,6 +88,8 @@ public class JPushPlugin implements MethodCallHandler {
             getLaunchAppNotification(call, result);
         } else if (call.method.equals("getRegistrationID")) {
             getRegistrationID(call, result);
+        } else if (call.method.equals("sendLocalNotification")) {
+            sendLocalNotification(call, result);
         } else {
             result.notImplemented();
         }
@@ -196,6 +201,31 @@ public class JPushPlugin implements MethodCallHandler {
     }
 
 
+    public void sendLocalNotification(MethodCall call, Result result) {
+        try {
+            HashMap<String, Object> map = call.arguments();
+            Log.d("JPushPlugin", "1111111111111111111");
+//            Log.d("JPushPlugin", map.toString());
+            JPushLocalNotification ln = new JPushLocalNotification();
+            ln.setBuilderId((Integer)map.get("buildId"));
+            ln.setNotificationId((Integer)map.get("id"));
+            ln.setTitle((String) map.get("title"));
+            ln.setContent((String) map.get("content"));
+            HashMap<String, Object> extra = (HashMap<String, Object>)map.get("extra");
+
+            if (extra != null) {
+                JSONObject json = new JSONObject(extra);
+                ln.setExtras(json.toString());
+            }
+
+            long date = (long) map.get("fireTime");
+            ln.setBroadcastTime(date);
+
+            JPushInterface.addLocalNotification(registrar.context(), ln);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
 
@@ -327,6 +357,5 @@ public class JPushPlugin implements MethodCallHandler {
         // try to clean getRid cache
         JPushPlugin.instance.scheduleCache();
     }
-
 
 }
