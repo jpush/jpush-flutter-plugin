@@ -1,3 +1,4 @@
+[![QQ Group](https://img.shields.io/badge/QQ%20Group-862401307-red.svg)]()
 # JPush Flutter Plugin
 
 ### 安装
@@ -6,7 +7,7 @@
 
 ```yaml
 dependencies:
-  jpush_flutter: 0.0.2
+  jpush_flutter: 0.0.3
 ```
 
 ### 配置
