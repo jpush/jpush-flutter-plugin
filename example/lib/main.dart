@@ -13,7 +13,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String debugLable = 'Unknown';
-
+final JPush jpush = new JPush();
   @override
   void initState() {
     super.initState();
@@ -23,26 +23,28 @@ class _MyAppState extends State<MyApp> {
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
     String platformVersion;
+    
+
     // Platform messages may fail, so we use a try/catch PlatformException.
-    JPush.getRegistrationID().then((rid) {
+    jpush.getRegistrationID().then((rid) {
       setState(() {
           debugLable = "flutter getRegistrationID: $rid";
         });
     });
 
-    JPush.setup(
+    jpush.setup(
       appKey: "a1703c14b186a68a66ef86c1",
       channel: "theChannel",
       production: false
       );
-    JPush.applyPushAuthority(new NotificationSettingsIOS(
+    jpush.applyPushAuthority(new NotificationSettingsIOS(
       sound: false,
       alert: false,
       badge: false));
 
     try {
       
-      JPush.addEventHandler(
+      jpush.addEventHandler(
         onReceiveNotification: (Map<String, dynamic> message) async {
         // print("flutter onReceiveNotification: $message");
         // setState(() {
@@ -102,9 +104,9 @@ class _MyAppState extends State<MyApp> {
                     fireTime: fireDate,
                     subtitle: 'fasf',
                     badge: 5,
-                    extras: {"fa": 0}
+                    extras: {"fa": "0"}
                   );
-                JPush.sendLocalNotification(localNotification).then((res) {
+                jpush.sendLocalNotification(localNotification).then((res) {
                   setState(() {
                       debugLable = res;
                     });
@@ -115,12 +117,12 @@ class _MyAppState extends State<MyApp> {
               new FlatButton(
               child: new Text('applyPushAuthority\n'), 
               onPressed: () {
-                JPush.applyPushAuthority(NotificationSettingsIOS(badge: true, alert: true, sound: true));
+                jpush.applyPushAuthority(NotificationSettingsIOS(badge: true, alert: true, sound: true));
               }),
               new FlatButton(
                 child: new Text('setTags\n'), 
                 onPressed: () {
-                  JPush.setTags(["lala","haha"]).then((map) {
+                  jpush.setTags(["lala","haha"]).then((map) {
                     var tags = map['tags'];
                     setState(() {
                       debugLable = "set tags success: $map $tags";
@@ -135,7 +137,7 @@ class _MyAppState extends State<MyApp> {
               new FlatButton(
               child: new Text('cleanTags\n'), 
               onPressed: () {
-                    JPush.cleanTags().then((map) {
+                    jpush.cleanTags().then((map) {
                     var tags = map['tags'];
                     setState(() {
                       debugLable = "cleanTags success: $map $tags";
@@ -151,7 +153,7 @@ class _MyAppState extends State<MyApp> {
                 child: new Text('addTags\n'), 
                 onPressed: () {
                   
-                    JPush.addTags(["lala","haha"]).then((map) {
+                    jpush.addTags(["lala","haha"]).then((map) {
                     var tags = map['tags'];
                     setState(() {
                       debugLable = "addTags success: $map $tags";
@@ -168,7 +170,7 @@ class _MyAppState extends State<MyApp> {
                 child: new Text('deleteTags\n'), 
                 onPressed: () {
                   
-                  JPush.deleteTags(["lala","haha"]).then((map) {
+                  jpush.deleteTags(["lala","haha"]).then((map) {
                     var tags = map['tags'];
                     setState(() {
                       debugLable = "deleteTags success: $map $tags";
@@ -185,7 +187,7 @@ class _MyAppState extends State<MyApp> {
                 child: new Text('getAllTags\n'), 
                 onPressed: () {
                   
-                  JPush.getAllTags().then((map) {
+                  jpush.getAllTags().then((map) {
                     setState(() {
                       debugLable = "getAllTags success: $map";
                     });
@@ -201,7 +203,7 @@ class _MyAppState extends State<MyApp> {
                 child: new Text('setAlias\n'), 
                 onPressed: () {
                   
-                  JPush.setAlias("thealias11").then((map) {
+                  jpush.setAlias("thealias11").then((map) {
                     setState(() {
                       debugLable = "setAlias success: $map";
                     });
@@ -217,7 +219,7 @@ class _MyAppState extends State<MyApp> {
                 child: new Text('deleteAlias\n'), 
                 onPressed: () {
                   
-                  JPush.deleteAlias().then((map) {
+                  jpush.deleteAlias().then((map) {
                     setState(() {
                       debugLable = "deleteAlias success: $map";
                     });
@@ -233,7 +235,7 @@ class _MyAppState extends State<MyApp> {
                 child: new Text('setBadge\n'), 
                 onPressed: () {
                   
-                  JPush.setBadge(66).then((map) {
+                  jpush.setBadge(66).then((map) {
                     setState(() {
                       debugLable = "setBadge success: $map";
                     });
@@ -249,28 +251,28 @@ class _MyAppState extends State<MyApp> {
                 child: new Text('stopPush\n'), 
                 onPressed: () {
                   
-                  JPush.stopPush();
+                  jpush.stopPush();
 
                 }),
               new FlatButton(
                 child: new Text('resumePush\n'), 
                 onPressed: () {
                   
-                  JPush.resumePush();
+                  jpush.resumePush();
 
                 }),
               new FlatButton(
                 child: new Text('clearAllNotifications\n'), 
                 onPressed: () {
                   
-                  JPush.clearAllNotifications();
+                  jpush.clearAllNotifications();
 
                 }),
               new FlatButton(
                 child: new Text('getLaunchAppNotification\n'), 
                 onPressed: () {
                   
-                  JPush.getLaunchAppNotification().then((map) {
+                  jpush.getLaunchAppNotification().then((map) {
                     setState(() {
                       debugLable = "getLaunchAppNotification success: $map";
                     });

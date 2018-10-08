@@ -28,7 +28,8 @@
 添加事件监听方法。
 
 ```dart
-JPush.addEventHandler(
+JPush jpush = new JPush();
+jpush.addEventHandler(
       // 接收通知回调方法。
       onReceiveNotification: (Map<String, dynamic> message) async {
          print("flutter onReceiveNotification: $message");
@@ -52,7 +53,8 @@ JPush.addEventHandler(
 - 将缓存的事件下发到 dart 环境中。
 
 ```dart
-JPush.setup(
+JPush jpush = new JPush();
+jpush.setup(
       appKey: "替换成你自己的 appKey",
       channel: "theChannel",
       production: false
@@ -64,7 +66,8 @@ JPush.setup(
 获取 registrationId，这个 JPush 运行通过 registrationId 来进行推送.
 
 ```dart
-JPush.getRegistrationID().then((rid) { });
+JPush jpush = new JPush();
+jpush.getRegistrationID().then((rid) { });
 ```
 
 #### stopPush
@@ -72,7 +75,8 @@ JPush.getRegistrationID().then((rid) { });
 停止推送功能，调用该方法将不会接收到通知。
 
 ```dart
-JPush.stopPush();
+JPush jpush = new JPush();
+jpush.stopPush();
 ```
 
 #### resumePush
@@ -80,7 +84,8 @@ JPush.stopPush();
 调用 stopPush 后，可以通过 resumePush 方法恢复推送。
 
 ```dart
-JPush.resumePush();
+JPush jpush = new JPush();
+jpush.resumePush();
 ```
 
 #### setAlias
@@ -88,7 +93,8 @@ JPush.resumePush();
 设置别名，极光后台可以通过别名来推送，一个 App 应用只有一个别名，一般用来存储用户 id。
 
 ```
-JPush.setAlias("your alias").then((map) { });
+JPush jpush = new JPush();
+jpush.setAlias("your alias").then((map) { });
 ```
 
 #### deleteAlias
@@ -96,7 +102,8 @@ JPush.setAlias("your alias").then((map) { });
 可以通过 deleteAlias 方法来删除已经设置的 alias。
 
 ```dart
-JPush.deleteAlias().then((map) {})
+JPush jpush = new JPush();
+jpush.deleteAlias().then((map) {})
 ```
 
 #### addTags
@@ -104,7 +111,8 @@ JPush.deleteAlias().then((map) {})
 在原来的 Tags 列表上添加指定 tags。
 
 ```
-JPush.addTags(["tag1","tag2"]).then((map) {});
+JPush jpush = new JPush();
+jpush.addTags(["tag1","tag2"]).then((map) {});
 ```
 
 ####  deleteTags
@@ -112,15 +120,17 @@ JPush.addTags(["tag1","tag2"]).then((map) {});
 在原来的 Tags 列表上删除指定 tags。
 
 ```
-JPush.deleteTags(["tag1","tag2"]).then((map) {});
+JPush jpush = new JPush();
+jpush.deleteTags(["tag1","tag2"]).then((map) {});
 ```
 
 #### setTags
 
 重置 tags。
 
-```
-JPush.setTags(["tag1","tag2"]).then((map) {});
+```dart
+JPush jpush = new JPush();
+jpush.setTags(["tag1","tag2"]).then((map) {});
 ```
 
 #### cleanTags
@@ -128,15 +138,16 @@ JPush.setTags(["tag1","tag2"]).then((map) {});
 清空所有 tags
 
 ```dart
-JPush.setTags().then((map) {});
+jpush.setTags().then((map) {});
 ```
 
 #### getAllTags
 
 获取当前 tags 列表。
 
-```
-JPush.getAllTags().then((map) {});
+```dart
+JPush jpush = new JPush();
+jpush.getAllTags().then((map) {});
 ```
 
 #### sendLocalNotification
@@ -145,6 +156,7 @@ JPush.getAllTags().then((map) {});
 
 ```dart
 // 延时 3 秒后触发本地通知。
+JPush jpush = new JPush();
 var fireDate = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch + 3000);
 var localNotification = LocalNotification(
    id: 234,
@@ -156,7 +168,7 @@ var localNotification = LocalNotification(
    badge: 5, // 该参数只有在 iOS 有效
    extras: {"fa": "0"} // 设置 extras ，extras 需要是 Map<String, String>
   );
-JPush.sendLocalNotification(localNotification).then((res) {});
+jpush.sendLocalNotification(localNotification).then((res) {});
 ```
 
 #### clearAllNotifications
@@ -164,7 +176,8 @@ JPush.sendLocalNotification(localNotification).then((res) {});
 清楚通知栏上所有通知。
 
 ```dart
-JPush.clearAllNotifications();
+JPush jpush = new JPush();
+jpush.clearAllNotifications();
 ```
 
 #### applyPushAuthority
@@ -174,7 +187,8 @@ JPush.clearAllNotifications();
 **注意： iOS10+ 可以通过该方法来设置推送是否前台展示，是否触发声音，是否设置应用角标 badge**
 
 ```dart
-JPush.applyPushAuthority(new NotificationSettingsIOS(
+JPush jpush = new JPush();
+jpush.applyPushAuthority(new NotificationSettingsIOS(
       sound: true,
       alert: true,
       badge: true));
@@ -187,7 +201,8 @@ JPush.applyPushAuthority(new NotificationSettingsIOS(
 设置应用 badge 值，该方法还会同步 JPush 服务器的的 badge 值，JPush 服务器的 badge 值用于推送 badge 自动 +1 时会用到。
 
 ```dart
-JPush.setBadge(66).then((map) {});
+JPush jpush = new JPush();
+jpush.setBadge(66).then((map) {});
 ```
 
 ### getLaunchAppNotification
@@ -195,6 +210,7 @@ JPush.setBadge(66).then((map) {});
 获取 iOS 点击推送启动应用的那条通知。
 
 ```dart
-JPush.getLaunchAppNotification().then((map) {});
+JPush jpush = new JPush();
+jpush.getLaunchAppNotification().then((map) {});
 ```
 

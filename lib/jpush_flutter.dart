@@ -1,25 +1,31 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'dart:io' show Platform;
+import 'package:platform/platform.dart';
 
 
 typedef Future<dynamic> EventHandler(Map<String, dynamic> event);
 
 class JPush {
-    static const MethodChannel _channel =
-        const MethodChannel('jpush');
+    factory JPush() => _instance;
 
-    static Future<String> get platformVersion async {
-      final String version = await _channel.invokeMethod('getPlatformVersion');
-      return version;
-    }
+    final MethodChannel _channel;
+    final Platform _platform;
 
-    static EventHandler _onReceiveNotification;
-    static EventHandler _onOpenNotification;
-    static EventHandler _onReceiveMessage;
+    @visibleForTesting
+    JPush.private(MethodChannel channel, Platform platform)
+    : _channel = channel,
+      _platform = platform;
 
-    static void setup({
+    static final JPush _instance = new JPush.private(
+          const MethodChannel('jpush'),
+          const LocalPlatform());
+
+    EventHandler _onReceiveNotification;
+    EventHandler _onOpenNotification;
+    EventHandler _onReceiveMessage;
+
+    void setup({
       String appKey,
       String channel,
       bool production,
@@ -29,7 +35,7 @@ class JPush {
     ///
     /// 初始化 JPush 必须先初始化才能执行其他操作(比如接收事件传递)
     ///
-    static void addEventHandler({
+    void addEventHandler({
       EventHandler onReceiveNotification,
       EventHandler onOpenNotification,
       EventHandler onReceiveMessage,
@@ -40,7 +46,7 @@ class JPush {
       _channel.setMethodCallHandler(_handleMethod);
     }
 
-    static Future<Null> _handleMethod(MethodCall call) async {
+    Future<Null> _handleMethod(MethodCall call) async {
       switch (call.method) {
         case "onReceiveNotification":
           return _onReceiveNotification(call.arguments.cast<String, dynamic>());
@@ -56,9 +62,9 @@ class JPush {
     ///
     /// 申请推送权限，注意这个方法只会向用户弹出一次推送权限请求（如果用户不同意，之后只能用户到设置页面里面勾选相应权限），需要开发者选择合适的时机调用。
     ///
-    static void applyPushAuthority([NotificationSettingsIOS iosSettings = const NotificationSettingsIOS()]) {
+    void applyPushAuthority([NotificationSettingsIOS iosSettings = const NotificationSettingsIOS()]) {
 
-        if (!Platform.isIOS) {
+        if (!_platform.isIOS) {
           return;
         }
 
@@ -72,7 +78,7 @@ class JPush {
     /// @param {Function} success = ({"tags":[String]}) => {  }
     /// @param {Function} fail = ({"errorCode":int}) => {  }
     ///
-    static Future<Map<dynamic, dynamic>> setTags(List<String> tags) async {
+    Future<Map<dynamic, dynamic>> setTags(List<String> tags) async {
       final Map<dynamic, dynamic> result = await _channel.invokeMethod('setTags', tags);
       return result;
     }
@@ -83,7 +89,7 @@ class JPush {
     /// @param {Function} success = ({"tags":[String]}) => {  }
     /// @param {Function} fail = ({"errorCode":int}) => {  }
     ///
-    static Future<Map<dynamic, dynamic>> cleanTags() async {
+    Future<Map<dynamic, dynamic>> cleanTags() async {
       final Map<dynamic, dynamic> result = await _channel.invokeMethod('cleanTags');
       return result;
     }
@@ -96,7 +102,7 @@ class JPush {
     /// @param {Function} fail = ({"errorCode":int}) => {  }
     ///
 
-    static Future<Map<dynamic, dynamic>> addTags(List<String> tags) async {
+    Future<Map<dynamic, dynamic>> addTags(List<String> tags) async {
       final Map<dynamic, dynamic> result = await _channel.invokeMethod('addTags', tags);
       return result;
     }
@@ -108,7 +114,7 @@ class JPush {
     /// @param {Function} success = ({"tags":[String]}) => {  }
     /// @param {Function} fail = ({"errorCode":int}) => {  }
     ///
-    static Future<Map<dynamic, dynamic>> deleteTags(List<String> tags) async {
+    Future<Map<dynamic, dynamic>> deleteTags(List<String> tags) async {
       final Map<dynamic, dynamic> result = await _channel.invokeMethod('deleteTags', tags);
       return result;
     }
@@ -119,7 +125,7 @@ class JPush {
     /// @param {Function} success = ({"tags":[String]}) => {  }
     /// @param {Function} fail = ({"errorCode":int}) => {  }
     ///
-    static Future<Map<dynamic, dynamic>> getAllTags() async {
+    Future<Map<dynamic, dynamic>> getAllTags() async {
       final Map<dynamic, dynamic> result = await _channel.invokeMethod('getAllTags');
       return result;
     }
@@ -132,7 +138,7 @@ class JPush {
     /// @param {Function} success = ({"alias":String}) => {  }
     /// @param {Function} fail = ({"errorCode":int}) => {  }
     ///
-    static Future<Map<dynamic, dynamic>> setAlias(String alias) async {
+    Future<Map<dynamic, dynamic>> setAlias(String alias) async {
       final Map<dynamic, dynamic> result = await _channel.invokeMethod('setAlias', alias);
       return result;
     }
@@ -143,7 +149,7 @@ class JPush {
     /// @param {Function} success = ({"alias":String}) => {  }
     /// @param {Function} fail = ({"errorCode":int}) => {  }
     ///
-    static Future<Map<dynamic, dynamic>> deleteAlias() async {
+    Future<Map<dynamic, dynamic>> deleteAlias() async {
       final Map<dynamic, dynamic> result = await _channel.invokeMethod('deleteAlias');
       return result;
     }
@@ -154,28 +160,28 @@ class JPush {
     /// 
     /// @param {Int} badge
     ///
-    static Future setBadge(int badge) async {
+    Future setBadge(int badge) async {
       await _channel.invokeMethod('setBadge', badge);
     }
 
     ///
     /// 停止接收推送，调用该方法后应用将不再受到推送，如果想要重新收到推送可以调用 resumePush。
     ///
-    static Future stopPush() async {
+    Future stopPush() async {
       await _channel.invokeMethod('stopPush');
     }
     
     ///
     /// 恢复推送功能。
     ///
-    static Future resumePush() async {
+    Future resumePush() async {
       await _channel.invokeMethod('resumePush');
     }
     
     ///
     /// 清空通知栏上的所有通知。
     ///
-    static Future clearAllNotifications() async {
+    Future clearAllNotifications() async {
       await _channel.invokeMethod('clearAllNotifications');
     }
     
@@ -186,7 +192,7 @@ class JPush {
     /// 如果不是通过点击推送启动应用，比如点击应用 icon 直接启动应用，notification 会返回 @{}。
     /// @param {Function} callback = (Object) => {}
     ///
-    static Future<Map<dynamic, dynamic>> getLaunchAppNotification() async {
+    Future<Map<dynamic, dynamic>> getLaunchAppNotification() async {
       final Map<dynamic, dynamic> result = await _channel.invokeMethod('getLaunchAppNotification');
       return result;
     }
@@ -196,7 +202,7 @@ class JPush {
     /// 
     /// @param {Function} callback = (String) => {}
     ///
-    static Future<String> getRegistrationID() async {
+    Future<String> getRegistrationID() async {
       final String rid = await _channel.invokeMethod('getRegistrationID');
       return rid;
     }
@@ -205,7 +211,7 @@ class JPush {
     /// 发送本地通知到调度器，指定时间出发该通知。
     /// @param {Notification} notification
     ///
-   static Future<String> sendLocalNotification(LocalNotification notification) async {
+   Future<String> sendLocalNotification(LocalNotification notification) async {
     await _channel.invokeMethod('sendLocalNotification', notification.toMap());
 
     return notification.toMap().toString();
