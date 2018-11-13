@@ -63,7 +63,7 @@ android {
             signingConfig signingConfigs.debug
         }
     }
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.2'
 
     packagingOptions {
         exclude 'lib/arm64-v8a/libgojni.so'
