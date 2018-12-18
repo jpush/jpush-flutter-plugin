@@ -27,8 +27,8 @@ class JPush {
 
     void setup({
       String appKey,
-      String channel,
       bool production,
+      String channel = '',
       bool debug = false,
       }) {
       _channel.invokeMethod('setup', { 'appKey': appKey, 'channel': channel, 'production': production, 'debug': debug});

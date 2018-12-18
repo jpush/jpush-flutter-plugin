@@ -36,7 +36,7 @@ final JPush jpush = new JPush();
       appKey: "a1703c14b186a68a66ef86c1",
       channel: "theChannel",
       production: false,
-      // debug: true,
+      debug: true,
       );
     jpush.applyPushAuthority(new NotificationSettingsIOS(
       sound: false,

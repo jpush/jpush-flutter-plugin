@@ -99,7 +99,12 @@ public class JPushPlugin implements MethodCallHandler {
         HashMap<String, Object> map = call.arguments();
         boolean debug = (boolean)map.get("debug");
         JPushInterface.setDebugMode(debug);
+
         JPushInterface.init(registrar.context());     		// 初始化 JPush
+        
+        String channel = (String)map.get("channel");
+        JPushInterface.setChannel(registrar.context(), channel);
+
         JPushPlugin.instance.dartIsReady = true;
 
         // try to clean getRid cache
