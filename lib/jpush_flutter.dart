@@ -154,10 +154,6 @@ class JPush {
       final Map<dynamic, dynamic> result = await _channel.invokeMethod('deleteAlias');
       return result;
     }
-    
-    void setDebugMode() {
-      _channel.invokeMethod('setDebugMode');
-    }
 
     ///
     /// iOS Only
