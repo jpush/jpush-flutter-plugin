@@ -7,7 +7,7 @@
 
 ```yaml
 dependencies:
-  jpush_flutter: 0.0.6
+  jpush_flutter: 0.0.8
 ```
 
 ### 配置
@@ -29,8 +29,7 @@ android: {
 
     manifestPlaceholders = [
         JPUSH_PKGNAME : applicationId,
-        JPUSH_APPKEY : "appkey", // NOTE: JPush 上注册的包名对应的 Appkey.
-        JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
+        JPUSH_APPKEY : "appkey", // NOTE: JPush 上注册的包名对应的 Appkey.  
     ]
   }    
 }
