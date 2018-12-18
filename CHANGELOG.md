@@ -7,6 +7,14 @@
 
 修改 setup 方法，添加 boolean debug 参数，如果 debug 为 true 这打印日志，如果为 false 则不打印日志。
 
+## 0.0.6
+
+ 增加 swift 工程支持。
+
+
+## 0.0.3
+添加 localnotification api。
+
 ## 0.0.2
 
 修复 android 类名文件名不匹配问题。
