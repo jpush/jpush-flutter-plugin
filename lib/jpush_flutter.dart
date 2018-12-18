@@ -29,8 +29,9 @@ class JPush {
       String appKey,
       String channel,
       bool production,
+      bool debug = false,
       }) {
-      _channel.invokeMethod('setup', { 'appKey': appKey, 'channel': channel, 'production': production });
+      _channel.invokeMethod('setup', { 'appKey': appKey, 'channel': channel, 'production': production, 'debug': debug});
     }
     ///
     /// 初始化 JPush 必须先初始化才能执行其他操作(比如接收事件传递)
@@ -154,6 +155,10 @@ class JPush {
       return result;
     }
     
+    void setDebugMode() {
+      _channel.invokeMethod('setDebugMode');
+    }
+
     ///
     /// iOS Only
     /// 设置应用 Badge（小红点）
@@ -239,18 +244,18 @@ class NotificationSettingsIOS {
 
 
 
-    /// @property {number} [buildId] - 通知样式：1 为基础样式，2 为自定义样式（需先调用 `setStyleCustom` 设置自定义样式）
-    /// @property {number} [id] - 通知 id, 可用于取消通知
-    /// @property {string} [title] - 通知标题
-    /// @property {string} [content] - 通知内容
-    /// @property {object} [extra] - extra 字段
-    /// @property {number} [fireTime] - 通知触发时间（毫秒）
-    /// // iOS Only
-    /// @property {number} [badge] - 本地推送触发后应用角标值
-    /// // iOS Only
-    /// @property {string} [soundName] - 指定推送的音频文件
-    /// // iOS 10+ Only
-    /// @property {string} [subtitle] - 子标题
+  /// @property {number} [buildId] - 通知样式：1 为基础样式，2 为自定义样式（需先调用 `setStyleCustom` 设置自定义样式）
+  /// @property {number} [id] - 通知 id, 可用于取消通知
+  /// @property {string} [title] - 通知标题
+  /// @property {string} [content] - 通知内容
+  /// @property {object} [extra] - extra 字段
+  /// @property {number} [fireTime] - 通知触发时间（毫秒）
+  /// // iOS Only
+  /// @property {number} [badge] - 本地推送触发后应用角标值
+  /// // iOS Only
+  /// @property {string} [soundName] - 指定推送的音频文件
+  /// // iOS 10+ Only
+  /// @property {string} [subtitle] - 子标题
 class LocalNotification {
 
   final int buildId;//?

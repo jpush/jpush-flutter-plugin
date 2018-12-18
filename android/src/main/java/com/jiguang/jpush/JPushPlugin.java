@@ -96,8 +96,9 @@ public class JPushPlugin implements MethodCallHandler {
     }
 
     public void setup(MethodCall call, Result result) {
-
-        JPushInterface.setDebugMode(true); 	// 设置开启日志,发布时请关闭日志
+        HashMap<String, Object> map = call.arguments();
+        boolean debug = (boolean)map.get("debug");
+        JPushInterface.setDebugMode(debug);
         JPushInterface.init(registrar.context());     		// 初始化 JPush
         JPushPlugin.instance.dartIsReady = true;
 
@@ -225,9 +226,6 @@ public class JPushPlugin implements MethodCallHandler {
             e.printStackTrace();
         }
     }
-
-
-
 
 
     /**

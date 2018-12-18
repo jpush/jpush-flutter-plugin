@@ -150,9 +150,17 @@ static NSMutableArray<FlutterResult>* getRidResults;
   }
 }
 
+
+
 - (void)setup:(FlutterMethodCall*)call result:(FlutterResult)result {
   NSDictionary *arguments = call.arguments;
-  
+  NSNumber *debug = arguments[@"debug"];
+  if ([debug boolValue]) {
+    [JPUSHService setDebugMode];
+  } else {
+    [JPUSHService setLogOFF];
+  }
+
   [JPUSHService setupWithOption:_launchNotification
                          appKey:arguments[@"appKey"]
                         channel:arguments[@"channel"]
@@ -382,6 +390,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
 
   result(@[@[]]);
 }
+
+
 
 - (void)dealloc {
   _isJPushDidLogin = NO;
