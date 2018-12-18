@@ -52,6 +52,7 @@ jpush.addEventHandler(
 - 初始化 JPush SDK
 - 将缓存的事件下发到 dart 环境中。
 
+**注意：** 插件版本 >= 0.0.8 android 端支持在 setup 方法中动态设置 channel，动态设置的 channel 优先级比 manifestPlaceholders 中的 JPUSH_CHANNEL 优先级要高。
 ```dart
 JPush jpush = new JPush();
 jpush.setup(
