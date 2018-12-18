@@ -57,7 +57,8 @@ JPush jpush = new JPush();
 jpush.setup(
       appKey: "替换成你自己的 appKey",
       channel: "theChannel",
-      production: false
+      production: false,
+      debug: false, // 设置是否打印 debug 日志
     );
 ```
 
