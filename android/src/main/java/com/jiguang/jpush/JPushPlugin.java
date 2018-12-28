@@ -240,7 +240,7 @@ public class JPushPlugin implements MethodCallHandler {
     public static class JPushReceiver extends BroadcastReceiver {
 
         private static final List<String> IGNORED_EXTRAS_KEYS = Arrays.asList("cn.jpush.android.TITLE",
-                "cn.jpush.android.MESSAGE", "cn.jpush.android.APPKEY", "cn.jpush.android.NOTIFICATION_CONTENT_TITLE");
+                "cn.jpush.android.MESSAGE", "cn.jpush.android.APPKEY", "cn.jpush.android.NOTIFICATION_CONTENT_TITLE", "key_show_entity", "platform");
 
         public JPushReceiver() {
         }

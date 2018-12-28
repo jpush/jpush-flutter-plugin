@@ -26,8 +26,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  jpush_flutter:
-    path: ../
+  jpush_flutter: ^0.0.8
+    # path: ../
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

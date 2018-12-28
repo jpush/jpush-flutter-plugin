@@ -133,9 +133,9 @@ packages:
   jpush_flutter:
     dependency: "direct dev"
     description:
-      path: ".."
-      relative: true
-    source: path
+      name: jpush_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.0.8"
   js:
     dependency: transitive

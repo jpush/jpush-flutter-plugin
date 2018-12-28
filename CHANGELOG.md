@@ -1,3 +1,7 @@
+## 0.0.9
+
+android: 修复 JPushReceiver 类型转换的错误。
+
 ## 0.0.8
 
 更新 setup 方法，android 端现在支持 channel 字段，用于动态设置 channel，和 iOS 保持一致。
