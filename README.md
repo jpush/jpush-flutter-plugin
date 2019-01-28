@@ -24,7 +24,7 @@ android: {
     ...
     ndk {
 	//选择要添加的对应 cpu 类型的 .so 库。
-	abiFilters 'armeabi', 'armeabi-v7a', 'x86', 'x86_64', 'mips', 'mips64' // 'arm64-v8a',        
+	abiFilters 'armeabi', 'armeabi-v7a', 'x86', 'x86_64', 'mips', 'mips64', 'arm64-v8a',        
     }
 
     manifestPlaceholders = [
