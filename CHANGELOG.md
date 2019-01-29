@@ -1,4 +1,4 @@
-## 0.0.10
+## 0.0.11
 
 iOS: 修复 getLaunchAppNotification 返回 null 的情况。
 featurn: APNS 推送字段将 extras 字段移动到 notification.extras 中和 android 保持一致。

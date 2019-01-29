@@ -295,14 +295,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
 }
 
 - (void)getLaunchAppNotification:(FlutterMethodCall*)call result:(FlutterResult)result {
-  NSDictionary *notification;
-  notification = [_launchNotification objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-  
-  if ([_launchNotification objectForKey:UIApplicationLaunchOptionsLocalNotificationKey]) {
-    UILocalNotification *localNotification = [_launchNotification objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
-    notification = localNotification.userInfo;
-  }
-  result(notification);
+  result(_launchNotification == nil ? @{}: _launchNotification);
 }
 
 - (void)getRegistrationID:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -406,7 +399,22 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   
   if (launchOptions != nil) {
     _launchNotification = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
+    _launchNotification = [self jpushFormatAPNSDic:_launchNotification.copy];
+  }
+  
+  if ([launchOptions valueForKey:UIApplicationLaunchOptionsLocalNotificationKey]) {
+    UILocalNotification *localNotification = [launchOptions valueForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+    NSMutableDictionary *localNotificationEvent = @{}.mutableCopy;
+    localNotificationEvent[@"content"] = localNotification.alertBody;
+    localNotificationEvent[@"badge"] = @(localNotification.applicationIconBadgeNumber);
+    localNotificationEvent[@"extras"] = localNotification.userInfo;
+    localNotificationEvent[@"fireTime"] = [NSNumber numberWithLong:[localNotification.fireDate timeIntervalSince1970] * 1000];
+    localNotificationEvent[@"soundName"] = [localNotification.soundName isEqualToString:UILocalNotificationDefaultSoundName] ? @"" : localNotification.soundName;
     
+    if (@available(iOS 8.2, *)) {
+      localNotificationEvent[@"title"] = localNotification.alertTitle;
+    }
+    _launchNotification = localNotificationEvent;
   }
   return YES;
 }
@@ -416,20 +424,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-//  _resumingFromBackground = NO;
-  // Clears push notifications from the notification center, with the
-  // side effect of resetting the badge count. We need to clear notifications
-  // because otherwise the user could tap notifications in the notification
-  // center while the app is in the foreground, and we wouldn't be able to
-  // distinguish that case from the case where a message came in and the
-  // user dismissed the notification center without tapping anything.
-  // TODO(goderbauer): Revisit this behavior once we provide an API for managing
-  // the badge number, or if we add support for running Dart in the background.
-  // Setting badgeNumber to 0 is a no-op (= notifications will not be cleared)
-  // if it is already 0,
-  // therefore the next line is setting it to 1 first before clearing it again
-  // to remove all
-  // notifications.
   application.applicationIconBadgeNumber = 1;
   application.applicationIconBadgeNumber = 0;
 }
@@ -437,7 +431,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 - (bool)application:(UIApplication *)application
 didReceiveRemoteNotification:(NSDictionary *)userInfo
 fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
-//  [self didReceiveRemoteNotification:userInfo];
 
   [_channel invokeMethod:@"onReceiveNotification" arguments:userInfo];
   completionHandler(UIBackgroundFetchResultNoData);
@@ -461,28 +454,41 @@ didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSe
 
 
 
-- (void)jpushNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(NSInteger))completionHandler {
-  
+- (void)jpushNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(NSInteger))completionHandler  API_AVAILABLE(ios(10.0)){
   
   NSDictionary * userInfo = notification.request.content.userInfo;
   if([notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
     [JPUSHService handleRemoteNotification:userInfo];
-    [_channel invokeMethod:@"onReceiveNotification" arguments: userInfo];
+    [_channel invokeMethod:@"onReceiveNotification" arguments: [self jpushFormatAPNSDic:userInfo]];
   }
   
-
   completionHandler(notificationTypes);
 }
 
-- (void)jpushNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
+- (void)jpushNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler  API_AVAILABLE(ios(10.0)){
   NSDictionary * userInfo = response.notification.request.content.userInfo;
   if([response.notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
     [JPUSHService handleRemoteNotification:userInfo];
-//    [[NSNotificationCenter defaultCenter] postNotificationName:@"kJPFOpenNotification" object:userInfo];
-    [_channel invokeMethod:@"onOpenNotification" arguments: userInfo];
-    
+    [_channel invokeMethod:@"onOpenNotification" arguments: [self jpushFormatAPNSDic:userInfo]];
   }
   completionHandler();
+}
+
+- (NSMutableDictionary *)jpushFormatAPNSDic:(NSDictionary *)dic {
+  NSMutableDictionary *extras = @{}.mutableCopy;
+  for (NSString *key in dic) {
+    if([key isEqualToString:@"_j_business"]      ||
+       [key isEqualToString:@"_j_msgid"]         ||
+       [key isEqualToString:@"_j_uid"]           ||
+       [key isEqualToString:@"actionIdentifier"] ||
+       [key isEqualToString:@"aps"]) {
+      continue;
+    }
+    extras[key] = dic[key];
+  }
+  NSMutableDictionary *formatDic = dic.mutableCopy;
+  formatDic[@"extras"] = extras;
+  return formatDic;
 }
 
 @end

@@ -7,7 +7,7 @@
 
 ```yaml
 dependencies:
-  jpush_flutter: 0.0.10
+  jpush_flutter: 0.0.11
 ```
 
 ### 配置

@@ -116,7 +116,22 @@ final JPush jpush = new JPush();
                 });
 
               }),
+              new FlatButton(
+                child: new Text('getLaunchAppNotification\n'), 
+                onPressed: () {
+                  
+                  jpush.getLaunchAppNotification().then((map) {
+                    setState(() {
+                      debugLable = "getLaunchAppNotification success: $map";
+                    });
+                  })
+                  .catchError((error) {
+                    setState(() {
+                      debugLable = "getLaunchAppNotification error: $error";
+                    });
+                  });
 
+                }),
               new FlatButton(
               child: new Text('applyPushAuthority\n'), 
               onPressed: () {
@@ -271,22 +286,7 @@ final JPush jpush = new JPush();
                   jpush.clearAllNotifications();
 
                 }),
-              new FlatButton(
-                child: new Text('getLaunchAppNotification\n'), 
-                onPressed: () {
-                  
-                  jpush.getLaunchAppNotification().then((map) {
-                    setState(() {
-                      debugLable = "getLaunchAppNotification success: $map";
-                    });
-                  })
-                  .catchError((error) {
-                    setState(() {
-                      debugLable = "getLaunchAppNotification error: $error";
-                    });
-                  });
-
-                }),
+              
                 
             ]
           )
