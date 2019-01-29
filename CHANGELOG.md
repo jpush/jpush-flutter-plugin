@@ -1,3 +1,8 @@
+## 0.0.10
+
+iOS: 修复 getLaunchAppNotification 返回 null 的情况。
+featurn: APNS 推送字段将 extras 字段移动到 notification.extras 中和 android 保持一致。
+
 ## 0.0.9
 
 android: 修复 JPushReceiver 类型转换的错误。

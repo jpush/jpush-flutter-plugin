@@ -39,18 +39,18 @@ final JPush jpush = new JPush();
       debug: true,
       );
     jpush.applyPushAuthority(new NotificationSettingsIOS(
-      sound: false,
-      alert: false,
-      badge: false));
+      sound: true,
+      alert: true,
+      badge: true));
 
     try {
       
       jpush.addEventHandler(
         onReceiveNotification: (Map<String, dynamic> message) async {
-        // print("flutter onReceiveNotification: $message");
-        // setState(() {
-        //     _platformVersion = "flutter onReceiveNotification: $message";
-        //   });
+        print("flutter onReceiveNotification: $message");
+        setState(() {
+            debugLable = "flutter onReceiveNotification: $message";
+          });
       },
       onOpenNotification: (Map<String, dynamic> message) async {
         print("flutter onOpenNotification: $message");
@@ -60,7 +60,9 @@ final JPush jpush = new JPush();
       },
       onReceiveMessage: (Map<String, dynamic> message) async {
         print("flutter onReceiveMessage: $message");
-        
+        setState(() {
+            debugLable = "flutter onReceiveMessage: $message";
+          });
       },
       );
 
