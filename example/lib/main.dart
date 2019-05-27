@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
     return new MaterialApp(
         home: new Scaffold(
       appBar: new AppBar(
-        title: const Text("Viewv Lab"),
+        title: const Text("Plugin example app"),
         backgroundColor: Colors.blue,
       ),
       body: Container(
