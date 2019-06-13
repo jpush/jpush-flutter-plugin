@@ -175,7 +175,7 @@ jpush.sendLocalNotification(localNotification).then((res) {});
 
 #### clearAllNotifications
 
-清楚通知栏上所有通知。
+清除通知栏上所有通知。
 
 ```dart
 JPush jpush = new JPush();
