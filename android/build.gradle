@@ -34,6 +34,6 @@ android {
 }
 
 dependencies {
-    implementation 'cn.jiguang.sdk:jpush:3.3.2'  // 此处以JPush 3.1.6 版本为例。
-    implementation 'cn.jiguang.sdk:jcore:2.0.1'  // 此处以JCore 1.2.5 版本为例。
+    implementation 'cn.jiguang.sdk:jpush:3.2.0'  // 此处以JPush 3.1.6 版本为例。
+    implementation 'cn.jiguang.sdk:jcore:1.2.7'  // 此处以JCore 1.2.5 版本为例。
 }
