@@ -1,3 +1,7 @@
+## 0.0.12
+
+featurn: 修改LocalNotification的属性名为"extra"
+
 ## 0.0.11
 
 iOS: 修复 getLaunchAppNotification 返回 null 的情况。

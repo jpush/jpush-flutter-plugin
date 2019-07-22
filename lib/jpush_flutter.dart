@@ -258,7 +258,7 @@ class LocalNotification {
   final int id;
   final String title;
   final String content;
-  final Map<String, String> extras;//?
+  final Map<String, String> extra;//?
   final DateTime fireTime;
   final int badge;//?
   final String soundName;//?
@@ -270,7 +270,7 @@ class LocalNotification {
     @required this.content,
     @required this.fireTime,
     this.buildId,
-    this.extras,
+    this.extra,
     this.badge = 0,
     this.soundName,
     this.subtitle
@@ -287,7 +287,7 @@ class LocalNotification {
       'content': content,
       'fireTime': fireTime.millisecondsSinceEpoch,
       'buildId': buildId,
-      'extras': extras,
+      'extra': extra,
       'badge': badge,
       'soundName': soundName,
       'subtitle': subtitle
