@@ -1,3 +1,9 @@
+## 0.0.13
+
+featurn:
+适配flutter 1.7.8
+升级 jpush sdk 版本为3.3.4
+
 ## 0.0.12
 
 featurn: 修改LocalNotification的属性名为"extra"

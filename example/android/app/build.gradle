@@ -34,7 +34,7 @@ android {
 
 //        applicationId "com.jiguang.jpushexample"
 
-        applicationId "com.example.huminios.jpushtest" //JPush 上注册的包名.
+        applicationId "com.shikk.testJpush" //JPush 上注册的包名.
 
         minSdkVersion 16
         targetSdkVersion 27
@@ -46,13 +46,13 @@ android {
 
         ndk {
             //选择要添加的对应 cpu 类型的 .so 库。
-            abiFilters 'armeabi', 'armeabi-v7a', 'x86', 'x86_64', 'mips', 'mips64'// 'arm64-v8a',
+            abiFilters 'armeabi', 'armeabi-v7a', 'x86', 'x86_64', 'mips', 'mips64', 'arm64-v8a'
             // 还可以添加
         }
 
         manifestPlaceholders = [
                 JPUSH_PKGNAME : applicationId,
-                JPUSH_APPKEY : "a1703c14b186a68a66ef86c1", //JPush 上注册的包名对应的 Appkey.
+                JPUSH_APPKEY : "31c7c1b2cf59c1d42895a782", //JPush 上注册的包名对应的 Appkey.
                 JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
         ]
     }

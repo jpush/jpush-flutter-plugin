@@ -1,6 +1,8 @@
 package com.jiguang.jpush;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -19,97 +21,113 @@ import io.flutter.plugin.common.MethodChannel.Result;
 public class JPushEventReceiver extends JPushMessageReceiver {
 
     @Override
-    public void onTagOperatorResult(Context context, JPushMessage jPushMessage) {
+    public void onTagOperatorResult(Context context, final JPushMessage jPushMessage) {
         super.onTagOperatorResult(context, jPushMessage);
 
-        JSONObject resultJson = new JSONObject();
+        final JSONObject resultJson = new JSONObject();
 
-        int sequence = jPushMessage.getSequence();
+        final int sequence = jPushMessage.getSequence();
         try {
             resultJson.put("sequence", sequence);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        Result callback = JPushPlugin.instance.callbackMap.get(sequence);//instance.eventCallbackMap.get(sequence);
+        final Result callback = JPushPlugin.instance.callbackMap.get(sequence);//instance.eventCallbackMap.get(sequence);
 
         if (callback == null) {
             Log.i("JPushPlugin", "Unexpected error, callback is null!");
             return;
         }
 
-        if (jPushMessage.getErrorCode() == 0) { // success
-            Set<String> tags = jPushMessage.getTags();
-            List<String> tagList = new ArrayList<>(tags);
-            Map<String, Object> res = new HashMap<>();
-            res.put("tags", tagList);
-            callback.success(res);
-        } else {
-            try {
-                resultJson.put("code", jPushMessage.getErrorCode());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            callback.error(Integer.toString(jPushMessage.getErrorCode()), "", "");
-        }
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (jPushMessage.getErrorCode() == 0) { // success
+                    Set<String> tags = jPushMessage.getTags();
+                    List<String> tagList = new ArrayList<>(tags);
+                    Map<String, Object> res = new HashMap<>();
+                    res.put("tags", tagList);
+                    callback.success(res);
+                } else {
+                    try {
+                        resultJson.put("code", jPushMessage.getErrorCode());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    callback.error(Integer.toString(jPushMessage.getErrorCode()), "", "");
+                }
 
-        JPushPlugin.instance.callbackMap.remove(sequence);
+                JPushPlugin.instance.callbackMap.remove(sequence);
+            }
+        });
+
     }
 
 
 
     @Override
-    public void onCheckTagOperatorResult(Context context, JPushMessage jPushMessage) {
+    public void onCheckTagOperatorResult(Context context, final JPushMessage jPushMessage) {
         super.onCheckTagOperatorResult(context, jPushMessage);
 
 
 
-        int sequence = jPushMessage.getSequence();
+        final int sequence = jPushMessage.getSequence();
 
 
-        Result callback = JPushPlugin.instance.callbackMap.get(sequence);
+        final Result callback = JPushPlugin.instance.callbackMap.get(sequence);
 
         if (callback == null) {
             Log.i("JPushPlugin", "Unexpected error, callback is null!");
             return;
         }
 
-        if (jPushMessage.getErrorCode() == 0) {
-            Set<String> tags = jPushMessage.getTags();
-            List<String> tagList = new ArrayList<>(tags);
-            Map<String, Object> res = new HashMap<>();
-            res.put("tags", tagList);
-            callback.success(res);
-        } else {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (jPushMessage.getErrorCode() == 0) {
+                    Set<String> tags = jPushMessage.getTags();
+                    List<String> tagList = new ArrayList<>(tags);
+                    Map<String, Object> res = new HashMap<>();
+                    res.put("tags", tagList);
+                    callback.success(res);
+                } else {
 
-            callback.error(Integer.toString(jPushMessage.getErrorCode()), "", "");
-        }
+                    callback.error(Integer.toString(jPushMessage.getErrorCode()), "", "");
+                }
 
-        JPushPlugin.instance.callbackMap.remove(sequence);
+                JPushPlugin.instance.callbackMap.remove(sequence);
+            }
+        });
     }
 
     @Override
-    public void onAliasOperatorResult(Context context, JPushMessage jPushMessage) {
+    public void onAliasOperatorResult(Context context, final JPushMessage jPushMessage) {
         super.onAliasOperatorResult(context, jPushMessage);
 
-        int sequence = jPushMessage.getSequence();
+        final int sequence = jPushMessage.getSequence();
 
-        Result callback = JPushPlugin.instance.callbackMap.get(sequence);
+        final Result callback = JPushPlugin.instance.callbackMap.get(sequence);
 
         if (callback == null) {
             Log.i("JPushPlugin", "Unexpected error, callback is null!");
             return;
         }
 
-        if (jPushMessage.getErrorCode() == 0) { // success
-            Map<String, Object> res = new HashMap<>();
-            res.put("alias", (jPushMessage.getAlias() == null)? "" : jPushMessage.getAlias());
-            callback.success(res);
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (jPushMessage.getErrorCode() == 0) { // success
+                    Map<String, Object> res = new HashMap<>();
+                    res.put("alias", (jPushMessage.getAlias() == null)? "" : jPushMessage.getAlias());
+                    callback.success(res);
 
-        } else {
-            callback.error(Integer.toString(jPushMessage.getErrorCode()), "", "");
-        }
+                } else {
+                    callback.error(Integer.toString(jPushMessage.getErrorCode()), "", "");
+                }
 
-        JPushPlugin.instance.callbackMap.remove(sequence);
+                JPushPlugin.instance.callbackMap.remove(sequence);
+            }
+        });
     }
 }
