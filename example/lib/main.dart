@@ -107,7 +107,7 @@ final JPush jpush = new JPush();
                     fireTime: fireDate,
                     subtitle: 'fasf',
                     badge: 5,
-                    extras: {"fa": "0"}
+                    extra: {"fa": "0"}
                   );
                 jpush.sendLocalNotification(localNotification).then((res) {
                   setState(() {

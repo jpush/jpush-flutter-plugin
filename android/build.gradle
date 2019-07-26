@@ -34,6 +34,9 @@ android {
 }
 
 dependencies {
-    implementation 'cn.jiguang.sdk:jpush:3.1.6'  // 此处以JPush 3.1.6 版本为例。
-    implementation 'cn.jiguang.sdk:jcore:1.2.5'  // 此处以JCore 1.2.5 版本为例。
+    implementation 'cn.jiguang.sdk:jpush:3.3.4'
+    implementation 'cn.jiguang.sdk:jcore:2.1.2'
+    implementation 'com.android.support:appcompat-v7:27.+'
+    compileOnly files('libs/flutter.jar')
+
 }
