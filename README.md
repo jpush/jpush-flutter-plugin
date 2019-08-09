@@ -3,11 +3,11 @@
 
 ### 安装
 
-在工程 pubspec.yaml 中加入 dependencies
+在工程 pubspec.yaml 中加入 dependencies，注意`1.0.0`以上版本针对`AndroidX`，对于还未采用`AndroidX`的项目，请采用低于`1.0.0`以下的版本。
 
 ```yaml
 dependencies:
-  jpush_flutter: 0.0.13
+  jpush_flutter: 1.0.0
 ```
 
 ### 配置
