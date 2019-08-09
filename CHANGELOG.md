@@ -1,3 +1,8 @@
+## 1.0.0
+
+break change:
+迁移到AndroidX，[参考](https://flutter.dev/docs/development/packages-and-plugins/androidx-compatibility)
+
 ## 0.0.13
 
 featurn:
