@@ -91,7 +91,8 @@ final JPush jpush = new JPush();
           title: const Text('Plugin example app'),
         ),
         body: new Center(
-          child: new Column(
+          child: new ListView(
+              shrinkWrap: true,
             children:[
               new Text('result: $debugLable\n'), 
               new FlatButton(
