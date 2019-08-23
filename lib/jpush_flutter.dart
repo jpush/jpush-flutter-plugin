@@ -291,7 +291,7 @@ class LocalNotification {
       'badge': badge,
       'soundName': soundName,
       'subtitle': subtitle
-    };
+    }..removeWhere((key, value)=>value==null);
   }
 
 }

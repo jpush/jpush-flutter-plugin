@@ -326,7 +326,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
     content.title = params[@"title"];
   }
   
-  if (![params[@"subtitle"] isEqualToString:@"<null>"]) {
+  if (params[@"subtitle"] && ![params[@"subtitle"] isEqualToString:@"<null>"]) {
     content.subtitle = params[@"subtitle"];
   }
   
@@ -338,15 +338,15 @@ static NSMutableArray<FlutterResult>* getRidResults;
     content.badge = params[@"badge"];
   }
   
-  if (![params[@"action"] isEqualToString:@"<null>"]) {
+  if (params[@"action"] && ![params[@"action"] isEqualToString:@"<null>"]) {
     content.action = params[@"action"];
   }
   
-  if (![params[@"extra"] isEqualToString:@"<null>"]) {
-    content.userInfo = params[@"extra"];
-  }
+    if ([params[@"extra"] isKindOfClass:[NSDictionary class]]) {
+        content.userInfo = params[@"extra"];
+    }
   
-  if (![params[@"sound"] isEqualToString:@"<null>"]) {
+  if (params[@"sound"] && ![params[@"sound"] isEqualToString:@"<null>"]) {
     content.sound = params[@"sound"];
   }
   
@@ -424,8 +424,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-  application.applicationIconBadgeNumber = 1;
-  application.applicationIconBadgeNumber = 0;
+//  application.applicationIconBadgeNumber = 1;
+//  application.applicationIconBadgeNumber = 0;
 }
 
 - (bool)application:(UIApplication *)application
