@@ -14,6 +14,7 @@ import 'package:jpush_flutter/jpush_flutter.dart';
 import 'package:test/test.dart';
 
 void main() {
+  /*
   testWidgets('Verify Platform version', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(new MyApp());
@@ -48,6 +49,6 @@ test('requestNotificationPermissions on ios with custom permissions', () {
         <String, bool>{'sound': false, 'badge': true, 'alert': true}));
   });
 
-  
+  */
 
 }

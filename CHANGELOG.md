@@ -1,3 +1,9 @@
+## 0.1.0
++ 修复：调用 sendLocalNotification 接口 crash 问题；
++ 修复：iOS 启动 APP 角标自动消失问题；
++ 修复执行 flutter build apk 打包错误问题;
++ 更新配置
+
 ## 0.0.13
 
 featurn:
