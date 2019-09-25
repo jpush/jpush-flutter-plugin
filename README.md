@@ -7,7 +7,14 @@
 
 ```yaml
 dependencies:
-  jpush_flutter: 0.1.0
+  jpush_flutter: 0.2.0
+  
+//github   
+dependencies:
+  jmessage_flutter:
+    git:
+      url: git://github.com/jpush/jmessage-flutter-plugin.git
+      ref: master
 ```
 
 ### 配置

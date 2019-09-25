@@ -34,4 +34,5 @@
             </intent-filter>
         </service>
     </application>
+    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE "/>
 </manifest>
