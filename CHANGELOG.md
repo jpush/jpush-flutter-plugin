@@ -1,3 +1,6 @@
+## 0.2.0
++ 适配最新版本 JPush SDK
++ Android 支持设置角标 badge
 ## 0.1.0
 + 修复：调用 sendLocalNotification 接口 crash 问题；
 + 修复：iOS 启动 APP 角标自动消失问题；

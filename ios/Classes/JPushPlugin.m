@@ -5,6 +5,8 @@
 
 #import <JPush/JPUSHService.h>
 
+#define JPLog(fmt, ...) NSLog((@"| JPUSH | iOS | " fmt), ##__VA_ARGS__)
+
 @interface NSError (FlutterError)
 @property(readonly, nonatomic) FlutterError *flutterError;
 @end
@@ -111,6 +113,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"handleMethodCall:%@",call.method);
+    
   if ([@"getPlatformVersion" isEqualToString:call.method]) {
     result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
   } else if([@"setup" isEqualToString:call.method]) {
@@ -153,6 +157,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
 
 
 - (void)setup:(FlutterMethodCall*)call result:(FlutterResult)result {
+  JPLog(@"setup:");
   NSDictionary *arguments = call.arguments;
   NSNumber *debug = arguments[@"debug"];
   if ([debug boolValue]) {
@@ -168,6 +173,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
 }
 
 - (void)applyPushAuthority:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"applyPushAuthority:%@",call.arguments);
   notificationTypes = 0;
   NSDictionary *arguments = call.arguments;
   if ([arguments[@"sound"] boolValue]) {
@@ -185,6 +191,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
 }
 
 - (void)setTags:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"setTags:%@",call.arguments);
   NSSet *tagSet;
   
   if (call.arguments != NULL) {
@@ -202,6 +209,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
 }
 
 - (void)cleanTags:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"cleanTags:");
   [JPUSHService cleanTags:^(NSInteger iResCode, NSSet *iTags, NSInteger seq) {
     if (iResCode == 0) {
       result(@{@"tags": iTags ? [iTags allObjects] : @[]});
@@ -213,6 +221,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
 }
 
 - (void)addTags:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"addTags:%@",call.arguments);
   NSSet *tagSet;
   
   if (call.arguments != NULL) {
@@ -230,6 +239,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
 }
 
 - (void)deleteTags:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"deleteTags:%@",call.arguments);
   NSSet *tagSet;
   
   if (call.arguments != NULL) {
@@ -247,6 +257,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
 }
 
 - (void)getAllTags:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"getAllTags:");
   [JPUSHService getAllTags:^(NSInteger iResCode, NSSet *iTags, NSInteger seq) {
     if (iResCode == 0) {
       result(@{@"tags": iTags ? [iTags allObjects] : @[]});
@@ -258,6 +269,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
 }
 
 - (void)setAlias:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"setAlias:%@",call.arguments);
   NSString *alias = call.arguments;
   [JPUSHService setAlias:alias completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
     if (iResCode == 0) {
@@ -270,6 +282,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
 }
 
 - (void)deleteAlias:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"deleteAlias:%@",call.arguments);
   [JPUSHService deleteAlias:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
     if (iResCode == 0) {
       result(@{@"alias": iAlias ?: @""});
@@ -281,24 +294,32 @@ static NSMutableArray<FlutterResult>* getRidResults;
 }
 
 - (void)setBadge:(FlutterMethodCall*)call result:(FlutterResult)result {
-  NSNumber *badge = call.arguments;
-  [[UIApplication sharedApplication] setApplicationIconBadgeNumber: badge.integerValue];
-  [JPUSHService setBadge: badge.integerValue > 0 ? badge.integerValue: 0];
+    JPLog(@"setBadge:%@",call.arguments);
+  NSInteger badge = [call.arguments[@"badge"] integerValue];
+  if (badge < 0) {
+    badge = 0;
+  }
+  [[UIApplication sharedApplication] setApplicationIconBadgeNumber: badge];
+  [JPUSHService setBadge: badge];
 }
 
 - (void)stopPush:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"stopPush:");
   [[UIApplication sharedApplication] unregisterForRemoteNotifications];
 }
 
 - (void)clearAllNotifications:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"clearAllNotifications:");
   [[UIApplication sharedApplication] setApplicationIconBadgeNumber: 0];
 }
 
 - (void)getLaunchAppNotification:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"getLaunchAppNotification");
   result(_launchNotification == nil ? @{}: _launchNotification);
 }
 
 - (void)getRegistrationID:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"getRegistrationID:");
 #if TARGET_IPHONE_SIMULATOR//模拟器
   NSLog(@"simulator can not get registrationid");
   result(@"");
@@ -320,6 +341,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
 }
 
 - (void)sendLocalNotification:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"sendLocalNotification:%@",call.arguments);
   JPushNotificationContent *content = [[JPushNotificationContent alloc] init];
     NSDictionary *params = call.arguments;
   if (params[@"title"]) {
