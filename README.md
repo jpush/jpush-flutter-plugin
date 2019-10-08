@@ -11,9 +11,9 @@ dependencies:
   
 //github   
 dependencies:
-  jmessage_flutter:
+  jpush_flutter:
     git:
-      url: git://github.com/jpush/jmessage-flutter-plugin.git
+      url: git://github.com/jpush/jpush-flutter-plugin.git
       ref: master
 ```
 
