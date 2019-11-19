@@ -1,7 +1,7 @@
 name: jpush_flutter
 description: Offically supported JPush Flutter plugin.
-version: 0.2.0
-author: huminios <h380108184@gmail.com>
+version: 0.3.0
+author: xudong.rao <xudong.rao@outlook.com>
 homepage: https://www.jiguang.cn
 
 environment:

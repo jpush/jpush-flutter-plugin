@@ -34,8 +34,8 @@ android {
 }
 
 dependencies {
-    implementation 'cn.jiguang.sdk:jpush:3.3.4'
-    implementation 'cn.jiguang.sdk:jcore:2.1.2'
+    implementation 'cn.jiguang.sdk:jpush:3.4.0'
+    implementation 'cn.jiguang.sdk:jcore:2.1.6'
 //    implementation 'com.android.support:appcompat-v7:28.+'
     compileOnly files('libs/flutter.jar')
 
