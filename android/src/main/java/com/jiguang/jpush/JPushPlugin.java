@@ -12,6 +12,7 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import java.util.ArrayList;
@@ -23,17 +24,26 @@ import java.util.Map;
 import java.util.Set;
 
 import cn.jpush.android.api.JPushInterface;
+import io.flutter.view.FlutterNativeView;
 
 /** JPushPlugin */
 public class JPushPlugin implements MethodCallHandler {
+
     /** Plugin registration. */
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "jpush");
         channel.setMethodCallHandler(new JPushPlugin(registrar, channel));
-        
+
+        registrar.addViewDestroyListener(new PluginRegistry.ViewDestroyListener() {
+            @Override
+            public boolean onViewDestroy(FlutterNativeView flutterNativeView) {
+                instance.dartIsReady = false;
+                return false;
+            }
+        });
     }
 
-    private static String TAG = "| JPUSH | Android | ";
+    private static String TAG = "| JPUSH | Flutter | Android | ";
     public static JPushPlugin instance;
     static List<Map<String, Object>> openNotificationCache = new ArrayList<>();
 
@@ -86,6 +96,8 @@ public class JPushPlugin implements MethodCallHandler {
             resumePush(call, result);
         } else if (call.method.equals("clearAllNotifications")) {
             clearAllNotifications(call, result);
+        } else if (call.method.equals("clearNotification")) {
+            clearNotification(call,result);
         } else if (call.method.equals("getLaunchAppNotification")) {
             getLaunchAppNotification(call, result);
         } else if (call.method.equals("getRegistrationID")) {
@@ -133,6 +145,7 @@ public class JPushPlugin implements MethodCallHandler {
         if (ridAvailable && dartIsReady) {
             // try to schedule get rid cache
             for (Result res: JPushPlugin.instance.getRidCache) {
+                Log.d(TAG,"scheduleCache rid = " + rid);
                 res.success(rid);
                 JPushPlugin.instance.getRidCache.remove(res);
             }
@@ -219,6 +232,13 @@ public class JPushPlugin implements MethodCallHandler {
         Log.d(TAG,"clearAllNotifications: ");
 
         JPushInterface.clearAllNotifications(registrar.context());
+    }
+    public void clearNotification(MethodCall call, Result result) {
+        Log.d(TAG,"clearNotification: ");
+        Object id = call.arguments;
+        if (id != null) {
+            JPushInterface.clearNotificationById(registrar.context(),(int)id);
+        }
     }
 
     public void getLaunchAppNotification(MethodCall call, Result result) {

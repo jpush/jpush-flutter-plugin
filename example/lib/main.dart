@@ -13,7 +13,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String debugLable = 'Unknown';
-final JPush jpush = new JPush();
+  final JPush jpush = new JPush();
   @override
   void initState() {
     super.initState();
@@ -23,17 +23,37 @@ final JPush jpush = new JPush();
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
     String platformVersion;
-    
 
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    jpush.getRegistrationID().then((rid) {
-      setState(() {
-          debugLable = "flutter getRegistrationID: $rid";
-        });
-    });
+
+    try {
+      jpush.addEventHandler(
+        onReceiveNotification: (Map<String, dynamic> message) async {
+          print("flutter onReceiveNotification: $message");
+          setState(() {
+            debugLable = "flutter onReceiveNotification: $message";
+          });
+        },
+        onOpenNotification: (Map<String, dynamic> message) async {
+          print("flutter onOpenNotification: $message");
+          setState(() {
+            debugLable = "flutter onOpenNotification: $message";
+          });
+        },
+        onReceiveMessage: (Map<String, dynamic> message) async {
+          print("flutter onReceiveMessage: $message");
+          setState(() {
+            debugLable = "flutter onReceiveMessage: $message";
+          });
+        },
+      );
+
+    } on PlatformException {
+      platformVersion = 'Failed to get platform version.';
+    }
+
 
     jpush.setup(
-      appKey: "a1703c14b186a68a66ef86c1",
+      appKey: "你自己应用的 AppKey",
       channel: "theChannel",
       production: false,
       debug: true,
@@ -43,32 +63,15 @@ final JPush jpush = new JPush();
       alert: true,
       badge: true));
 
-    try {
-      
-      jpush.addEventHandler(
-        onReceiveNotification: (Map<String, dynamic> message) async {
-        print("flutter onReceiveNotification: $message");
-        setState(() {
-            debugLable = "flutter onReceiveNotification: $message";
-          });
-      },
-      onOpenNotification: (Map<String, dynamic> message) async {
-        print("flutter onOpenNotification: $message");
-        setState(() {
-            debugLable = "flutter onOpenNotification: $message";
-          });
-      },
-      onReceiveMessage: (Map<String, dynamic> message) async {
-        print("flutter onReceiveMessage: $message");
-        setState(() {
-            debugLable = "flutter onReceiveMessage: $message";
-          });
-      },
-      );
 
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    jpush.getRegistrationID().then((rid) {
+      print("flutter get registration id : $rid");
+      setState(() {
+        debugLable = "flutter getRegistrationID: $rid";
+      });
+    });
+
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
@@ -93,206 +96,214 @@ final JPush jpush = new JPush();
         body: new Center(
           child: new Column(
             children:[
-              new Text('result: $debugLable\n'), 
-              new FlatButton(
-              child: new Text('sendLocalNotification\n'), 
-              onPressed: () {
-                // 三秒后出发本地推送
-                var fireDate = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch + 3000);
-                var localNotification = LocalNotification(
-                    id: 234,
-                    title: 'fadsfa',
-                    buildId: 1,
-                    content: 'fdas',
-                    fireTime: fireDate,
-                    subtitle: 'fasf',
-                    badge: 5,
-                    extra: {"fa": "0"}
-                  );
-                jpush.sendLocalNotification(localNotification).then((res) {
-                  setState(() {
-                      debugLable = res;
+              new Text('result: $debugLable\n'),
+            new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Text(" "),
+                  new CustomButton(title: "sendLocalNotification", onPressed: (){
+                    // 三秒后出发本地推送
+                    var fireDate = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch + 3000);
+                    var localNotification = LocalNotification(
+                        id: 234,
+                        title: 'fadsfa',
+                        buildId: 1,
+                        content: 'fdas',
+                        fireTime: fireDate,
+                        subtitle: 'fasf',
+                        badge: 5,
+                        extra: {"fa": "0"}
+                    );
+                    jpush.sendLocalNotification(localNotification).then((res) {
+                      setState(() {
+                        debugLable = res;
+                      });
                     });
-                });
-
-              }),
-              new FlatButton(
-                child: new Text('getLaunchAppNotification\n'), 
-                onPressed: () {
-                  
-                  jpush.getLaunchAppNotification().then((map) {
-                    setState(() {
-                      debugLable = "getLaunchAppNotification success: $map";
+                  }),
+                  new Text(" "),
+                  new CustomButton(title: "getLaunchAppNotification", onPressed: (){
+                    jpush.getLaunchAppNotification().then((map) {
+                      setState(() {
+                        debugLable = "getLaunchAppNotification success: $map";
+                      });
+                    })
+                        .catchError((error) {
+                      setState(() {
+                        debugLable = "getLaunchAppNotification error: $error";
+                      });
                     });
-                  })
-                  .catchError((error) {
-                    setState(() {
-                      debugLable = "getLaunchAppNotification error: $error";
-                    });
-                  });
-
-                }),
-              new FlatButton(
-              child: new Text('applyPushAuthority\n'), 
-              onPressed: () {
-                jpush.applyPushAuthority(NotificationSettingsIOS(badge: true, alert: true, sound: true));
-              }),
-              new FlatButton(
-                child: new Text('setTags\n'), 
-                onPressed: () {
-                  jpush.setTags(["lala","haha"]).then((map) {
-                    var tags = map['tags'];
-                    setState(() {
-                      debugLable = "set tags success: $map $tags";
-                    });
-                  })
-                  .catchError((error) {
-                    setState(() {
-                      debugLable = "set tags error: $error";
-                    });
-                  }) ;
-                }),
-              new FlatButton(
-              child: new Text('cleanTags\n'), 
-              onPressed: () {
-                    jpush.cleanTags().then((map) {
-                    var tags = map['tags'];
-                    setState(() {
-                      debugLable = "cleanTags success: $map $tags";
-                    });
-                  })
-                  .catchError((error) {
-                    setState(() {
-                      debugLable = "cleanTags error: $error";
-                    });
-                  }) ;
-              }),
-              new FlatButton(
-                child: new Text('addTags\n'), 
-                onPressed: () {
-                  
+                  }),
+                ]),
+            new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Text(" "),
+                  new CustomButton(title: "setTags", onPressed: (){
+                    jpush.setTags(["lala","haha"]).then((map) {
+                      var tags = map['tags'];
+                      setState(() {
+                        debugLable = "set tags success: $map $tags";
+                      });
+                    })
+                        .catchError((error) {
+                      setState(() {
+                        debugLable = "set tags error: $error";
+                      });
+                    }) ;
+                  }),
+                  new Text(" "),
+                  new CustomButton(title: "addTags", onPressed: (){
                     jpush.addTags(["lala","haha"]).then((map) {
-                    var tags = map['tags'];
-                    setState(() {
-                      debugLable = "addTags success: $map $tags";
-                    });
-                  })
-                  .catchError((error) {
-                    setState(() {
-                      debugLable = "addTags error: $error";
-                    });
-                  }) ;
+                      var tags = map['tags'];
+                      setState(() {
+                        debugLable = "addTags success: $map $tags";
+                      });
+                    }).catchError((error) {
+                      setState(() {
+                        debugLable = "addTags error: $error";
+                      });
+                    }) ;
+                  }),
+                  new Text(" "),
+                  new CustomButton(title: "deleteTags", onPressed: (){
+                    jpush.deleteTags(["lala","haha"]).then((map) {
+                      var tags = map['tags'];
+                      setState(() {
+                        debugLable = "deleteTags success: $map $tags";
+                      });
+                    })
+                        .catchError((error) {
+                      setState(() {
+                        debugLable = "deleteTags error: $error";
+                      });
+                    }) ;
+                  }),
+                ]
+            ),
+            new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Text(" "),
+                  new CustomButton(title: "getAllTags", onPressed: (){
+                    jpush.getAllTags().then((map) {
+                      setState(() {
+                        debugLable = "getAllTags success: $map";
+                      });
+                    })
+                        .catchError((error) {
+                      setState(() {
+                        debugLable = "getAllTags error: $error";
+                      });
+                    }) ;
+                  }),
+                  new Text(" "),
+                  new CustomButton(title: "cleanTags", onPressed: (){
+                    jpush.cleanTags().then((map) {
+                      var tags = map['tags'];
+                      setState(() {
+                        debugLable = "cleanTags success: $map $tags";
+                      });
+                    })
+                        .catchError((error) {
+                      setState(() {
+                        debugLable = "cleanTags error: $error";
+                      });
+                    }) ;
+                  }),
+                ]
+            ),
+            new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Text(" "),
+                  new CustomButton(title: "setAlias", onPressed: (){
+                    jpush.setAlias("thealias11").then((map) {
+                      setState(() {
+                        debugLable = "setAlias success: $map";
+                      });
+                    })
+                        .catchError((error) {
+                      setState(() {
+                        debugLable = "setAlias error: $error";
+                      });
+                    }) ;
+                  }),
+                  new Text(" "),
+                  new CustomButton(title: "deleteAlias", onPressed: (){
+                    jpush.deleteAlias().then((map) {
+                      setState(() {
+                        debugLable = "deleteAlias success: $map";
+                      });
+                    })
+                        .catchError((error) {
+                      setState(() {
+                        debugLable = "deleteAlias error: $error";
+                      });
+                    }) ;
+                  }),
 
-                }),
-              new FlatButton(
-                child: new Text('deleteTags\n'), 
-                onPressed: () {
-                  
-                  jpush.deleteTags(["lala","haha"]).then((map) {
-                    var tags = map['tags'];
-                    setState(() {
-                      debugLable = "deleteTags success: $map $tags";
+                ]
+            ),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Text(" "),
+                  new CustomButton(title: "stopPush",onPressed: (){
+                    jpush.stopPush();
+                  }),
+                  new Text(" "),
+                  new CustomButton(title: "resumePush", onPressed: (){
+                    jpush.resumePush();
+                  }),
+                ],
+              ),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Text(" "),
+                  new CustomButton(title: "clearAllNotifications",onPressed: (){
+                    jpush.clearAllNotifications();
+                  }),
+                  new Text(" "),
+                  new CustomButton(title: "setBadge", onPressed: (){
+                    jpush.setBadge(66).then((map) {
+                      setState(() {
+                        debugLable = "setBadge success: $map";
+                      });
+                    })
+                        .catchError((error) {
+                      setState(() {
+                        debugLable = "setBadge error: $error";
+                      });
                     });
-                  })
-                  .catchError((error) {
-                    setState(() {
-                      debugLable = "deleteTags error: $error";
-                    });
-                  }) ;
-
-                }),
-              new FlatButton(
-                child: new Text('getAllTags\n'), 
-                onPressed: () {
-                  
-                  jpush.getAllTags().then((map) {
-                    setState(() {
-                      debugLable = "getAllTags success: $map";
-                    });
-                  })
-                  .catchError((error) {
-                    setState(() {
-                      debugLable = "getAllTags error: $error";
-                    });
-                  }) ;
-
-                }),
-              new FlatButton(
-                child: new Text('setAlias\n'), 
-                onPressed: () {
-                  
-                  jpush.setAlias("thealias11").then((map) {
-                    setState(() {
-                      debugLable = "setAlias success: $map";
-                    });
-                  })
-                  .catchError((error) {
-                    setState(() {
-                      debugLable = "setAlias error: $error";
-                    });
-                  }) ;
-
-                }),
-              new FlatButton(
-                child: new Text('deleteAlias\n'), 
-                onPressed: () {
-                  
-                  jpush.deleteAlias().then((map) {
-                    setState(() {
-                      debugLable = "deleteAlias success: $map";
-                    });
-                  })
-                  .catchError((error) {
-                    setState(() {
-                      debugLable = "deleteAlias error: $error";
-                    });
-                  }) ;
-
-                }),
-              new FlatButton(
-                child: new Text('setBadge\n'), 
-                onPressed: () {
-                  
-                  jpush.setBadge(66).then((map) {
-                    setState(() {
-                      debugLable = "setBadge success: $map";
-                    });
-                  })
-                  .catchError((error) {
-                    setState(() {
-                      debugLable = "setBadge error: $error";
-                    });
-                  }) ;
-
-                }),
-              new FlatButton(
-                child: new Text('stopPush\n'), 
-                onPressed: () {
-                  
-                  jpush.stopPush();
-
-                }),
-              new FlatButton(
-                child: new Text('resumePush\n'), 
-                onPressed: () {
-                  
-                  jpush.resumePush();
-
-                }),
-              new FlatButton(
-                child: new Text('clearAllNotifications\n'), 
-                onPressed: () {
-                  
-                  jpush.clearAllNotifications();
-
-                }),
-              
-                
+                  }),
+                ],
+              ),
             ]
           )
-          
         ),
       ),
+    );
+  }
+}
+/// 封装控件
+class CustomButton extends StatelessWidget {
+
+  final VoidCallback onPressed;
+  final String title;
+
+  const CustomButton({@required this.onPressed, @required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return new FlatButton(
+      onPressed: onPressed,
+      child: new Text("$title"),
+      color: Color(0xff585858),
+      highlightColor: Color(0xff888888),
+      splashColor: Color(0xff888888),
+      textColor: Colors.white,
+      //padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
     );
   }
 }
