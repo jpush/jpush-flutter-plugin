@@ -94,7 +94,8 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: new Center(
-          child: new Column(
+          child: new ListView(
+              shrinkWrap: true,
             children:[
               new Text('result: $debugLable\n'),
             new Row(
