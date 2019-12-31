@@ -23,6 +23,7 @@ class JPush {
   EventHandler _onReceiveNotification;
   EventHandler _onOpenNotification;
   EventHandler _onReceiveMessage;
+  EventHandler _onReceiveNotificationAuthorization;
 
   void setup({
     String appKey,
@@ -47,12 +48,14 @@ class JPush {
     EventHandler onReceiveNotification,
     EventHandler onOpenNotification,
     EventHandler onReceiveMessage,
+    EventHandler onReceiveNotificationAuthorization,
   }) {
     print(flutter_log + "addEventHandler:");
 
     _onReceiveNotification = onReceiveNotification;
     _onOpenNotification = onOpenNotification;
     _onReceiveMessage = onReceiveMessage;
+    _onReceiveNotificationAuthorization = onReceiveNotificationAuthorization;
     _channel.setMethodCallHandler(_handleMethod);
   }
 
@@ -66,12 +69,15 @@ class JPush {
         return _onOpenNotification(call.arguments.cast<String, dynamic>());
       case "onReceiveMessage":
         return _onReceiveMessage(call.arguments.cast<String, dynamic>());
+      case "onReceiveNotificationAuthorization":
+        return _onReceiveNotificationAuthorization(call.arguments.cast<String, dynamic>());
       default:
         throw new UnsupportedError("Unrecognized Event");
     }
   }
 
   ///
+  /// iOS Only
   /// 申请推送权限，注意这个方法只会向用户弹出一次推送权限请求（如果用户不同意，之后只能用户到设置页面里面勾选相应权限），需要开发者选择合适的时机调用。
   ///
   void applyPushAuthority(
@@ -278,6 +284,17 @@ class JPush {
   }
 
 
+  /// 调用此 API 检测通知授权状态是否打开
+  Future<bool> isNotificationEnabled() async {
+    final Map<dynamic, dynamic> result = await _channel.invokeMethod('isNotificationEnabled');
+    bool isEnabled = result["isEnabled"];
+    return isEnabled;
+  }
+
+  /// 调用此 API 跳转至系统设置中应用设置界面
+  void openSettingsForNotification()  {
+    _channel.invokeMethod('openSettingsForNotification');
+  }
 
 }
 

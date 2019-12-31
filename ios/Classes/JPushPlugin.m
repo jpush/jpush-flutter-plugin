@@ -152,10 +152,15 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [self getRegistrationID:call result:result];
     } else if([@"sendLocalNotification"isEqualToString:call.method]) {
         [self sendLocalNotification:call result:result];
+    } else if([@"isNotificationEnabled"isEqualToString:call.method]) {
+        [self isNotificationEnabled:call result:result];
+    } else if([@"openSettingsForNotification"isEqualToString:call.method]) {
+        [self openSettingsForNotification];
     } else{
         result(FlutterMethodNotImplemented);
     }
 }
+
 
 
 
@@ -436,6 +441,30 @@ static NSMutableArray<FlutterResult>* getRidResults;
     result(@[@[]]);
 }
 
+/// 检查当前应用的通知开关是否开启
+- (void)isNotificationEnabled:(FlutterMethodCall*)call result:(FlutterResult)result  {
+    JPLog(@"isNotificationEnabled:");
+    [JPUSHService requestNotificationAuthorization:^(JPAuthorizationStatus status) {
+        BOOL isEnabled = NO;
+        if (status == JPAuthorizationStatusAuthorized) {
+            isEnabled = YES;
+        }
+        
+        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:isEnabled],@"isEnabled", nil];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            result(dict);
+        });
+    }];
+   
+    
+}
+- (void)openSettingsForNotification {
+    JPLog(@"openSettingsForNotification:");
+    [JPUSHService openSettingsForNotification:^(BOOL success) {
+        JPLog(@"openSettingsForNotification: %@",@(success));
+    }];
+}
+
 
 
 - (void)dealloc {
@@ -525,6 +554,19 @@ didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSe
     completionHandler();
 }
 
+- (void)jpushNotificationAuthorization:(JPAuthorizationStatus)status withInfo:(NSDictionary *)info {
+    BOOL isEnabled = NO;
+    if (status == JPAuthorizationStatusAuthorized) {
+        isEnabled = YES;
+    }
+    
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:isEnabled],@"isEnabled", nil];
+    __weak typeof(self) weakself = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        __strong typeof(self) strongself = weakself;
+        [strongself.channel invokeMethod:@"onReceiveNotificationAuthorization" arguments: dict];
+    });
+}
 - (NSMutableDictionary *)jpushFormatAPNSDic:(NSDictionary *)dic {
     NSMutableDictionary *extras = @{}.mutableCopy;
     for (NSString *key in dic) {
