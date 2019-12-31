@@ -3,6 +3,8 @@ package com.jiguang.jpush;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import org.json.JSONObject;
@@ -106,10 +108,30 @@ public class JPushPlugin implements MethodCallHandler {
             sendLocalNotification(call, result);
         } else if (call.method.equals("setBadge")) {
             setBadge(call, result);
+        } else if (call.method.equals("isNotificationEnabled")) {
+            isNotificationEnabled(call, result);
+        } else if (call.method.equals("openSettingsForNotification")) {
+            openSettingsForNotification(call, result);
         }
         else {
             result.notImplemented();
         }
+    }
+
+    // 主线程再返回数据
+    public void runMainThread(final Map<String,Object> map, final Result result, final String method) {
+        Log.d(TAG,"runMainThread:" + "map = " + map + ",method =" + method);
+        android.os.Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (result == null && method != null){
+                    channel.invokeMethod(method,map);
+                } else {
+                    result.success(map);
+                }
+            }
+        });
     }
 
     public void setup(MethodCall call, Result result) {
@@ -298,6 +320,24 @@ public class JPushPlugin implements MethodCallHandler {
         }
     }
 
+    /// 检查当前应用的通知开关是否开启
+    private void isNotificationEnabled(MethodCall call, Result result) {
+        Log.d(TAG,"isNotificationEnabled: ");
+        int isEnabled = JPushInterface.isNotificationEnabled(registrar.context());
+        //1表示开启，0表示关闭，-1表示检测失败
+        HashMap<String, Object> map = new HashMap();
+        map.put("isEnabled",isEnabled==1?true:false);
+
+        runMainThread(map,result,null);
+    }
+
+    private void openSettingsForNotification(MethodCall call, Result result) {
+        Log.d(TAG,"openSettingsForNotification: " );
+
+        JPushInterface.goToAppNotificationSettings(registrar.context());
+
+    }
+
     /**
      * 接收自定义消息,通知,通知点击事件等事件的广播
      * 文档链接:http://docs.jiguang.cn/client/android_api/
@@ -309,6 +349,8 @@ public class JPushPlugin implements MethodCallHandler {
 
         public JPushReceiver() {
         }
+
+
 
         @Override
         public void onReceive(Context context, Intent intent) {
