@@ -5,16 +5,18 @@
 
 在工程 pubspec.yaml 中加入 dependencies
 
-```yaml
-dependencies:
-  jpush_flutter: 0.5.0
+```
   
-//github   
+//github  集成
 dependencies:
   jpush_flutter:
     git:
       url: git://github.com/jpush/jpush-flutter-plugin.git
       ref: master
+      
+// pub 集成
+dependencies:
+  jpush_flutter: 0.5.1
 ```
 
 ### 配置

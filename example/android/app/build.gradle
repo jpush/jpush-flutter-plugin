@@ -40,7 +40,7 @@ android {
 
         applicationId "com.shikk.testJpush" //JPush 上注册的包名.
 
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
