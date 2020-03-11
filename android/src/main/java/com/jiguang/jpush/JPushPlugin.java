@@ -359,7 +359,6 @@ public class JPushPlugin implements MethodCallHandler {
             if (action.equals(JPushInterface.ACTION_REGISTRATION_ID)) {
                 String rId = intent.getStringExtra(JPushInterface.EXTRA_REGISTRATION_ID);
                 Log.d("JPushPlugin","on get registration");
-                Log.d("JPushPlugin", JPushPlugin.instance.getRidCache.toString());
                 JPushPlugin.transmitReceiveRegistrationId(rId);
 
             } else if (action.equals(JPushInterface.ACTION_MESSAGE_RECEIVED)) {
