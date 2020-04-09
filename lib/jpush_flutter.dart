@@ -209,6 +209,15 @@ class JPush {
   }
 
   ///
+  /// 清空应用Badge（小红点）
+  ///
+  Future resetBadge() async {
+    print(flutter_log + "resetBadge:");
+
+    await _channel.invokeMethod('resetBadge');
+  }
+
+  ///
   /// 停止接收推送，调用该方法后应用将不再受到推送，如果想要重新收到推送可以调用 resumePush。
   ///
   Future stopPush() async {
