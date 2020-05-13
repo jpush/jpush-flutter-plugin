@@ -496,8 +496,43 @@ static NSMutableArray<FlutterResult>* getRidResults;
         }
         _launchNotification = localNotificationEvent;
     }
+    //[self performSelector:@selector(addNotificationWithDateTrigger) withObject:nil afterDelay:2];
     return YES;
 }
+- (void)addNotificationWithDateTrigger {
+  
+    JPushNotificationTrigger *trigger = [[JPushNotificationTrigger alloc] init];
+    
+    if (@available(iOS 10.0, *)) {
+        trigger.timeInterval = 10;
+    } else {
+        NSDate *fireDate = [NSDate dateWithTimeIntervalSinceNow:10];
+        trigger.fireDate = fireDate;
+    }
+    
+    JPushNotificationContent *content = [[JPushNotificationContent alloc] init];
+    content.title = @"title";
+    content.subtitle = @"subtitle";
+    content.body = @"body";
+    content.badge = @(1);
+    content.action = @"action";
+    content.categoryIdentifier = @"categoryIdentifier";
+    content.threadIdentifier = @"threadIdentifier";
+    
+  JPushNotificationRequest *request = [[JPushNotificationRequest alloc] init];
+  request.content = content;
+  request.trigger = trigger;
+  request.completionHandler = ^(id result) {
+    // iOS10以上成功则result为UNNotificationRequest对象，失败则result为nil
+    // iOS10以下成功result为UILocalNotification对象，失败则result为nil
+    if (result) {
+      NSLog(@"添加日期通知成功 --- %@", result);
+    }
+  };
+  request.requestIdentifier = @"123";
+  [JPUSHService addNotification:request];
+}
+
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     //  _resumingFromBackground = YES;
@@ -508,22 +543,11 @@ static NSMutableArray<FlutterResult>* getRidResults;
     //  application.applicationIconBadgeNumber = 0;
 }
 
-- (bool)application:(UIApplication *)application
-didReceiveRemoteNotification:(NSDictionary *)userInfo
-fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
-    
-    [_channel invokeMethod:@"onReceiveNotification" arguments:userInfo];
-    completionHandler(UIBackgroundFetchResultNoData);
-    return YES;
-}
-
-- (void)application:(UIApplication *)application
-didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     [JPUSHService registerDeviceToken:deviceToken];
 }
 
-- (void)application:(UIApplication *)application
-didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
     NSDictionary *settingsDictionary = @{
         @"sound" : [NSNumber numberWithBool:notificationSettings.types & UIUserNotificationTypeSound],
         @"badge" : [NSNumber numberWithBool:notificationSettings.types & UIUserNotificationTypeBadge],
@@ -532,29 +556,84 @@ didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSe
     [_channel invokeMethod:@"onIosSettingsRegistered" arguments:settingsDictionary];
 }
 
+- (BOOL)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    JPLog(@"application:didReceiveRemoteNotification:fetchCompletionHandler");
+    
+    [JPUSHService handleRemoteNotification:userInfo];
+    [_channel invokeMethod:@"onReceiveNotification" arguments:userInfo];
+    completionHandler(UIBackgroundFetchResultNewData);
+    return YES;
+}
 
+// iOS 10 以下点击本地通知
+-(void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+    JPLog(@"application:didReceiveLocalNotification:");
+    
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    NSString *title = @"";
+    if (@available(iOS 8.2, *)) {
+        title = notification.alertTitle;
+    } else {
+        // Fallback on earlier versions
+    }
+    
+    NSString *body = notification.alertBody;
+    NSString *action = notification.alertAction;
+    
+    [dic setValue:title?:@"" forKey:@"title"];
+    [dic setValue:body?:@"" forKey:@"body"];
+    [dic setValue:action?:@"" forKey:@"action"];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.channel invokeMethod:@"onOpenNotification" arguments:dic];
+    });
+}
 
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(NSInteger))completionHandler  API_AVAILABLE(ios(10.0)){
-    
+    JPLog(@"jpushNotificationCenter:willPresentNotification::");
     NSDictionary * userInfo = notification.request.content.userInfo;
     if([notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
         [JPUSHService handleRemoteNotification:userInfo];
         [_channel invokeMethod:@"onReceiveNotification" arguments: [self jpushFormatAPNSDic:userInfo]];
+    }else{
+        JPLog(@"iOS10 前台收到本地通知:userInfo：%@",userInfo);
     }
     
     completionHandler(notificationTypes);
 }
 
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler  API_AVAILABLE(ios(10.0)){
+    JPLog(@"jpushNotificationCenter:didReceiveNotificationResponse::");
     NSDictionary * userInfo = response.notification.request.content.userInfo;
     if([response.notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
         [JPUSHService handleRemoteNotification:userInfo];
         [_channel invokeMethod:@"onOpenNotification" arguments: [self jpushFormatAPNSDic:userInfo]];
+    }else{
+        // iOS 10 以上点击本地通知
+        JPLog(@"iOS10 点击本地通知");
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        NSString *identifier = response.notification.request.identifier;
+        NSString *body = response.notification.request.content.body;
+        NSString *categoryIdentifier = response.notification.request.content.categoryIdentifier;
+        NSString *title = response.notification.request.content.title;
+        NSString *subtitle = response.notification.request.content.subtitle;
+        NSString *threadIdentifier = response.notification.request.content.threadIdentifier;
+        
+        [dic setValue:body?:@"" forKey:@"body"];
+        [dic setValue:title?:@"" forKey:@"title"];
+        [dic setValue:subtitle?:@"" forKey:@"subtitle"];
+        [dic setValue:identifier?:@"" forKey:@"identifier"];
+        [dic setValue:threadIdentifier?:@"" forKey:@"threadIdentifier"];
+        [dic setValue:categoryIdentifier?:@"" forKey:@"categoryIdentifier"];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.channel invokeMethod:@"onOpenNotification" arguments:dic];
+        });
     }
     completionHandler();
 }
 
 - (void)jpushNotificationAuthorization:(JPAuthorizationStatus)status withInfo:(NSDictionary *)info {
+   JPLog(@"");
     BOOL isEnabled = NO;
     if (status == JPAuthorizationStatusAuthorized) {
         isEnabled = YES;
