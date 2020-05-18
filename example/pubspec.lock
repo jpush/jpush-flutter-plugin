@@ -157,7 +157,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.5.5"
+    version: "0.5.6"
   js:
     dependency: transitive
     description:
