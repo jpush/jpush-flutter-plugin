@@ -625,6 +625,13 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [dic setValue:identifier?:@"" forKey:@"identifier"];
         [dic setValue:threadIdentifier?:@"" forKey:@"threadIdentifier"];
         [dic setValue:categoryIdentifier?:@"" forKey:@"categoryIdentifier"];
+        if (userInfo && userInfo.count) {
+            NSMutableDictionary *extras = [NSMutableDictionary dictionary];
+            for (NSString *key in userInfo) {
+                extras[key] = userInfo[key];
+            }
+            dic[@"extras"] = extras;
+        }
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.channel invokeMethod:@"onOpenNotification" arguments:dic];
         });
