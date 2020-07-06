@@ -29,6 +29,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
 
 @implementation JPushPlugin {
     NSDictionary *_launchNotification;
+    NSDictionary *_completeLaunchNotification;
     BOOL _isJPushDidLogin;
     JPAuthorizationOptions notificationTypes;
 }
@@ -174,7 +175,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [JPUSHService setLogOFF];
     }
     
-    [JPUSHService setupWithOption:_launchNotification
+    [JPUSHService setupWithOption:_completeLaunchNotification
                            appKey:arguments[@"appKey"]
                           channel:arguments[@"channel"]
                  apsForProduction:[arguments[@"production"] boolValue]];
@@ -476,7 +477,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
 #pragma mark - AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
+    _completeLaunchNotification = launchOptions;
     if (launchOptions != nil) {
         _launchNotification = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
         _launchNotification = [self jpushFormatAPNSDic:_launchNotification.copy];
