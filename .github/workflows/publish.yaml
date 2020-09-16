@@ -1,0 +1,24 @@
+name: publish
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Publish
+        uses: sakebook/actions-flutter-pub-publisher@v1.3.0
+        with:
+          credential: ${{ secrets.CREDENTIAL_JSON_JPUSH }}
+          flutter_package: false
+          skip_test: true
+          dry_run: false
+
+
