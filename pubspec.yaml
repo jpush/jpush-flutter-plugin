@@ -22,11 +22,12 @@ dev_dependencies:
 # The following section is specific to Flutter.
 flutter:
   plugin:
-    android:
-      package: com.jiguang.jpush
-      pluginClass: JPushPlugin
-    ios:
-      pluginClass: JPushPlugin
+    platforms:
+      android:
+        package: com.jiguang.jpush
+        pluginClass: JPushPlugin
+      ios:
+        pluginClass: JPushPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
