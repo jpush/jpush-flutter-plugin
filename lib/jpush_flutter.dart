@@ -82,7 +82,8 @@ class JPush {
       case "onReceiveNotificationAuthorization":
         if (_onReceiveNotificationAuthorization != null) {
           _onReceiveNotificationAuthorization!(
-              call.arguments.cast<String, dynamic>());
+            call.arguments.cast<String, dynamic>(),
+          );
         }
         return;
       default:
@@ -192,6 +193,23 @@ class JPush {
 
     final Map<dynamic, dynamic> result =
         await _channel.invokeMethod('setAlias', alias);
+    return result;
+  }
+
+  ///
+  /// 获取 alias.
+  ///
+  /// @param {String} alias
+  ///
+  /// @param {Function} success = ({"alias":String}) => {  }
+  /// @param {Function} fail = ({"errorCode":int}) => {  }
+  ///
+  Future<Map<dynamic, dynamic>> getAlias() async {
+    print(flutter_log + "getAlias:");
+
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('getAlias');
+
     return result;
   }
 
