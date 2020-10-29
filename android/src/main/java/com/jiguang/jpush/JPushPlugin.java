@@ -90,6 +90,8 @@ public class JPushPlugin implements MethodCallHandler {
             getAllTags(call, result);
         } else if (call.method.equals("setAlias")) {
             setAlias(call, result);
+        } else if (call.method.equals("getAlias")) {
+            getAlias(call, result);
         } else if (call.method.equals("deleteAlias")) {
             deleteAlias(call, result);;
         } else if (call.method.equals("stopPush")) {
@@ -234,6 +236,13 @@ public class JPushPlugin implements MethodCallHandler {
         sequence += 1;
         callbackMap.put(sequence, result);
         JPushInterface.setAlias(registrar.context(), sequence, alias);
+    }
+
+    public void getAlias(MethodCall call, Result result) {
+        Log.d(TAG,"getAlias");
+        sequence += 1;
+        callbackMap.put(sequence, result);
+        JPushInterface.getAlias(registrar.context(), sequence);
     }
 
     public void deleteAlias(MethodCall call, Result result) {
