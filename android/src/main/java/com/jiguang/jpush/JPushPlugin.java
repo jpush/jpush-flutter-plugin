@@ -166,6 +166,12 @@ public class JPushPlugin implements MethodCallHandler {
             }
             openNotificationCacheList.removeAll(tempList);
         }
+
+        if (registrar == null || registrar.context() == null) {
+            Log.d(TAG,"scheduleCache，register context is nil.");
+            return;
+        }
+
         String rid = JPushInterface.getRegistrationID(registrar.context());
         boolean ridAvailable = rid != null && !rid.isEmpty();
         if (ridAvailable && dartIsReady) {
