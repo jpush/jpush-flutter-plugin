@@ -129,6 +129,7 @@ class _MyAppState extends State<MyApp> {
                     title: "getLaunchAppNotification",
                     onPressed: () {
                       jpush.getLaunchAppNotification().then((map) {
+                        print("flutter getLaunchAppNotification:$map");
                         setState(() {
                           debugLable = "getLaunchAppNotification success: $map";
                         });

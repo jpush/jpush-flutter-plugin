@@ -155,22 +155,35 @@ public class JPushPlugin implements MethodCallHandler {
     public void scheduleCache() {
         Log.d(TAG,"scheduleCache:");
 
+        List<Object> tempList = new ArrayList<Object>();
+
         if (dartIsReady) {
             // try to shedule notifcation cache
-            for (Map<String, Object> notification: JPushPlugin.openNotificationCache) {
+            List<Map<String, Object>> openNotificationCacheList = JPushPlugin.openNotificationCache;
+            for (Map<String, Object> notification: openNotificationCacheList) {
                 JPushPlugin.instance.channel.invokeMethod("onOpenNotification", notification);
-                JPushPlugin.openNotificationCache.remove(notification);
+                tempList.add(notification);
             }
+            openNotificationCacheList.removeAll(tempList);
         }
+
+        if (registrar == null || registrar.context() == null) {
+            Log.d(TAG,"scheduleCache，register context is nil.");
+            return;
+        }
+
         String rid = JPushInterface.getRegistrationID(registrar.context());
         boolean ridAvailable = rid != null && !rid.isEmpty();
         if (ridAvailable && dartIsReady) {
             // try to schedule get rid cache
-            for (Result res: JPushPlugin.instance.getRidCache) {
+            tempList.clear();
+            List<Result> resultList = JPushPlugin.instance.getRidCache;
+            for (Result res: resultList) {
                 Log.d(TAG,"scheduleCache rid = " + rid);
                 res.success(rid);
-                JPushPlugin.instance.getRidCache.remove(res);
+                tempList.add(res);
             }
+            resultList.removeAll(tempList);
         }
     }
 
