@@ -285,6 +285,11 @@ public class JPushPlugin implements MethodCallHandler {
     public void getRegistrationID(MethodCall call, Result result) {
         Log.d(TAG,"getRegistrationID: ");
 
+        if (registrar == null || registrar.context() == null) {
+            Log.d(TAG,"register context is nil.");
+            return;
+        }
+
         String rid = JPushInterface.getRegistrationID(registrar.context());
         if (rid == null || rid.isEmpty()) {
             getRidCache.add(result);
