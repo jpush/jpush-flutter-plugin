@@ -1,5 +1,6 @@
 package com.jiguang.jpush;
 
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import cn.jpush.android.api.BasicPushNotificationBuilder;
 import org.json.JSONObject;
 
 import cn.jpush.android.data.JPushLocalNotification;
@@ -320,6 +322,15 @@ public class JPushPlugin implements MethodCallHandler {
             long date = (long) map.get("fireTime");
             ln.setBroadcastTime(date);
 
+            BasicPushNotificationBuilder builder = new BasicPushNotificationBuilder(registrar.context());
+            builder.statusBarDrawable = R.drawable.jpush_notification_icon;
+            builder.notificationFlags = Notification.FLAG_AUTO_CANCEL
+                    | Notification.FLAG_SHOW_LIGHTS;  //设置为自动消失和呼吸灯闪烁
+            builder.notificationDefaults = Notification.DEFAULT_SOUND
+                    | Notification.DEFAULT_VIBRATE
+                    | Notification.DEFAULT_LIGHTS;  // 设置为铃声、震动、呼吸灯闪烁都要
+            JPushInterface.setPushNotificationBuilder(2, builder);
+
             JPushInterface.addLocalNotification(registrar.context(), ln);
         } catch (Exception e) {
             e.printStackTrace();
@@ -344,7 +355,7 @@ public class JPushPlugin implements MethodCallHandler {
         int isEnabled = JPushInterface.isNotificationEnabled(registrar.context());
         //1表示开启，0表示关闭，-1表示检测失败
         HashMap<String, Object> map = new HashMap();
-        map.put("isEnabled",isEnabled==1?true:false);
+        map.put("isEnabled", isEnabled == 1);
 
         runMainThread(map,result,null);
     }
