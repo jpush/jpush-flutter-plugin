@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import cn.jpush.android.api.BasicPushNotificationBuilder;
+import cn.jpush.android.api.CustomPushNotificationBuilder;
 import org.json.JSONObject;
 
 import cn.jpush.android.data.JPushLocalNotification;
@@ -149,6 +150,16 @@ public class JPushPlugin implements MethodCallHandler {
         JPushInterface.setChannel(registrar.context(), channel);
 
         JPushPlugin.instance.dartIsReady = true;
+
+        BasicPushNotificationBuilder builder = new BasicPushNotificationBuilder(registrar.context());
+        builder.statusBarDrawable = R.drawable.jpush_notification_icon;
+        builder.notificationFlags = Notification.FLAG_AUTO_CANCEL
+                | Notification.FLAG_SHOW_LIGHTS;  //设置为自动消失和呼吸灯闪烁
+        builder.notificationDefaults = Notification.DEFAULT_SOUND
+                | Notification.DEFAULT_VIBRATE
+                | Notification.DEFAULT_LIGHTS;  // 设置为铃声、震动、呼吸灯闪烁都要
+        // 指定下拉状态栏时显示的通知图标
+        JPushInterface.setPushNotificationBuilder(2, builder);
 
         // try to clean getRid cache
         scheduleCache();
@@ -321,16 +332,6 @@ public class JPushPlugin implements MethodCallHandler {
 
             long date = (long) map.get("fireTime");
             ln.setBroadcastTime(date);
-
-            BasicPushNotificationBuilder builder = new BasicPushNotificationBuilder(registrar.context());
-            builder.statusBarDrawable = R.drawable.jpush_notification_icon;
-            builder.notificationFlags = Notification.FLAG_AUTO_CANCEL
-                    | Notification.FLAG_SHOW_LIGHTS;  //设置为自动消失和呼吸灯闪烁
-            builder.notificationDefaults = Notification.DEFAULT_SOUND
-                    | Notification.DEFAULT_VIBRATE
-                    | Notification.DEFAULT_LIGHTS;  // 设置为铃声、震动、呼吸灯闪烁都要
-            JPushInterface.setPushNotificationBuilder(2, builder);
-
             JPushInterface.addLocalNotification(registrar.context(), ln);
         } catch (Exception e) {
             e.printStackTrace();
