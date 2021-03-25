@@ -336,14 +336,13 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new FlatButton(
+    return new TextButton(
       onPressed: onPressed,
       child: new Text("$title"),
-      color: Color(0xff585858),
-      highlightColor: Color(0xff888888),
-      splashColor: Color(0xff888888),
-      textColor: Colors.white,
-      //padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+      style: new ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.white),
+        overlayColor: MaterialStateProperty.all(Color(0xff888888)),
+        backgroundColor: MaterialStateProperty.all(Color(0xff585858)),
+        padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(10, 5, 10, 5)), ),
     );
   }
 }
