@@ -1,4 +1,4 @@
-##2.0.1
+## 2.0.1
 + 适配Flutter 2.0，Flutter 2.0 以下版本请使用 0.6.3版本
 ## 0.6.3
 + 修复：Android端获取RegistrationID偶现奔溃问题
