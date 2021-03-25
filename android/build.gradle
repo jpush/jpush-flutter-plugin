@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'com.android.tools.build:gradle:4.1.0'
     }
 }
 
@@ -22,11 +22,11 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
         minSdkVersion 17
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     lintOptions {
         disable 'InvalidPackage'
@@ -36,7 +36,7 @@ android {
 dependencies {
     implementation 'cn.jiguang.sdk:jpush:3.9.0'
     implementation 'cn.jiguang.sdk:jcore:2.6.0'
-//    implementation 'com.android.support:appcompat-v7:28.+'
-    compileOnly files('libs/flutter.jar')
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+//    compileOnly files('libs/flutter.jar')
 
 }
