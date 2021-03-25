@@ -183,9 +183,9 @@
     },
     {
       "name": "platform",
-      "rootUri": "file:///Users/Brandon/.pub-cache/hosted/pub.flutter-io.cn/platform-2.2.0",
+      "rootUri": "file:///Users/Brandon/.pub-cache/hosted/pub.flutter-io.cn/platform-3.0.0",
       "packageUri": "lib/",
-      "languageVersion": "1.24"
+      "languageVersion": "2.12"
     },
     {
       "name": "pool",
@@ -338,7 +338,7 @@
       "languageVersion": "2.1"
     }
   ],
-  "generated": "2021-03-25T08:16:37.054845Z",
+  "generated": "2021-03-25T08:38:38.498317Z",
   "generator": "pub",
   "generatorVersion": "2.12.2"
 }
