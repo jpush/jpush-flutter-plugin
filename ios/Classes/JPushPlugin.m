@@ -134,6 +134,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [self getAllTags:call result:result];
     } else if([@"setAlias" isEqualToString:call.method]) {
         [self setAlias:call result:result];
+    } else if([@"getAlias" isEqualToString:call.method]) {
+        [self getAlias:call result:result];
     } else if([@"deleteAlias" isEqualToString:call.method]) {
         [self deleteAlias:call result:result];
     } else if([@"setBadge" isEqualToString:call.method]) {
@@ -281,6 +283,18 @@ static NSMutableArray<FlutterResult>* getRidResults;
     JPLog(@"setAlias:%@",call.arguments);
     NSString *alias = call.arguments;
     [JPUSHService setAlias:alias completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
+        if (iResCode == 0) {
+            result(@{@"alias": iAlias ?: @""});
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:@"JPush.Flutter" code:iResCode userInfo:nil];
+            result([error flutterError]);
+        }
+    } seq: 0];
+}
+
+- (void)getAlias:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"getAlias");
+    [JPUSHService getAlias:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
         if (iResCode == 0) {
             result(@{@"alias": iAlias ?: @""});
         } else {
