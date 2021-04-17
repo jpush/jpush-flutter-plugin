@@ -92,7 +92,6 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
             getAlias(call, result);
         } else if (call.method.equals("deleteAlias")) {
             deleteAlias(call, result);
-            ;
         } else if (call.method.equals("stopPush")) {
             stopPush(call, result);
         } else if (call.method.equals("resumePush")) {
@@ -352,7 +351,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         int isEnabled = JPushInterface.isNotificationEnabled(context);
         //1表示开启，0表示关闭，-1表示检测失败
         HashMap<String, Object> map = new HashMap();
-        map.put("isEnabled", isEnabled == 1 ? true : false);
+        map.put("isEnabled", isEnabled == 1);
 
         runMainThread(map, result, null);
     }
