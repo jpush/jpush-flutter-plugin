@@ -148,3 +148,7 @@ fastlane/readme.md
 
 .dart_tool/
 .packages
+**/*/.last_build_id
+**/*/flutter_export_environment.sh
+**/*/.flutter-plugins-dependencies
+**/*/pubspec.lock
