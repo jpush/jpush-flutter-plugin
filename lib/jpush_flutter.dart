@@ -233,10 +233,12 @@ class JPush {
   ///
   /// 注意：如果是 Android 手机，目前仅支持华为手机
   ///
-  Future<void> setBadge(int badge) async {
+  Future<bool> setBadge(int badge) async {
     print(flutter_log + 'setBadge:');
 
-    await _channel.invokeMethod('setBadge', {'badge': badge});
+    final bool? result =
+        await _channel.invokeMethod('setBadge', {'badge': badge});
+    return result ?? false;
   }
 
   ///

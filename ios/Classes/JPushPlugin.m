@@ -327,7 +327,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
     }
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber: badge];
     [JPUSHService setBadge: badge];
-    result(@{@"badge": badge});
+    result(true);
 }
 
 - (void)resetBadge:(FlutterMethodCall*)call result:(FlutterResult)result {

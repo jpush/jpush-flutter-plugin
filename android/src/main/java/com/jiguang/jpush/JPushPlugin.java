@@ -344,6 +344,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
             int num = (int) numObject;
             JPushInterface.setBadgeNumber(context, num);
             result.success(true);
+        } else {
+            result.success(false);
         }
     }
 
