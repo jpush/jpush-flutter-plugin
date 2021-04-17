@@ -149,6 +149,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
 
         // try to clean getRid cache
         scheduleCache();
+        result.success(new HashMap<String, Object>());
     }
 
     public void scheduleCache() {
@@ -191,7 +192,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
 
         List<String> tagList = call.arguments();
         Set<String> tags = new HashSet<>(tagList);
-        sequence += 1;
+        sequence++;
         callbackMap.put(sequence, result);
         JPushInterface.setTags(context, sequence, tags);
     }
@@ -199,7 +200,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
     public void cleanTags(MethodCall call, Result result) {
         Log.d(TAG, "cleanTags:");
 
-        sequence += 1;
+        sequence++;
         callbackMap.put(sequence, result);
         JPushInterface.cleanTags(context, sequence);
     }
@@ -209,7 +210,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
 
         List<String> tagList = call.arguments();
         Set<String> tags = new HashSet<>(tagList);
-        sequence += 1;
+        sequence++;
         callbackMap.put(sequence, result);
         JPushInterface.addTags(context, sequence, tags);
     }
@@ -219,7 +220,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
 
         List<String> tagList = call.arguments();
         Set<String> tags = new HashSet<>(tagList);
-        sequence += 1;
+        sequence++;
         callbackMap.put(sequence, result);
         JPushInterface.deleteTags(context, sequence, tags);
     }
@@ -227,7 +228,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
     public void getAllTags(MethodCall call, Result result) {
         Log.d(TAG, "getAllTags： ");
 
-        sequence += 1;
+        sequence++;
         callbackMap.put(sequence, result);
         JPushInterface.getAllTags(context, sequence);
     }
@@ -236,23 +237,22 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         Log.d(TAG, "setAlias: " + call.arguments);
 
         String alias = call.arguments();
-        sequence += 1;
+        sequence++;
         callbackMap.put(sequence, result);
         JPushInterface.setAlias(context, sequence, alias);
     }
 
     public void getAlias(MethodCall call, Result result) {
         Log.d(TAG,"getAlias");
-        sequence += 1;
+        sequence++;
         callbackMap.put(sequence, result);
-        JPushInterface.getAlias(registrar.context(), sequence);
+        JPushInterface.getAlias(context, sequence);
     }
 
     public void deleteAlias(MethodCall call, Result result) {
         Log.d(TAG, "deleteAlias:");
 
-        String alias = call.arguments();
-        sequence += 1;
+        sequence++;
         callbackMap.put(sequence, result);
         JPushInterface.deleteAlias(context, sequence);
     }
@@ -261,12 +261,14 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         Log.d(TAG, "stopPush:");
 
         JPushInterface.stopPush(context);
+        result.success(null);
     }
 
     public void resumePush(MethodCall call, Result result) {
         Log.d(TAG, "resumePush:");
 
         JPushInterface.resumePush(context);
+        result.success(null);
     }
 
     public void clearAllNotifications(MethodCall call, Result result) {
