@@ -146,7 +146,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [self stopPush:call result:result];
     } else if([@"resumePush" isEqualToString:call.method]) {
         JPLog(@"ios platform not support resume push.");
-        result([error flutterError]);
+        result(nil);
     } else if([@"clearAllNotifications" isEqualToString:call.method]) {
         [self clearAllNotifications:call result:result];
     } else if ([@"clearNotification" isEqualToString:call.method]) {
@@ -327,7 +327,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
     }
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber: badge];
     [JPUSHService setBadge: badge];
-    result(true);
+    result(@YES);
 }
 
 - (void)resetBadge:(FlutterMethodCall*)call result:(FlutterResult)result {
