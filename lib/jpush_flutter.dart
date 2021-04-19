@@ -99,7 +99,7 @@ class JPush {
     print(flutter_log + 'applyPushAuthority:');
 
     if (!_platform.isIOS) {
-      throw (OSError('Only support iOS.'));
+      return;
     }
 
     _channel.invokeMethod('applyPushAuthority', iosSettings.toMap());
@@ -248,7 +248,7 @@ class JPush {
     print(flutter_log + 'resetBadge:');
 
     if (!_platform.isIOS) {
-      throw (OSError('Only support iOS.'));
+      return;
     }
 
     await _channel.invokeMethod('resetBadge');
