@@ -1,24 +1,31 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:platform/platform.dart';
 
-typedef Future<dynamic> EventHandler(Map<String, dynamic> event);
+typedef EventHandler = FutureOr<Object?> Function(Map<String, dynamic> event);
 
 class JPush {
   static const String flutter_log = '| JPUSH | Flutter | ';
 
-  factory JPush() => _instance;
+  final MethodChannel _channel;
+  final Platform _platform;
 
-  static const MethodChannel _channel = MethodChannel('jpush');
-  static const Platform _platform = LocalPlatform();
-
-  JPush._() {
+  @visibleForTesting
+  JPush.private(MethodChannel channel, Platform platform)
+      : _channel = channel,
+        _platform = platform {
     _channel.setMethodCallHandler(_handleMethod);
   }
 
-  static late final JPush _instance = JPush._();
+  static late final JPush _instance = JPush.private(
+    const MethodChannel('jpush'),
+    const LocalPlatform(),
+  );
+
+  factory JPush() => _instance;
 
   EventHandler? _onReceiveNotification;
   EventHandler? _onOpenNotification;
