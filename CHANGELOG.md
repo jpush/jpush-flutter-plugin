@@ -1,3 +1,5 @@
+## 2.0.5
++ 升级：android jcore 升级 2.7.8
 ## 2.0.3
 + 升级：android push 升级4.0.6，ios push 升级 3.5.2
 ## 2.0.1
