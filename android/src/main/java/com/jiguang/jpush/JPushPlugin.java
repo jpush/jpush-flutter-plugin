@@ -88,9 +88,10 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
             getAllTags(call, result);
         } else if (call.method.equals("setAlias")) {
             setAlias(call, result);
+        } else if (call.method.equals("getAlias")) {
+            getAlias(call, result);
         } else if (call.method.equals("deleteAlias")) {
             deleteAlias(call, result);
-            ;
         } else if (call.method.equals("stopPush")) {
             stopPush(call, result);
         } else if (call.method.equals("resumePush")) {
@@ -148,6 +149,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
 
         // try to clean getRid cache
         scheduleCache();
+        result.success(new HashMap<String, Object>());
     }
 
     public void scheduleCache() {
@@ -190,7 +192,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
 
         List<String> tagList = call.arguments();
         Set<String> tags = new HashSet<>(tagList);
-        sequence += 1;
+        sequence++;
         callbackMap.put(sequence, result);
         JPushInterface.setTags(context, sequence, tags);
     }
@@ -198,7 +200,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
     public void cleanTags(MethodCall call, Result result) {
         Log.d(TAG, "cleanTags:");
 
-        sequence += 1;
+        sequence++;
         callbackMap.put(sequence, result);
         JPushInterface.cleanTags(context, sequence);
     }
@@ -208,7 +210,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
 
         List<String> tagList = call.arguments();
         Set<String> tags = new HashSet<>(tagList);
-        sequence += 1;
+        sequence++;
         callbackMap.put(sequence, result);
         JPushInterface.addTags(context, sequence, tags);
     }
@@ -218,7 +220,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
 
         List<String> tagList = call.arguments();
         Set<String> tags = new HashSet<>(tagList);
-        sequence += 1;
+        sequence++;
         callbackMap.put(sequence, result);
         JPushInterface.deleteTags(context, sequence, tags);
     }
@@ -226,7 +228,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
     public void getAllTags(MethodCall call, Result result) {
         Log.d(TAG, "getAllTags： ");
 
-        sequence += 1;
+        sequence++;
         callbackMap.put(sequence, result);
         JPushInterface.getAllTags(context, sequence);
     }
@@ -235,16 +237,22 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         Log.d(TAG, "setAlias: " + call.arguments);
 
         String alias = call.arguments();
-        sequence += 1;
+        sequence++;
         callbackMap.put(sequence, result);
         JPushInterface.setAlias(context, sequence, alias);
+    }
+
+    public void getAlias(MethodCall call, Result result) {
+        Log.d(TAG,"getAlias");
+        sequence++;
+        callbackMap.put(sequence, result);
+        JPushInterface.getAlias(context, sequence);
     }
 
     public void deleteAlias(MethodCall call, Result result) {
         Log.d(TAG, "deleteAlias:");
 
-        String alias = call.arguments();
-        sequence += 1;
+        sequence++;
         callbackMap.put(sequence, result);
         JPushInterface.deleteAlias(context, sequence);
     }
@@ -253,12 +261,14 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         Log.d(TAG, "stopPush:");
 
         JPushInterface.stopPush(context);
+        result.success(null);
     }
 
     public void resumePush(MethodCall call, Result result) {
         Log.d(TAG, "resumePush:");
 
         JPushInterface.resumePush(context);
+        result.success(null);
     }
 
     public void clearAllNotifications(MethodCall call, Result result) {
@@ -334,6 +344,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
             int num = (int) numObject;
             JPushInterface.setBadgeNumber(context, num);
             result.success(true);
+        } else {
+            result.success(false);
         }
     }
 
@@ -343,7 +355,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         int isEnabled = JPushInterface.isNotificationEnabled(context);
         //1表示开启，0表示关闭，-1表示检测失败
         HashMap<String, Object> map = new HashMap();
-        map.put("isEnabled", isEnabled == 1 ? true : false);
+        map.put("isEnabled", isEnabled == 1);
 
         runMainThread(map, result, null);
     }

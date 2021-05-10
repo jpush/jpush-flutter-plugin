@@ -12,7 +12,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String debugLable = 'Unknown';
+  String? debugLable = 'Unknown';
   final JPush jpush = new JPush();
 
   @override
@@ -23,7 +23,7 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
-    String platformVersion;
+    String? platformVersion;
 
     try {
       jpush.addEventHandler(
@@ -332,7 +332,7 @@ class CustomButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String title;
 
-  const CustomButton({@required this.onPressed, @required this.title});
+  const CustomButton({required this.onPressed, required this.title});
 
   @override
   Widget build(BuildContext context) {

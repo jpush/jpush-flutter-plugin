@@ -134,15 +134,19 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [self getAllTags:call result:result];
     } else if([@"setAlias" isEqualToString:call.method]) {
         [self setAlias:call result:result];
+    } else if([@"getAlias" isEqualToString:call.method]) {
+        [self getAlias:call result:result];
     } else if([@"deleteAlias" isEqualToString:call.method]) {
         [self deleteAlias:call result:result];
     } else if([@"setBadge" isEqualToString:call.method]) {
         [self setBadge:call result:result];
+    } else if([@"resetBadge" isEqualToString:call.method]) {
+        [self resetBadge:call result:result];
     } else if([@"stopPush" isEqualToString:call.method]) {
         [self stopPush:call result:result];
     } else if([@"resumePush" isEqualToString:call.method]) {
         JPLog(@"ios platform not support resume push.");
-        //[self applyPushAuthority:call result:result];
+        result(nil);
     } else if([@"clearAllNotifications" isEqualToString:call.method]) {
         [self clearAllNotifications:call result:result];
     } else if ([@"clearNotification" isEqualToString:call.method]) {
@@ -179,6 +183,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
                            appKey:arguments[@"appKey"]
                           channel:arguments[@"channel"]
                  apsForProduction:[arguments[@"production"] boolValue]];
+    result(nil);
 }
 
 - (void)applyPushAuthority:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -290,6 +295,18 @@ static NSMutableArray<FlutterResult>* getRidResults;
     } seq: 0];
 }
 
+- (void)getAlias:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"getAlias");
+    [JPUSHService getAlias:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
+        if (iResCode == 0) {
+            result(@{@"alias": iAlias ?: @""});
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:@"JPush.Flutter" code:iResCode userInfo:nil];
+            result([error flutterError]);
+        }
+    } seq: 0];
+}
+
 - (void)deleteAlias:(FlutterMethodCall*)call result:(FlutterResult)result {
     JPLog(@"deleteAlias:%@",call.arguments);
     [JPUSHService deleteAlias:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
@@ -310,11 +327,20 @@ static NSMutableArray<FlutterResult>* getRidResults;
     }
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber: badge];
     [JPUSHService setBadge: badge];
+    result(@YES);
+}
+
+- (void)resetBadge:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"resetBadge:%@",call.arguments);
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber: 0];
+    [JPUSHService resetBadge];
+    result(nil);
 }
 
 - (void)stopPush:(FlutterMethodCall*)call result:(FlutterResult)result {
     JPLog(@"stopPush:");
     [[UIApplication sharedApplication] unregisterForRemoteNotifications];
+    result(nil);
 }
 - (void)clearAllNotifications:(FlutterMethodCall*)call result:(FlutterResult)result {
     JPLog(@"clearAllNotifications:");
@@ -329,6 +355,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
         // iOS 10 以下移除所有推送；iOS 10 以上移除所有在通知中心显示推送和待推送请求
         [JPUSHService removeNotification:nil];
     }
+    result(nil);
 }
 - (void)clearNotification:(FlutterMethodCall*)call result:(FlutterResult)result {
     JPLog(@"clearNotification:");
@@ -347,6 +374,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
         // Fallback on earlier versions
     }
     [JPUSHService removeNotification:identifier];
+    result(nil);
 }
 
 - (void)getLaunchAppNotification:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -456,8 +484,6 @@ static NSMutableArray<FlutterResult>* getRidResults;
             result(dict);
         });
     }];
-   
-    
 }
 - (void)openSettingsForNotification {
     JPLog(@"openSettingsForNotification:");
