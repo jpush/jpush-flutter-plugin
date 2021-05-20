@@ -7,6 +7,7 @@ typedef Future<dynamic> EventHandler(Map<String, dynamic> event);
 
 class JPush {
   static const String flutter_log = "| JPUSH | Flutter | ";
+
   factory JPush() => _instance;
 
   final MethodChannel _channel;
@@ -20,14 +21,14 @@ class JPush {
   static final JPush _instance =
       new JPush.private(const MethodChannel('jpush'), const LocalPlatform());
 
-  EventHandler _onReceiveNotification;
-  EventHandler _onOpenNotification;
-  EventHandler _onReceiveMessage;
-  EventHandler _onReceiveNotificationAuthorization;
+  EventHandler? _onReceiveNotification;
+  EventHandler? _onOpenNotification;
+  EventHandler? _onReceiveMessage;
+  EventHandler? _onReceiveNotificationAuthorization;
 
   void setup({
-    String appKey,
-    bool production,
+    String appKey = '',
+    bool production = false,
     String channel = '',
     bool debug = false,
   }) {
@@ -45,10 +46,10 @@ class JPush {
   /// 初始化 JPush 必须先初始化才能执行其他操作(比如接收事件传递)
   ///
   void addEventHandler({
-    EventHandler onReceiveNotification,
-    EventHandler onOpenNotification,
-    EventHandler onReceiveMessage,
-    EventHandler onReceiveNotificationAuthorization,
+    EventHandler? onReceiveNotification,
+    EventHandler? onOpenNotification,
+    EventHandler? onReceiveMessage,
+    EventHandler? onReceiveNotificationAuthorization,
   }) {
     print(flutter_log + "addEventHandler:");
 
@@ -59,18 +60,19 @@ class JPush {
     _channel.setMethodCallHandler(_handleMethod);
   }
 
-  Future<Null> _handleMethod(MethodCall call) async {
+  Future<dynamic> _handleMethod(MethodCall call) async {
     print(flutter_log + "_handleMethod:");
 
     switch (call.method) {
       case "onReceiveNotification":
-        return _onReceiveNotification(call.arguments.cast<String, dynamic>());
+        return _onReceiveNotification!(call.arguments.cast<String, dynamic>());
       case "onOpenNotification":
-        return _onOpenNotification(call.arguments.cast<String, dynamic>());
+        return _onOpenNotification!(call.arguments.cast<String, dynamic>());
       case "onReceiveMessage":
-        return _onReceiveMessage(call.arguments.cast<String, dynamic>());
+        return _onReceiveMessage!(call.arguments.cast<String, dynamic>());
       case "onReceiveNotificationAuthorization":
-        return _onReceiveNotificationAuthorization(call.arguments.cast<String, dynamic>());
+        return _onReceiveNotificationAuthorization!(
+            call.arguments.cast<String, dynamic>());
       default:
         throw new UnsupportedError("Unrecognized Event");
     }
@@ -239,9 +241,9 @@ class JPush {
   /// 清空通知栏上某个通知
   /// @param notificationId 通知 id，即：LocalNotification id
   ///
-  void clearNotification({@required int notificationId}) {
+  void clearNotification({@required int notificationId = 0}) {
     print(flutter_log + "clearNotification:");
-    _channel.invokeListMethod("clearNotification",notificationId);
+    _channel.invokeListMethod("clearNotification", notificationId);
   }
 
   ///
@@ -283,19 +285,18 @@ class JPush {
     return notification.toMap().toString();
   }
 
-
   /// 调用此 API 检测通知授权状态是否打开
   Future<bool> isNotificationEnabled() async {
-    final Map<dynamic, dynamic> result = await _channel.invokeMethod('isNotificationEnabled');
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('isNotificationEnabled');
     bool isEnabled = result["isEnabled"];
     return isEnabled;
   }
 
   /// 调用此 API 跳转至系统设置中应用设置界面
-  void openSettingsForNotification()  {
+  void openSettingsForNotification() {
     _channel.invokeMethod('openSettingsForNotification');
   }
-
 }
 
 class NotificationSettingsIOS {
@@ -327,15 +328,15 @@ class NotificationSettingsIOS {
 /// // iOS 10+ Only
 /// @property {string} [subtitle] - 子标题
 class LocalNotification {
-  final int buildId; //?
-  final int id;
-  final String title;
-  final String content;
-  final Map<String, String> extra; //?
-  final DateTime fireTime;
-  final int badge; //?
-  final String soundName; //?
-  final String subtitle; //?
+  final int? buildId; //?
+  final int? id;
+  final String? title;
+  final String? content;
+  final Map<String, String>? extra; //?
+  final DateTime? fireTime;
+  final int? badge; //?
+  final String? soundName; //?
+  final String? subtitle; //?
 
   const LocalNotification(
       {@required this.id,
@@ -357,7 +358,7 @@ class LocalNotification {
       'id': id,
       'title': title,
       'content': content,
-      'fireTime': fireTime.millisecondsSinceEpoch,
+      'fireTime': fireTime?.millisecondsSinceEpoch,
       'buildId': buildId,
       'extra': extra,
       'badge': badge,
