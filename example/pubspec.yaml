@@ -10,7 +10,7 @@ description: Demonstrates how to use the jpush plugin.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -23,6 +23,7 @@ dependencies:
 dev_dependencies:
   test: ^1.3.0
   mockito: ^3.0.0
+  jmessage_flutter: 2.0.7
   flutter_test:
     sdk: flutter
 
