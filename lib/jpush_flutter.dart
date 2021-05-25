@@ -241,7 +241,7 @@ class JPush {
   /// 清空通知栏上某个通知
   /// @param notificationId 通知 id，即：LocalNotification id
   ///
-  void clearNotification({@required int notificationId = 0}) {
+  void clearNotification({int notificationId = 0}) {
     print(flutter_log + "clearNotification:");
     _channel.invokeListMethod("clearNotification", notificationId);
   }

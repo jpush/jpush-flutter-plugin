@@ -28,7 +28,6 @@ DerivedData/
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
-xcuserdata/
 
 ## Other
 *.moved-aside
@@ -97,7 +96,6 @@ out/
 
 # Gradle files
 .gradle/
-build/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -123,7 +121,6 @@ captures/
 .idea/dictionaries
 .idea/libraries
 .idea/caches
-
 # Keystore files
 # Uncomment the following line if you do not want to check your keystore files in.
 #*.jks
@@ -140,8 +137,10 @@ freeline/
 freeline_project_description.json
 
 # fastlane
-fastlane/report.xml
-fastlane/Preview.html
 fastlane/screenshots
-fastlane/test_output
 fastlane/readme.md
+pubspec.lock
+example/.flutter-plugins-dependencies
+example/pubspec.lock
+example/ios/Flutter/flutter_export_environment.sh
+.dart_tool/
