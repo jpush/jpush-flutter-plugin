@@ -225,12 +225,10 @@ class JPush {
   /// @param {Function} success = ({'alias':String}) => {  }
   /// @param {Function} fail = ({'errorCode':int}) => {  }
   ///
-  Future<Map<dynamic, dynamic>> deleteAlias() async {
-    print(flutter_log + 'deleteAlias:');
+  Future<Map<dynamic, dynamic>?> deleteAlias() {
+    print(flutter_log + "deleteAlias:");
 
-    final Map<dynamic, dynamic> result =
-        await _channel.invokeMethod('deleteAlias');
-    return result;
+    return _channel.invokeMethod('deleteAlias');
   }
 
   ///
