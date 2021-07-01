@@ -166,22 +166,24 @@ object JPushCallbackDispatcher {
 
     private fun checkAndTryCleanRidCache() {
         runOnMainThread {
-            if (registrationId?.isNotEmpty() == true) {
+            if (registrationId?.isNotEmpty() == true && obtainRidCache.size > 0) {
                 for (ridResult in obtainRidCache) {
                     ridResult.second.success(registrationId)
                 }
+                obtainRidCache.clear()
             }
         }
     }
 
     private fun checkAndTryCleanOpenNotificationCache() {
         runOnMainThread {
-            if (isSetUpDone) {
+            if (isSetUpDone && openNotificationCache.size > 0 && jPushPlugins.size > 0) {
                 for (notificationMap in openNotificationCache) {
                     for (jPushPlugin in jPushPlugins) {
                         jPushPlugin.onNotificationOpen(notificationMap)
                     }
                 }
+                openNotificationCache.clear()
             }
         }
     }
