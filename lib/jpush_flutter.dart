@@ -42,6 +42,10 @@ class JPush {
     });
   }
 
+  void setWakeEnable({bool enable = false}) {
+    _channel.invokeMethod('setWakeEnable', {'enable': enable});
+  }
+
   ///
   /// 初始化 JPush 必须先初始化才能执行其他操作(比如接收事件传递)
   ///

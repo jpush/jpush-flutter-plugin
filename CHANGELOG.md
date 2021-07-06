@@ -1,3 +1,5 @@
+## 2.1.4
++ 新增：Android push 新增 setWakeEnable 接口
 ## 2.1.2
 + 升级：升级 android push 4.0.8 jcore 2.8.2，ios push 3.6.1，jcore 2.6.2。
 ## 2.0.9
