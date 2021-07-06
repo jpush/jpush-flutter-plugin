@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import cn.jiguang.api.JCoreInterface;
 import cn.jpush.android.api.JPushInterface;
 import io.flutter.view.FlutterNativeView;
 
@@ -112,10 +113,23 @@ public class JPushPlugin implements MethodCallHandler {
             isNotificationEnabled(call, result);
         } else if (call.method.equals("openSettingsForNotification")) {
             openSettingsForNotification(call, result);
-        }
-        else {
+        } else if (call.method.equals("setWakeEnable")) {
+            setWakeEnable(call, result);
+        } else {
             result.notImplemented();
         }
+    }
+
+    private void setWakeEnable(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) {
+            return;
+        }
+        Boolean enable = (Boolean) map.get("enable");
+        if (enable == null) {
+            enable = false;
+        }
+        JCoreInterface.setWakeEnable(registrar.context(),enable);
     }
 
     // 主线程再返回数据
