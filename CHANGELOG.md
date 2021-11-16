@@ -1,3 +1,5 @@
+## 0.6.28
++ 适配：android jcore 升级3.0.0，push 4.4.0
 ## 0.6.27
 + 适配：android jcore 升级2.8.2，push 4.0.9，ios push 3.6.1，开通 Android setWakeEnable 接口
 ## 0.6.3
