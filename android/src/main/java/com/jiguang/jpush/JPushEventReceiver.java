@@ -16,10 +16,22 @@ import java.util.Set;
 
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.JPushMessage;
+import cn.jpush.android.api.NotificationMessage;
 import cn.jpush.android.service.JPushMessageReceiver;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class JPushEventReceiver extends JPushMessageReceiver {
+
+    @Override
+    public void onNotifyMessageUnShow(Context context,final NotificationMessage notificationMessage) {
+        super.onNotifyMessageUnShow(context,notificationMessage);
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                JPushPlugin.onNotifyMessageUnShow(notificationMessage);
+            }
+        });
+    }
 
     @Override
     public void onTagOperatorResult(Context context, final JPushMessage jPushMessage) {

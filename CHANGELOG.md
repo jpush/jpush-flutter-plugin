@@ -1,3 +1,5 @@
+## 0.6.31
++ 适配：新增onNotifyMessageUnShow方法
 ## 0.6.30
 + 适配：android jpush 4.4.5
 ## 0.6.29
