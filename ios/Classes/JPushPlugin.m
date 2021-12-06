@@ -9,6 +9,7 @@
 
 @interface NSError (FlutterError)
 @property(readonly, nonatomic) FlutterError *flutterError;
+
 @end
 
 @implementation NSError (FlutterError)
@@ -22,6 +23,8 @@
 
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
 @interface JPushPlugin ()<JPUSHRegisterDelegate>
+//在前台时是否展示通知
+@property(assign, nonatomic) BOOL unShow;
 @end
 #endif
 
@@ -120,6 +123,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
         result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
     } else if([@"setup" isEqualToString:call.method]) {
         [self setup:call result: result];
+    } else if([@"setUnShowAtTheForeground" isEqualToString:call.method]) {
+        [self setUnShowAtTheForeground:call result: result];
     } else if([@"applyPushAuthority" isEqualToString:call.method]) {
         [self applyPushAuthority:call result:result];
     } else if([@"setTags" isEqualToString:call.method]) {
@@ -179,6 +184,14 @@ static NSMutableArray<FlutterResult>* getRidResults;
                            appKey:arguments[@"appKey"]
                           channel:arguments[@"channel"]
                  apsForProduction:[arguments[@"production"] boolValue]];
+}
+
+//设置APP在前台时是否展示通知
+- (void)setUnShowAtTheForeground:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"setUnShowDidEnterBackground:");
+    NSDictionary *arguments = call.arguments;
+    NSNumber *unShow = arguments[@"UnShow"];
+    if(unShow && [unShow isKindOfClass:[NSNumber class]]) self.unShow = [unShow boolValue];
 }
 
 - (void)applyPushAuthority:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -590,6 +603,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
     });
 }
 
+//前台收到本地通知
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(NSInteger))completionHandler  API_AVAILABLE(ios(10.0)){
     JPLog(@"jpushNotificationCenter:willPresentNotification::");
     NSDictionary * userInfo = notification.request.content.userInfo;
@@ -599,8 +613,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
     }else{
         JPLog(@"iOS10 前台收到本地通知:userInfo：%@",userInfo);
     }
-    
-    completionHandler(notificationTypes);
+    if (!self.unShow) completionHandler(notificationTypes);
 }
 
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler  API_AVAILABLE(ios(10.0)){
