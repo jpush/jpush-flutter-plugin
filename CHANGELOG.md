@@ -1,3 +1,5 @@
+## 2.1.9
++ 升级：新增onNotifyMessageUnShow方法
 ## 2.1.8
 + 升级： jpush 4.4.5
 ## 2.1.7
