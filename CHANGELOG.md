@@ -1,3 +1,5 @@
+## 2.2.0
++ 修复channel为null时,异常崩溃问题
 ## 2.1.9
 + 升级：新增onNotifyMessageUnShow方法
 ## 2.1.8
