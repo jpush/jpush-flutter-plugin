@@ -141,7 +141,11 @@ public class JPushPlugin implements MethodCallHandler {
             @Override
             public void run() {
                 if (result == null && method != null){
-                    channel.invokeMethod(method,map);
+                    if( null != channel){
+                        channel.invokeMethod(method,map);
+                    }else {
+                        Log.d(TAG,"channel is null do nothing");
+                    }
                 } else {
                     result.success(map);
                 }
