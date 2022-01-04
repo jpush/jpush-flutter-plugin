@@ -572,9 +572,10 @@ static NSMutableArray<FlutterResult>* getRidResults;
 
 - (BOOL)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     JPLog(@"application:didReceiveRemoteNotification:fetchCompletionHandler");
-    
     [JPUSHService handleRemoteNotification:userInfo];
-    [_channel invokeMethod:@"onReceiveNotification" arguments:userInfo];
+    if (@available(* ,iOS 10)) {
+        [_channel invokeMethod:@"onReceiveNotification" arguments:userInfo];
+    }
     completionHandler(UIBackgroundFetchResultNewData);
     return YES;
 }
@@ -609,7 +610,9 @@ static NSMutableArray<FlutterResult>* getRidResults;
     NSDictionary * userInfo = notification.request.content.userInfo;
     if([notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
         [JPUSHService handleRemoteNotification:userInfo];
-        [_channel invokeMethod:@"onReceiveNotification" arguments: [self jpushFormatAPNSDic:userInfo]];
+        if (@available(iOS 10 , *)) {
+            [_channel invokeMethod:@"onReceiveNotification" arguments: [self jpushFormatAPNSDic:userInfo]];
+        }
     }else{
         JPLog(@"iOS10 前台收到本地通知:userInfo：%@",userInfo);
     }
