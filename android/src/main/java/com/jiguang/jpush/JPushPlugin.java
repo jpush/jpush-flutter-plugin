@@ -91,6 +91,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
             getAllTags(call, result);
         } else if (call.method.equals("setAlias")) {
             setAlias(call, result);
+        } else if (call.method.equals("getAlias")) {
+            getAlias(call, result);
         } else if (call.method.equals("deleteAlias")) {
             deleteAlias(call, result);
             ;
@@ -250,6 +252,13 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         sequence += 1;
         callbackMap.put(sequence, result);
         JPushInterface.getAllTags(context, sequence);
+    }
+    public void getAlias(MethodCall call, Result result) {
+        Log.d(TAG, "getAlias： ");
+
+        sequence += 1;
+        callbackMap.put(sequence, result);
+        JPushInterface.getAlias(context, sequence);
     }
 
     public void setAlias(MethodCall call, Result result) {

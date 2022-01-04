@@ -259,6 +259,20 @@ class _MyAppState extends State<MyApp> {
                         });
                       });
                     }),
+                new Text(" "),
+                new CustomButton(
+                    title: "getAlias",
+                    onPressed: () {
+                      jpush.getAlias().then((map) {
+                        setState(() {
+                          debugLable = "getAlias success: $map";
+                        });
+                      }).catchError((error) {
+                        setState(() {
+                          debugLable = "getAlias error: $error";
+                        });
+                      });
+                    }),
               ]),
           new Row(
             mainAxisAlignment: MainAxisAlignment.center,
