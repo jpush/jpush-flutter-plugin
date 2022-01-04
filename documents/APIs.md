@@ -6,6 +6,7 @@
 - [stopPush](#stoppush)
 - [resumePush](#resumepush)
 - [setAlias](#setalias)
+- [getAlias](#getAlias)
 - [deleteAlias](#deletealias)
 - [addTags](#addtags)
 - [deleteTags](#deletetags)
@@ -107,7 +108,14 @@ jpush.setAlias("your alias").then((map) { });
 JPush jpush = new JPush();
 jpush.deleteAlias().then((map) {})
 ```
+#### getAlias
 
+获取当前 alias 列表。
+
+```
+JPush jpush = new JPush();
+jpush.getAlias().then((map) { });
+```
 #### addTags
 
 在原来的 Tags 列表上添加指定 tags。
