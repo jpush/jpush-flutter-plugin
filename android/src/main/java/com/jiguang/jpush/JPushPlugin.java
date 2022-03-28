@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import cn.jiguang.api.JCoreInterface;
+import cn.jiguang.api.utils.JCollectionAuth;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.data.JPushLocalNotification;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -75,6 +76,10 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         Log.i(TAG, call.method);
         if (call.method.equals("getPlatformVersion")) {
             result.success("Android " + android.os.Build.VERSION.RELEASE);
+        } else if (call.method.equals("setAuth")) {
+            setAuth(call, result);
+        } else if (call.method.equals("setSmartPushEnable")) {
+            setSmartPushEnable(call, result);
         } else if (call.method.equals("setup")) {
             setup(call, result);
         } else if (call.method.equals("setTags")) {
@@ -145,6 +150,28 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
                 }
             }
         });
+    }
+
+    ////是否 同意隐私协议
+// 宿主 APP 在首次安装，冷启动
+// 用户隐私协议告知
+// 用户确认授权
+// 告知极光授权结果
+    public void setAuth(MethodCall call, Result result) {
+        Log.d(TAG, "setAuth :" + call.arguments);
+
+        HashMap<String, Object> map = call.arguments();
+        boolean auth = (boolean) map.get("auth");
+        JCollectionAuth.setAuth(context,auth);
+    }
+
+    ///智能推送开关
+    public void setSmartPushEnable(MethodCall call, Result result) {
+        Log.d(TAG, "setSmartPushEnable :" + call.arguments);
+
+        HashMap<String, Object> map = call.arguments();
+        boolean enable = (boolean) map.get("enable");
+        JPushInterface.setSmartPushEnable(context,enable);
     }
 
     public void setup(MethodCall call, Result result) {
