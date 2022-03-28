@@ -42,6 +42,27 @@ class JPush {
     });
   }
 
+  void setAuth({
+    bool auth = false,
+  }) {
+    print(flutter_log + "setAuth:");
+    _channel.invokeMethod('setAuth', {
+      'auth': debug
+    });
+  }
+
+  void setSmartPushEnable({
+    bool enable = false,
+  }) {
+    print(flutter_log + "setSmartPushEnable:");
+    if (_platform.isIOS) {
+      return;
+    }
+    _channel.invokeMethod('setSmartPushEnable', {
+      'auth': enable
+    });
+  }
+
   void setWakeEnable({bool enable = false}) {
     _channel.invokeMethod('setWakeEnable', {'enable': enable});
   }

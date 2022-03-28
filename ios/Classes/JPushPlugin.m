@@ -120,6 +120,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
         result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
     } else if([@"setup" isEqualToString:call.method]) {
         [self setup:call result: result];
+    } else if([@"setAuth" isEqualToString:call.method]) {
+        [self setAuth:call result: result];
     } else if([@"applyPushAuthority" isEqualToString:call.method]) {
         [self applyPushAuthority:call result:result];
     } else if([@"setTags" isEqualToString:call.method]) {
@@ -180,6 +182,22 @@ static NSMutableArray<FlutterResult>* getRidResults;
                           channel:arguments[@"channel"]
                  apsForProduction:[arguments[@"production"] boolValue]];
 }
+
+- (void)setAuth:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"setAuth:");
+    NSDictionary *arguments = call.arguments;
+    NSNumber *auth = arguments[@"auth"];
+    if ([auth boolValue]) {
+         [JGInforCollectionAuth JCollectionAuth:^(JGInforCollectionAuthItems * _Nonnull authInfo)     {
+                    authInfo.isAuth = YES;
+                }];
+    } else {
+        [JGInforCollectionAuth JCollectionAuth:^(JGInforCollectionAuthItems * _Nonnull authInfo)     {
+                authInfo.isAuth = NO;
+            }];
+    }
+}
+
 
 - (void)applyPushAuthority:(FlutterMethodCall*)call result:(FlutterResult)result {
     JPLog(@"applyPushAuthority:%@",call.arguments);
