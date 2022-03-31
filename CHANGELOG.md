@@ -1,3 +1,5 @@
+## 2.2.4
++ 修复：iOS点击通知冷启动app，不回调onOpenNotification问题
 ## 2.2.3
 + 升级：jpsuh 4.6.0
 ## 2.2.2
