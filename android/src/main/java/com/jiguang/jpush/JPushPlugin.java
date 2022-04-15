@@ -163,7 +163,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         JPushInterface.setDebugMode(debug);
 
         JPushInterface.init(context);            // 初始化 JPush
-
+        JPushInterface.setNotificationCallBackEnable(context, true);
         String channel = (String) map.get("channel");
         JPushInterface.setChannel(context, channel);
 
