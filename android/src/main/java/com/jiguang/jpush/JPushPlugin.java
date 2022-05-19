@@ -3,6 +3,7 @@ package com.jiguang.jpush;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -450,15 +451,14 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         }
 
         private Map<String, Object> getNotificationExtras(Intent intent) {
-            Log.d(TAG, "");
-
             Map<String, Object> extrasMap = new HashMap<String, Object>();
-            for (String key : intent.getExtras().keySet()) {
+            Bundle extras = intent.getExtras();
+            for (String key : extras.keySet()) {
                 if (!IGNORED_EXTRAS_KEYS.contains(key)) {
                     if (key.equals(JPushInterface.EXTRA_NOTIFICATION_ID)) {
                         extrasMap.put(key, intent.getIntExtra(key, 0));
                     } else {
-                        extrasMap.put(key, intent.getStringExtra(key));
+                        extrasMap.put(key, extras.get(key));
                     }
                 }
             }
