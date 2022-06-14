@@ -420,8 +420,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
         content.userInfo = params[@"extra"];
     }
     
-    if (params[@"sound"] && ![params[@"sound"] isEqualToString:@"<null>"]) {
-        content.sound = params[@"sound"];
+    if (params[@"soundName"] && ![params[@"soundName"] isEqualToString:@"<null>"]) {
+        content.sound = params[@"soundName"];
     }
     
     JPushNotificationTrigger *trigger = [[JPushNotificationTrigger alloc] init];
