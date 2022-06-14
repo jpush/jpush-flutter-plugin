@@ -59,6 +59,7 @@ class _MyAppState extends State<MyApp> {
       platformVersion = 'Failed to get platform version.';
     }
 
+    jpush.setAuth(enable: true);
     jpush.setup(
       appKey: "xxxxx", //你自己应用的 AppKey
       channel: "theChannel",
