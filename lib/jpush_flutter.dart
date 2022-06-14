@@ -42,6 +42,14 @@ class JPush {
     });
   }
 
+  //隐私协议授权接口
+  void setAuth({
+    bool enable = true,
+  }) {
+    print(flutter_log + "setAuth:");
+    _channel.invokeMethod('setAuth', {'enable': enable});
+  }
+
   //APP活跃在前台时是否展示通知
   void setUnShowAtTheForeground({
     bool unShow = false,
