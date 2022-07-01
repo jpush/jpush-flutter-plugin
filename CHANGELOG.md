@@ -1,3 +1,6 @@
+## 2.3.4
++ 升级：升级 Android JPush 4.7.2
+       升级 Android JCore 3.3.0
 ## 2.3.3
 + 升级：升级 Android JPush 4.7.0
 ## 2.3.2
