@@ -54,6 +54,7 @@ jpush.addEventHandler(
 - 将缓存的事件下发到 dart 环境中。
 
 **注意：** 插件版本 >= 0.0.8 android 端支持在 setup 方法中动态设置 channel，动态设置的 channel 优先级比 manifestPlaceholders 中的 JPUSH_CHANNEL 优先级要高。
+
 ```dart
 JPush jpush = new JPush();
 jpush.setup(
@@ -62,6 +63,15 @@ jpush.setup(
       production: false,
       debug: false, // 设置是否打印 debug 日志
     );
+```
+
+* iOS使用推送功能，需要调用申请通知权限的方法，详情见 [applyPushAuthority](#applyPushAuthority)。
+
+```
+jpush.applyPushAuthority(new NotificationSettingsIOS(
+      sound: true,
+      alert: true,
+      badge: true));
 ```
 
 #### getRegistrationID
