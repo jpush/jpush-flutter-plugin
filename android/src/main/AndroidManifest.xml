@@ -34,6 +34,9 @@
                 <action android:name="cn.jiguang.user.service.action" />
             </intent-filter>
         </service>
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
     </application>
     <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE"/>
 </manifest>
