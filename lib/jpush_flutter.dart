@@ -185,18 +185,20 @@ class JPush {
         await _channel.invokeMethod('getAllTags');
     return result;
   }
+
   ///
   /// 获取所有当前绑定的 alias
   ///
-  /// @param {Function} success = ({"tags":[String]}) => {  }
+  /// @param {Function} success = ({"alias":String}) => {  }
   /// @param {Function} fail = ({"errorCode":int}) => {  }
   ///
   Future<Map<dynamic, dynamic>> getAlias() async {
     print(flutter_log + "getAlias:");
     final Map<dynamic, dynamic> result =
-    await _channel.invokeMethod('getAlias');
+        await _channel.invokeMethod('getAlias');
     return result;
   }
+
   ///
   /// 重置 alias.
   ///
