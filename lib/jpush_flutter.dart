@@ -215,6 +215,11 @@ class JPush {
     return result;
   }
 
+  void testCountryCode(String code) {
+    print(flutter_log + "testCountryCode:" + code);
+    _channel.invokeMethod('testCountryCode', code);
+  }
+
   ///
   /// 删除原有 alias
   ///
