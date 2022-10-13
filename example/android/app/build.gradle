@@ -29,19 +29,19 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 33
     lintOptions {
         disable 'InvalidPackage'
     }
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
 
-//        applicationId "com.jiguang.jpushexample"
+        applicationId "com.jiguang.jpushexample"
 
-        applicationId "com.shikk.testJpush" //JPush 上注册的包名.
+//        applicationId "com.shikk.testJpush" //JPush 上注册的包名.
 
         minSdkVersion 17
-        targetSdkVersion 28
+        targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

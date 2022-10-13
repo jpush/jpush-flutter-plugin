@@ -5,17 +5,17 @@ version: 2.4.0
 homepage: https://www.jiguang.cn
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
-  flutter: ">=1.20.0"
+  sdk: ">=2.16.0 <3.0.0"
+#  flutter: ">=1.20.0"
 
 dependencies:
-  platform: ^3.0.0
+  platform: ^3.1.0
   flutter:
     sdk: flutter
 
 dev_dependencies:
-  test: ^1.17.4
-  mockito: ^5.0.7
+  test: ^1.21.4
+  mockito: ^5.3.0
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
 
