@@ -26,6 +26,7 @@ class JPush {
   EventHandler? _onReceiveMessage;
   EventHandler? _onReceiveNotificationAuthorization;
   EventHandler? _onNotifyMessageUnShow;
+  EventHandler? _onConnected;
   void setup({
     String appKey = '',
     bool production = false,
@@ -66,6 +67,7 @@ class JPush {
     EventHandler? onReceiveMessage,
     EventHandler? onReceiveNotificationAuthorization,
     EventHandler? onNotifyMessageUnShow,
+    EventHandler? onConnected,
   }) {
     print(flutter_log + "addEventHandler:");
 
@@ -74,6 +76,7 @@ class JPush {
     _onReceiveMessage = onReceiveMessage;
     _onReceiveNotificationAuthorization = onReceiveNotificationAuthorization;
     _onNotifyMessageUnShow = onNotifyMessageUnShow;
+    _onConnected = onConnected;
     _channel.setMethodCallHandler(_handleMethod);
   }
 
@@ -92,6 +95,8 @@ class JPush {
             call.arguments.cast<String, dynamic>());
       case "onNotifyMessageUnShow":
         return _onNotifyMessageUnShow!(call.arguments.cast<String, dynamic>());
+      case "onConnected":
+        return _onConnected!(call.arguments.cast<String, dynamic>());
       default:
         throw new UnsupportedError("Unrecognized Event");
     }

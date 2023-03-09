@@ -43,6 +43,9 @@ jpush.addEventHandler(
       onReceiveMessage: (Map<String, dynamic> message) async {
         print("flutter onReceiveMessage: $message");
       },
+      onConnected: (Map<String, dynamic> message) async {
+        print("flutter onConnected: $message");
+      },
   );
 ```
 

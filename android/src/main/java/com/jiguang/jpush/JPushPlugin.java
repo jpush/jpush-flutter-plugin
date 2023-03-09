@@ -531,6 +531,16 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         notification.put("extras", getExtras(notificationMessage));
         JPushPlugin.instance.channel.invokeMethod("onNotifyMessageUnShow", notification);
     }
+    public static void onConnected( boolean isConnected) {
+        Log.e(TAG,"[onConnected] :"+isConnected);
+        if (instance == null||instance.channel==null) {
+            Log.d("JPushPlugin", "the instance is null");
+            return;
+        }
+        Map<String, Object> results= new HashMap<>();
+        results.put("result", isConnected);
+        JPushPlugin.instance.channel.invokeMethod("onConnected", results);
+    }
 
 
     private static Map<String,Object> getExtras(NotificationMessage notificationMessage){

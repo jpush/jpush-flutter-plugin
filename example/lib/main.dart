@@ -48,11 +48,15 @@ class _MyAppState extends State<MyApp> {
         setState(() {
           debugLable = "flutter onReceiveNotificationAuthorization: $message";
         });
-      },onNotifyMessageUnShow:
-          (Map<String, dynamic> message) async {
+      }, onNotifyMessageUnShow: (Map<String, dynamic> message) async {
         print("flutter onNotifyMessageUnShow: $message");
         setState(() {
           debugLable = "flutter onNotifyMessageUnShow: $message";
+        });
+      }, onConnected: (Map<String, dynamic> message) async {
+        print("flutter onConnected: $message");
+        setState(() {
+          debugLable = "flutter onConnected: $message";
         });
       });
     } on PlatformException {
