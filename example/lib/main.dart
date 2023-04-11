@@ -53,6 +53,16 @@ class _MyAppState extends State<MyApp> {
         setState(() {
           debugLable = "flutter onNotifyMessageUnShow: $message";
         });
+      }, onInAppMessageShow: (Map<String, dynamic> message) async {
+        print("flutter onInAppMessageShow: $message");
+        setState(() {
+          debugLable = "flutter onInAppMessageShow: $message";
+        });
+      }, onInAppMessageClick: (Map<String, dynamic> message) async {
+        print("flutter onInAppMessageClick: $message");
+        setState(() {
+          debugLable = "flutter onInAppMessageClick: $message";
+        });
       }, onConnected: (Map<String, dynamic> message) async {
         print("flutter onConnected: $message");
         setState(() {

@@ -541,6 +541,36 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         results.put("result", isConnected);
         JPushPlugin.instance.channel.invokeMethod("onConnected", results);
     }
+    public static void onInAppMessageShow( NotificationMessage notificationMessage) {
+        Log.e(TAG,"[onInAppMessageShow] :"+notificationMessage);
+        if (instance == null||instance.channel==null) {
+            Log.d("JPushPlugin", "the instance is null");
+            return;
+        }
+        Map<String, Object> notification= new HashMap<>();
+        notification.put("title", notificationMessage.inAppMsgTitle);
+        notification.put("alert", notificationMessage.inAppMsgContentBody);
+        notification.put("messageId", notificationMessage.msgId);
+        notification.put("inAppShowTarget",  notificationMessage.inAppExtras);
+        notification.put("inAppClickAction",  notificationMessage.inAppClickAction);
+        notification.put("inAppExtras", notificationMessage.inAppExtras);
+        JPushPlugin.instance.channel.invokeMethod("onInAppMessageShow", notification);
+    }
+    public static void onInAppMessageClick( NotificationMessage notificationMessage) {
+        Log.e(TAG,"[onInAppMessageClick] :"+notificationMessage);
+        if (instance == null||instance.channel==null) {
+            Log.d("JPushPlugin", "the instance is null");
+            return;
+        }
+        Map<String, Object> notification= new HashMap<>();
+        notification.put("title", notificationMessage.inAppMsgTitle);
+        notification.put("alert", notificationMessage.inAppMsgContentBody);
+        notification.put("messageId", notificationMessage.msgId);
+        notification.put("inAppShowTarget",  notificationMessage.inAppExtras);
+        notification.put("inAppClickAction",  notificationMessage.inAppClickAction);
+        notification.put("inAppExtras", notificationMessage.inAppExtras);
+        JPushPlugin.instance.channel.invokeMethod("onInAppMessageClick", notification);
+    }
 
 
     private static Map<String,Object> getExtras(NotificationMessage notificationMessage){
