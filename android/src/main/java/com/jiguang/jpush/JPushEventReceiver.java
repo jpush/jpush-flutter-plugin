@@ -32,7 +32,38 @@ public class JPushEventReceiver extends JPushMessageReceiver {
             }
         });
     }
+    @Override
+    public void onConnected(Context context,final boolean isConnected) {
+        //连接状态
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                JPushPlugin.onConnected(isConnected);
+            }
+        });
+    }
 
+    @Override
+    public void onInAppMessageShow(Context context,final NotificationMessage message) {
+        Log.i("JPushPlugin", "[onInAppMessageShow], " + message.toString());
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                JPushPlugin.onInAppMessageShow(message);
+            }
+        });
+    }
+
+    @Override
+    public void onInAppMessageClick(Context context,final NotificationMessage message) {
+        Log.i("JPushPlugin", "[onInAppMessageClick], " + message.toString());
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                JPushPlugin.onInAppMessageClick(message);
+            }
+        });
+    }
     @Override
     public void onTagOperatorResult(Context context, final JPushMessage jPushMessage) {
         super.onTagOperatorResult(context, jPushMessage);

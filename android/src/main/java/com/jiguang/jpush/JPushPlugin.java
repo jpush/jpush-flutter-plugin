@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import cn.jiguang.api.JCoreInterface;
+import cn.jiguang.api.utils.JCollectionAuth;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.NotificationMessage;
 import cn.jpush.android.data.JPushLocalNotification;
@@ -119,11 +120,31 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
             openSettingsForNotification(call, result);
         } else if (call.method.equals("setWakeEnable")) {
             setWakeEnable(call, result);
+        } else if (call.method.equals("setAuth")) {
+            setAuth(call, result);
+        } else if (call.method.equals("testCountryCode")) {
+            testCountryCode(call, result);
         } else {
             result.notImplemented();
         }
     }
 
+    private void setAuth(MethodCall call, Result result){
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) {
+            return;
+        }
+        Boolean enable = (Boolean) map.get("enable");
+        if (enable == null) {
+            enable = false;
+        }
+        JCollectionAuth.setAuth(context,enable);
+    }
+    private void testCountryCode(MethodCall call, Result result){
+        String code = call.arguments();
+        Log.d(TAG,"testCountryCode code="+code);
+        JCoreInterface.testCountryCode(code);
+    }
     private void setWakeEnable(MethodCall call, Result result) {
         HashMap<String, Object> map = call.arguments();
         if (map == null) {
@@ -176,7 +197,9 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
 
     public void scheduleCache() {
         Log.d(TAG, "scheduleCache:");
-
+        if(JPushPlugin.instance==null||JPushPlugin.instance.channel==null){
+            return;
+        }
         List<Object> tempList = new ArrayList<Object>();
 
         if (dartIsReady) {
@@ -432,13 +455,6 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
             String alert = intent.getStringExtra(JPushInterface.EXTRA_ALERT);
             Map<String, Object> extras = getNotificationExtras(intent);
             JPushPlugin.transmitNotificationOpen(title, alert, extras);
-
-            Intent launch = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
-            if (launch != null) {
-                launch.addCategory(Intent.CATEGORY_LAUNCHER);
-                launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                context.startActivity(launch);
-            }
         }
 
         private void handlingNotificationReceive(Context context, Intent intent) {
@@ -470,7 +486,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
     static void transmitMessageReceive(String message, Map<String, Object> extras) {
         Log.d(TAG, "transmitMessageReceive " + "message=" + message + "extras=" + extras);
 
-        if (instance == null) {
+        if (instance == null||instance.channel==null) {
+            Log.d("JPushPlugin", "the instance is null");
             return;
         }
         Map<String, Object> msg = new HashMap<>();
@@ -489,7 +506,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         notification.put("extras", extras);
         JPushPlugin.openNotificationCache.add(notification);
 
-        if (instance == null) {
+        if (instance == null||instance.channel==null) {
             Log.d("JPushPlugin", "the instance is null");
             return;
         }
@@ -504,8 +521,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
 
     public static void onNotifyMessageUnShow( NotificationMessage notificationMessage) {
         Log.e(TAG,"[onNotifyMessageUnShow] message:"+notificationMessage);
-        if (instance == null) {
-            Log.d(TAG, "the instance is null");
+        if (instance == null||instance.channel==null) {
+            Log.d("JPushPlugin", "the instance is null");
             return;
         }
         Map<String, Object> notification= new HashMap<>();
@@ -513,6 +530,46 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         notification.put("alert", notificationMessage.notificationContent);
         notification.put("extras", getExtras(notificationMessage));
         JPushPlugin.instance.channel.invokeMethod("onNotifyMessageUnShow", notification);
+    }
+    public static void onConnected( boolean isConnected) {
+        Log.e(TAG,"[onConnected] :"+isConnected);
+        if (instance == null||instance.channel==null) {
+            Log.d("JPushPlugin", "the instance is null");
+            return;
+        }
+        Map<String, Object> results= new HashMap<>();
+        results.put("result", isConnected);
+        JPushPlugin.instance.channel.invokeMethod("onConnected", results);
+    }
+    public static void onInAppMessageShow( NotificationMessage notificationMessage) {
+        Log.e(TAG,"[onInAppMessageShow] :"+notificationMessage);
+        if (instance == null||instance.channel==null) {
+            Log.d("JPushPlugin", "the instance is null");
+            return;
+        }
+        Map<String, Object> notification= new HashMap<>();
+        notification.put("title", notificationMessage.inAppMsgTitle);
+        notification.put("alert", notificationMessage.inAppMsgContentBody);
+        notification.put("messageId", notificationMessage.msgId);
+        notification.put("inAppShowTarget",  notificationMessage.inAppExtras);
+        notification.put("inAppClickAction",  notificationMessage.inAppClickAction);
+        notification.put("inAppExtras", notificationMessage.inAppExtras);
+        JPushPlugin.instance.channel.invokeMethod("onInAppMessageShow", notification);
+    }
+    public static void onInAppMessageClick( NotificationMessage notificationMessage) {
+        Log.e(TAG,"[onInAppMessageClick] :"+notificationMessage);
+        if (instance == null||instance.channel==null) {
+            Log.d("JPushPlugin", "the instance is null");
+            return;
+        }
+        Map<String, Object> notification= new HashMap<>();
+        notification.put("title", notificationMessage.inAppMsgTitle);
+        notification.put("alert", notificationMessage.inAppMsgContentBody);
+        notification.put("messageId", notificationMessage.msgId);
+        notification.put("inAppShowTarget",  notificationMessage.inAppExtras);
+        notification.put("inAppClickAction",  notificationMessage.inAppClickAction);
+        notification.put("inAppExtras", notificationMessage.inAppExtras);
+        JPushPlugin.instance.channel.invokeMethod("onInAppMessageClick", notification);
     }
 
 
@@ -552,7 +609,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
     static void transmitNotificationReceive(String title, String alert, Map<String, Object> extras) {
         Log.d(TAG, "transmitNotificationReceive " + "title=" + title + "alert=" + alert + "extras=" + extras);
 
-        if (instance == null) {
+        if (instance == null||instance.channel==null) {
+            Log.d("JPushPlugin", "the instance is null");
             return;
         }
 

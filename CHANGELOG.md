@@ -1,3 +1,36 @@
+## 2.4.2 
+开放 onConnected 回调
+## 2.4.1
++ 升级：升级 Android JPush 4.9.0
+       升级 Android JCore 4.1.0
+## 2.4.0
++ 升级：升级 Android JPush 4.8.4
+## 2.3.9
++ 升级：升级 Android JPush 4.8.3
+       升级 Android JCore 3.3.6
+## 2.3.8
++ 新增：testCountryCode API
+## 2.3.7
++ 升级：升级 Android JPush 4.8.1
+       升级 Android JCore 3.3.2
+       升级 IOS JPush 4.8.1
+       升级 IOS JCore 3.2.5
+## 2.3.6
++ 新增：修复崩溃问题
+## 2.3.5
++ 新增：iOS新增getAlias接口实现
+## 2.3.4
++ 升级：升级 Android JPush 4.7.2
+       升级 Android JCore 3.3.0
+## 2.3.3
++ 升级：升级 Android JPush 4.7.0
+## 2.3.2
++ 新增：修复setAuth()方法问题
+## 2.3.1
++ 新增：iOS对外暴露setAuth()方法
+## 2.3.0
++ 新增：对外暴露setAuth()方法
+  修复：点开通知会默认跳转到主页问题
 ## 2.2.9
 + 升级：升级 Android JPush 4.6.6
 ## 2.2.8

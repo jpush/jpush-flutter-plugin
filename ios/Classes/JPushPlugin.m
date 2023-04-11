@@ -4,6 +4,7 @@
 #endif
 
 #import <JPush/JPUSHService.h>
+#import <JCore/JGInforCollectionAuth.h>
 
 #define JPLog(fmt, ...) NSLog((@"| JPUSH | Flutter | iOS | " fmt), ##__VA_ARGS__)
 
@@ -141,6 +142,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [self setAlias:call result:result];
     } else if([@"deleteAlias" isEqualToString:call.method]) {
         [self deleteAlias:call result:result];
+    } else if([@"getAlias" isEqualToString:call.method]) {
+        [self getAlias:call result:result];
     } else if([@"setBadge" isEqualToString:call.method]) {
         [self setBadge:call result:result];
     } else if([@"stopPush" isEqualToString:call.method]) {
@@ -162,6 +165,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [self isNotificationEnabled:call result:result];
     } else if([@"openSettingsForNotification"isEqualToString:call.method]) {
         [self openSettingsForNotification];
+    } else if ([@"setAuth" isEqualToString:call.method]) {
+        [self setAuth:call result:result];
     } else{
         result(FlutterMethodNotImplemented);
     }
@@ -315,6 +320,18 @@ static NSMutableArray<FlutterResult>* getRidResults;
     } seq: 0];
 }
 
+- (void)getAlias:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"getAlias:%@",call.arguments);
+    [JPUSHService getAlias:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
+        if (iResCode == 0) {
+            result(@{@"alias": iAlias ?: @""});
+        }else {
+            NSError *error = [[NSError alloc] initWithDomain:@"JPush.Flutter" code:iResCode userInfo:nil];
+            result([error flutterError]);
+        }
+    } seq: 0];
+}
+
 - (void)setBadge:(FlutterMethodCall*)call result:(FlutterResult)result {
     JPLog(@"setBadge:%@",call.arguments);
     NSInteger badge = [call.arguments[@"badge"] integerValue];
@@ -417,8 +434,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
         content.userInfo = params[@"extra"];
     }
     
-    if (params[@"sound"] && ![params[@"sound"] isEqualToString:@"<null>"]) {
-        content.sound = params[@"sound"];
+    if (params[@"soundName"] && ![params[@"soundName"] isEqualToString:@"<null>"]) {
+        content.sound = params[@"soundName"];
     }
     
     JPushNotificationTrigger *trigger = [[JPushNotificationTrigger alloc] init];
@@ -477,6 +494,15 @@ static NSMutableArray<FlutterResult>* getRidResults;
     [JPUSHService openSettingsForNotification:^(BOOL success) {
         JPLog(@"openSettingsForNotification: %@",@(success));
     }];
+}
+
+- (void)setAuth:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"setAuth:%@",call.arguments);
+    BOOL enable = [call.arguments[@"enable"] boolValue];
+    [JGInforCollectionAuth JCollectionAuth:^(JGInforCollectionAuthItems * _Nonnull authInfo) {
+        authInfo.isAuth = enable;
+    }];
+    
 }
 
 
