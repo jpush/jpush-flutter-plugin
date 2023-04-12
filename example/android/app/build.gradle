@@ -38,7 +38,7 @@ android {
 
 //        applicationId "com.jiguang.jpushexample"
 
-        applicationId "com.shikk.testJpush" //JPush 上注册的包名.
+        applicationId "cn.jiguang.junion.jpushtestdemo" //JPush 上注册的包名.
 
         minSdkVersion 17
         targetSdkVersion 28
@@ -56,7 +56,7 @@ android {
 
         manifestPlaceholders = [
                 JPUSH_PKGNAME : applicationId,
-                JPUSH_APPKEY : "31c7c1b2cf59c1d42895a782", //JPush 上注册的包名对应的 Appkey.
+                JPUSH_APPKEY : "89bf63bb0f6d2571d903dd63", //JPush 上注册的包名对应的 Appkey.
                 JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
         ]
     }

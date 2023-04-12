@@ -50,7 +50,7 @@ android: {
 ### 使用
 
 ```dart
-import 'package:jpush_flutter/jpush_flutter.dart';
+import 'package:jpush_google_flutter/jpush_google_flutter.dart';
 ```
 
 ### APIs
