@@ -25,7 +25,10 @@ class JPush {
   EventHandler? _onOpenNotification;
   EventHandler? _onReceiveMessage;
   EventHandler? _onReceiveNotificationAuthorization;
-
+  EventHandler? _onNotifyMessageUnShow;
+  EventHandler? _onConnected;
+  EventHandler? _onInAppMessageClick;
+  EventHandler? _onInAppMessageShow;
   void setup({
     String appKey = '',
     bool production = false,
@@ -42,8 +45,19 @@ class JPush {
     });
   }
 
+  //APP活跃在前台时是否展示通知
+  void setUnShowAtTheForeground({bool unShow = false}) {
+    print(flutter_log + "setUnShowAtTheForeground:");
+    _channel.invokeMethod('setUnShowAtTheForeground', {'UnShow': unShow});
+  }
+
   void setWakeEnable({bool enable = false}) {
     _channel.invokeMethod('setWakeEnable', {'enable': enable});
+  }
+
+  void setAuth({bool enable = true}) {
+    print(flutter_log + "setAuth:");
+    _channel.invokeMethod('setAuth', {'enable': enable});
   }
 
   ///
@@ -54,6 +68,10 @@ class JPush {
     EventHandler? onOpenNotification,
     EventHandler? onReceiveMessage,
     EventHandler? onReceiveNotificationAuthorization,
+    EventHandler? onNotifyMessageUnShow,
+    EventHandler? onConnected,
+    EventHandler? onInAppMessageClick,
+    EventHandler? onInAppMessageShow,
   }) {
     print(flutter_log + "addEventHandler:");
 
@@ -61,6 +79,10 @@ class JPush {
     _onOpenNotification = onOpenNotification;
     _onReceiveMessage = onReceiveMessage;
     _onReceiveNotificationAuthorization = onReceiveNotificationAuthorization;
+    _onNotifyMessageUnShow = onNotifyMessageUnShow;
+    _onConnected = onConnected;
+    _onInAppMessageClick = onInAppMessageClick;
+    _onInAppMessageShow = onInAppMessageShow;
     _channel.setMethodCallHandler(_handleMethod);
   }
 
@@ -77,6 +99,14 @@ class JPush {
       case "onReceiveNotificationAuthorization":
         return _onReceiveNotificationAuthorization!(
             call.arguments.cast<String, dynamic>());
+      case "onNotifyMessageUnShow":
+        return _onNotifyMessageUnShow!(call.arguments.cast<String, dynamic>());
+      case "onConnected":
+        return _onConnected!(call.arguments.cast<String, dynamic>());
+      case "onInAppMessageClick":
+        return _onInAppMessageClick!(call.arguments.cast<String, dynamic>());
+      case "onInAppMessageShow":
+        return _onInAppMessageShow!(call.arguments.cast<String, dynamic>());
       default:
         throw new UnsupportedError("Unrecognized Event");
     }
@@ -172,6 +202,19 @@ class JPush {
   }
 
   ///
+  /// 获取所有当前绑定的 alias
+  ///
+  /// @param {Function} success = ({"alias":String}) => {  }
+  /// @param {Function} fail = ({"errorCode":int}) => {  }
+  ///
+  Future<Map<dynamic, dynamic>> getAlias() async {
+    print(flutter_log + "getAlias:");
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('getAlias');
+    return result;
+  }
+
+  ///
   /// 重置 alias.
   ///
   /// @param {String} alias
@@ -185,6 +228,11 @@ class JPush {
     final Map<dynamic, dynamic> result =
         await _channel.invokeMethod('setAlias', alias);
     return result;
+  }
+
+  void testCountryCode(String code) {
+    print(flutter_log + "testCountryCode:" + code);
+    _channel.invokeMethod('testCountryCode', code);
   }
 
   ///

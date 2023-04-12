@@ -16,11 +16,54 @@ import java.util.Set;
 
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.JPushMessage;
+import cn.jpush.android.api.NotificationMessage;
 import cn.jpush.android.service.JPushMessageReceiver;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class JPushEventReceiver extends JPushMessageReceiver {
 
+    @Override
+    public void onNotifyMessageUnShow(Context context,final NotificationMessage notificationMessage) {
+        super.onNotifyMessageUnShow(context,notificationMessage);
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                JPushPlugin.onNotifyMessageUnShow(notificationMessage);
+            }
+        });
+    }
+    @Override
+    public void onConnected(Context context,final boolean isConnected) {
+        //连接状态
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                JPushPlugin.onConnected(isConnected);
+            }
+        });
+    }
+
+    @Override
+    public void onInAppMessageShow(Context context,final NotificationMessage message) {
+        Log.i("JPushPlugin", "[onInAppMessageShow], " + message.toString());
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                JPushPlugin.onInAppMessageShow(message);
+            }
+        });
+    }
+
+    @Override
+    public void onInAppMessageClick(Context context,final NotificationMessage message) {
+        Log.i("JPushPlugin", "[onInAppMessageClick], " + message.toString());
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                JPushPlugin.onInAppMessageClick(message);
+            }
+        });
+    }
     @Override
     public void onTagOperatorResult(Context context, final JPushMessage jPushMessage) {
         super.onTagOperatorResult(context, jPushMessage);
