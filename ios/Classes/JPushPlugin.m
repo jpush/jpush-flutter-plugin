@@ -23,7 +23,7 @@
 
 
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
-@interface JPushPlugin ()<JPUSHRegisterDelegate>
+@interface JPushPlugin ()<JPUSHRegisterDelegate,JPUSHInAppMessageDelegate>
 //在前台时是否展示通知
 @property(assign, nonatomic) BOOL unShow;
 @end
@@ -167,6 +167,10 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [self openSettingsForNotification];
     } else if ([@"setAuth" isEqualToString:call.method]) {
         [self setAuth:call result:result];
+    } else if ([@"pageEnterTo" isEqualToString:call.method]) {
+        [self pageEnterTo:call];
+    } else if ([@"pageLeave" isEqualToString:call.method]) {
+        [self pageLeave:call];
     } else{
         result(FlutterMethodNotImplemented);
     }
@@ -184,6 +188,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
     } else {
         [JPUSHService setLogOFF];
     }
+    
+    [JPUSHService setInAppMessageDelegate:self];
     
     [JPUSHService setupWithOption:_completeLaunchNotification
                            appKey:arguments[@"appKey"]
@@ -505,6 +511,17 @@ static NSMutableArray<FlutterResult>* getRidResults;
     
 }
 
+- (void)pageEnterTo:(FlutterMethodCall*)call {
+    JPLog(@"pageEnterTo:%@",call.arguments);
+    NSString *pageName = call.arguments;
+    [JPUSHService pageEnterTo:pageName];
+}
+
+- (void)pageLeave:(FlutterMethodCall*)call {
+    JPLog(@"pageLeave:%@",call.arguments);
+    NSString *pageName = call.arguments;
+    [JPUSHService pageLeave:pageName];
+}
 
 
 - (void)dealloc {
@@ -730,5 +747,28 @@ static NSMutableArray<FlutterResult>* getRidResults;
     formatDic[@"extras"] = extras;
     return formatDic;
 }
+
+
+#pragma mark - 应用内消息回调
+- (void)jPushInAppMessageDidShow:(JPushInAppMessage *)inAppMessage {
+    [_channel invokeMethod:@"onInAppMessageShow" arguments: [self convertInappMsg:inAppMessage]];
+}
+
+- (void)jPushInAppMessageDidClick:(JPushInAppMessage *)inAppMessage {
+    [_channel invokeMethod:@"onInAppMessageClick" arguments: [self convertInappMsg:inAppMessage]];
+}
+
+- (NSDictionary *)convertInappMsg:(JPushInAppMessage *)inAppMessage {
+    NSDictionary *result = @{
+        @"mesageId": inAppMessage.mesageId ?: @"",    // 消息id
+        @"title": inAppMessage.title ?:@"",       // 标题
+        @"content": inAppMessage.content ?: @"",    // 内容
+        @"target": inAppMessage.target ?: @[],      // 目标页面
+        @"clickAction": inAppMessage.clickAction ?: @"", // 跳转地址
+        @"extras": inAppMessage.extras ?: @{} // 附加字段
+    };
+    return result;
+}
+
 
 @end
