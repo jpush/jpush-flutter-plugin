@@ -91,6 +91,9 @@ class _MyAppState extends State<MyApp> {
       });
     });
 
+    // iOS要是使用应用内消息，请在页面进入离开的时候配置pageEnterTo 和  pageLeave 函数，参数为页面名。
+    jpush.pageEnterTo("HomePage"); // 在离开页面的时候请调用 jpush.pageLeave("HomePage");
+
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
@@ -374,10 +377,12 @@ class CustomButton extends StatelessWidget {
     return new TextButton(
       onPressed: onPressed,
       child: new Text("$title"),
-      style: new ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.white),
+      style: new ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.white),
         overlayColor: MaterialStateProperty.all(Color(0xff888888)),
         backgroundColor: MaterialStateProperty.all(Color(0xff585858)),
-        padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(10, 5, 10, 5)), ),
+        padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(10, 5, 10, 5)),
+      ),
     );
   }
 }
