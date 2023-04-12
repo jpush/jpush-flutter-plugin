@@ -55,6 +55,13 @@ class JPush {
     _channel.invokeMethod('setWakeEnable', {'enable': enable});
   }
 
+  void enableAutoWakeup({bool enable = false}) {
+    if (_platform.isIOS) {
+      return;
+    }
+    _channel.invokeMethod('enableAutoWakeup', {'enable': enable});
+  }
+
   void setAuth({bool enable = true}) {
     print(flutter_log + "setAuth:");
     _channel.invokeMethod('setAuth', {'enable': enable});
