@@ -3,367 +3,367 @@
   "packages": [
     {
       "name": "_fe_analyzer_shared",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/_fe_analyzer_shared-19.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/_fe_analyzer_shared-19.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "analyzer",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/analyzer-1.3.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/analyzer-1.3.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "args",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/args-2.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/args-2.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "async",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/async-2.5.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/async-2.5.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "boolean_selector",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/boolean_selector-2.1.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/boolean_selector-2.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "build",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/build-2.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/build-2.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "built_collection",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/built_collection-5.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/built_collection-5.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "built_value",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/built_value-8.0.4",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/built_value-8.0.4",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "characters",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/characters-1.1.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/characters-1.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "charcode",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/charcode-1.2.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/charcode-1.2.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "cli_util",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/cli_util-0.3.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/cli_util-0.3.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "code_builder",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/code_builder-4.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/code_builder-4.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "collection",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/collection-1.15.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/collection-1.15.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "convert",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/convert-3.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/convert-3.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "coverage",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/coverage-1.0.2",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/coverage-1.0.2",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "crypto",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/crypto-3.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/crypto-3.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "dart_style",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/dart_style-1.3.14",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/dart_style-1.3.14",
       "packageUri": "lib/",
       "languageVersion": "2.11"
     },
     {
       "name": "file",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/file-6.1.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/file-6.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "fixnum",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/fixnum-1.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/fixnum-1.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "flutter",
-      "rootUri": "file:///D:/Workspace/android/flutter/packages/flutter",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/packages/flutter",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "frontend_server_client",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/frontend_server_client-2.1.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/frontend_server_client-2.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "glob",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/glob-2.0.1",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/glob-2.0.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "http_multi_server",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/http_multi_server-3.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/http_multi_server-3.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "http_parser",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/http_parser-4.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/http_parser-4.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "io",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/io-1.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/io-1.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "js",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/js-0.6.3",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/js-0.6.3",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "logging",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/logging-1.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/logging-1.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "matcher",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/matcher-0.12.10",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/matcher-0.12.10",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "meta",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/meta-1.3.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/meta-1.7.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "mime",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/mime-1.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/mime-1.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "mockito",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/mockito-5.0.8",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/mockito-5.0.8",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "node_preamble",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/node_preamble-2.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/node_preamble-2.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "package_config",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/package_config-2.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/package_config-2.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "path",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/path-1.8.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/path-1.8.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "pedantic",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/pedantic-1.11.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/pedantic-1.11.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "platform",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/platform-3.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/platform-3.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "pool",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/pool-1.5.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/pool-1.5.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "pub_semver",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/pub_semver-2.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/pub_semver-2.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "shelf",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/shelf-1.1.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/shelf-1.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "shelf_packages_handler",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/shelf_packages_handler-3.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/shelf_packages_handler-3.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "shelf_static",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/shelf_static-1.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/shelf_static-1.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "shelf_web_socket",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/shelf_web_socket-1.0.1",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/shelf_web_socket-1.0.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "sky_engine",
-      "rootUri": "file:///D:/Workspace/android/flutter/bin/cache/pkg/sky_engine",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "source_gen",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/source_gen-0.9.10+4",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/source_gen-0.9.10+4",
       "packageUri": "lib/",
       "languageVersion": "2.11"
     },
     {
       "name": "source_map_stack_trace",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/source_map_stack_trace-2.1.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/source_map_stack_trace-2.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "source_maps",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/source_maps-0.10.10",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/source_maps-0.10.10",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "source_span",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/source_span-1.8.1",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/source_span-1.8.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "stack_trace",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/stack_trace-1.10.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/stack_trace-1.10.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "stream_channel",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/stream_channel-2.1.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/stream_channel-2.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "string_scanner",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/string_scanner-1.1.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/string_scanner-1.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "term_glyph",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/term_glyph-1.2.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/term_glyph-1.2.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "test",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/test-1.17.4",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/test-1.17.4",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "test_api",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/test_api-0.4.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/test_api-0.4.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "test_core",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/test_core-0.3.24",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/test_core-0.3.24",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "typed_data",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/typed_data-1.3.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/typed_data-1.3.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "vector_math",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/vector_math-2.1.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/vector_math-2.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "vm_service",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/vm_service-6.1.0+1",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/vm_service-6.1.0+1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "watcher",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/watcher-1.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/watcher-1.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "web_socket_channel",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/web_socket_channel-2.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/web_socket_channel-2.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "webkit_inspection_protocol",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/webkit_inspection_protocol-1.0.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/webkit_inspection_protocol-1.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "yaml",
-      "rootUri": "file:///D:/Workspace/android/flutter/.pub-cache/hosted/pub.flutter-io.cn/yaml-3.1.0",
+      "rootUri": "file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/yaml-3.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -374,7 +374,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2021-05-25T03:48:37.762663Z",
+  "generated": "2023-04-12T10:54:05.052292Z",
   "generator": "pub",
-  "generatorVersion": "2.13.0"
+  "generatorVersion": "2.14.3"
 }
