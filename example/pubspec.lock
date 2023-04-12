@@ -28,11 +28,7 @@ packages:
       name: async
       url: "https://pub.flutter-io.cn"
     source: hosted
-<<<<<<< HEAD
     version: "2.8.1"
-=======
-    version: "2.8.2"
->>>>>>> c0abfe8 (升级SDK到jcore4.2.0,jpush5.0.0)
   boolean_selector:
     dependency: transitive
     description:
@@ -46,7 +42,7 @@ packages:
       name: characters
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.2.0"
+    version: "1.1.0"
   charcode:
     dependency: transitive
     description:
@@ -168,7 +164,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "2.4.2"
+    version: "2.4.3"
   js:
     dependency: transitive
     description:
@@ -189,7 +185,7 @@ packages:
       name: matcher
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.12.11"
+    version: "0.12.10"
   meta:
     dependency: transitive
     description:
@@ -348,33 +344,21 @@ packages:
       name: test
       url: "https://pub.flutter-io.cn"
     source: hosted
-<<<<<<< HEAD
     version: "1.17.10"
-=======
-    version: "1.17.12"
->>>>>>> c0abfe8 (升级SDK到jcore4.2.0,jpush5.0.0)
   test_api:
     dependency: transitive
     description:
       name: test_api
       url: "https://pub.flutter-io.cn"
     source: hosted
-<<<<<<< HEAD
     version: "0.4.2"
-=======
-    version: "0.4.3"
->>>>>>> c0abfe8 (升级SDK到jcore4.2.0,jpush5.0.0)
   test_core:
     dependency: transitive
     description:
       name: test_core
       url: "https://pub.flutter-io.cn"
     source: hosted
-<<<<<<< HEAD
     version: "0.4.0"
-=======
-    version: "0.4.2"
->>>>>>> c0abfe8 (升级SDK到jcore4.2.0,jpush5.0.0)
   typed_data:
     dependency: transitive
     description:
@@ -388,7 +372,7 @@ packages:
       name: vector_math
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.1.1"
+    version: "2.1.0"
   vm_service:
     dependency: transitive
     description:
@@ -425,5 +409,5 @@ packages:
     source: hosted
     version: "3.1.0"
 sdks:
-  dart: ">=2.14.0 <3.0.0"
+  dart: ">=2.12.0 <3.0.0"
   flutter: ">=1.20.0"

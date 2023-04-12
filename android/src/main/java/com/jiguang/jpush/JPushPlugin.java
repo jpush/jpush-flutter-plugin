@@ -167,7 +167,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         if (enable == null) {
             enable = false;
         }
-        JCollectAuth.enableAutoWakeup(context,enable);
+        JCollectionAuth.enableAutoWakeup(context,enable);
     }
 
     // 主线程再返回数据
