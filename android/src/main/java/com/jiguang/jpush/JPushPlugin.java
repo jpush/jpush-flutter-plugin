@@ -444,8 +444,9 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
             Log.d(TAG, "handlingMessageReceive " + intent.getAction());
 
             String msg = intent.getStringExtra(JPushInterface.EXTRA_MESSAGE);
+            String title = intent.getStringExtra(JPushInterface.EXTRA_TITLE);
             Map<String, Object> extras = getNotificationExtras(intent);
-            JPushPlugin.transmitMessageReceive(msg, extras);
+            JPushPlugin.transmitMessageReceive(msg, title,extras);
         }
 
         private void handlingNotificationOpen(Context context, Intent intent) {
@@ -483,7 +484,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
     }
 
 
-    static void transmitMessageReceive(String message, Map<String, Object> extras) {
+    static void transmitMessageReceive(String message,String title, Map<String, Object> extras) {
         Log.d(TAG, "transmitMessageReceive " + "message=" + message + "extras=" + extras);
 
         if (instance == null||instance.channel==null) {
@@ -492,6 +493,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         }
         Map<String, Object> msg = new HashMap<>();
         msg.put("message", message);
+        msg.put("alert", title);
         msg.put("extras", extras);
 
         JPushPlugin.instance.channel.invokeMethod("onReceiveMessage", msg);
