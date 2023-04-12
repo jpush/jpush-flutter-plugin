@@ -9,7 +9,7 @@
   
 //github  集成
 dependencies:
-  jpush_flutter:
+  jpush_google_flutter:
     git:
       url: git://github.com/jpush/jpush-flutter-plugin.git
       ref: dev-2.x-google
@@ -50,7 +50,7 @@ android: {
 ### 使用
 
 ```dart
-import 'package:jpush_flutter/jpush_flutter.dart';
+import 'package:jpush_google_flutter/jpush_google_flutter.dart';
 ```
 
 ### APIs

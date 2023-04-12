@@ -1,6 +1,6 @@
 #include "AppDelegate.h"
 #include "GeneratedPluginRegistrant.h"
-#include <jpush_flutter/JPushPlugin.h>
+#include <jpush_google_flutter/JPushPlugin.h>
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application
