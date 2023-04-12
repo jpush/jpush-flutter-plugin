@@ -16,7 +16,7 @@ dependencies:
       
 // pub 集成
 dependencies:
-  jpush_google_flutter: 1.0.0
+  jpush_google_flutter: 1.0.1
 ```
 
 ### 配置
