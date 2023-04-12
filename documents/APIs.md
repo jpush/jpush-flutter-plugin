@@ -21,6 +21,8 @@
 - [applyPushAuthority](#applypushauthority)
 - [setBadge](#setbadge)
 - [getLaunchAppNotification](#getlaunchappnotification)
+- [pageEnterTo](#pageEnterTo)
+- [pageLeave](#pageLeave)
 
 **注意：addEventHandler 方法建议放到 setup 之前，其他方法需要在 setup 方法之后调用，**
 
@@ -235,5 +237,23 @@ jpush.setBadge(66).then((map) {});
 ```dart
 JPush jpush = new JPush();
 jpush.getLaunchAppNotification().then((map) {});
+```
+
+### pageEnterTo
+
+进入页面，应用内消息功能需要配置该接口，请与pageLeave函数配套使用
+
+```dart
+JPush jpush = new JPush();
+jpush.pageEnterTo("页面名");
+```
+
+### pageLeave
+
+离开页面，应用内消息功能需要配置该接口，请与pageEnterTo函数配套使用
+
+```dart
+JPush jpush = new JPush();
+jpush.pageLeave("页面名");
 ```
 

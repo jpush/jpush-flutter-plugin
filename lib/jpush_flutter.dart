@@ -134,6 +134,26 @@ class JPush {
     _channel.invokeMethod('applyPushAuthority', iosSettings.toMap());
   }
 
+  // iOS Only
+  // 进入页面， pageName：页面名  请与pageLeave配套使用
+  void pageEnterTo(String pageName) {
+    print(flutter_log + "pageEnterTo:" + pageName);
+    if (!_platform.isIOS) {
+      return;
+    }
+    _channel.invokeMethod('pageEnterTo', pageName);
+  }
+
+  // iOS Only
+  // 离开页面，pageName：页面名， 请与pageEnterTo配套使用
+  void pageLeave(String pageName) {
+    print(flutter_log + "pageLeave:" + pageName);
+    if (!_platform.isIOS) {
+      return;
+    }
+    _channel.invokeMethod('pageLeave', pageName);
+  }
+
   ///
   /// 设置 Tag （会覆盖之前设置的 tags）
   ///
