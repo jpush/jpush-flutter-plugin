@@ -1,3 +1,5 @@
+## 2.4.4
++ 修复：优化代码结构
 ## 2.4.3
 + 升级：升级 Android+IOS JPush 5.0.0
        升级 Android+IOS JCore 4.2.0
