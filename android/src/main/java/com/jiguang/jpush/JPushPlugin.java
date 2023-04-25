@@ -53,7 +53,10 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
 
     @Override
     public void onDetachedFromEngine(FlutterPluginBinding binding) {
-        JPushHelper.getInstance().getChannel().setMethodCallHandler(null);
+        MethodChannel  channel =JPushHelper.getInstance().getChannel();
+        if(channel!=null){
+            channel.setMethodCallHandler(null);
+        }
         JPushHelper.getInstance().setDartIsReady(false);
     }
 
