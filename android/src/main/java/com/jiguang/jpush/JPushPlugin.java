@@ -112,9 +112,23 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
             testCountryCode(call, result);
         }else if (call.method.equals("enableAutoWakeup")) {
             enableAutoWakeup(call, result);
+        } else if (call.method.equals("setLbsEnable")) {
+            setLbsEnable(call, result);
         } else {
             result.notImplemented();
         }
+    }
+
+    private void setLbsEnable(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) {
+            return;
+        }
+        Boolean enable = (Boolean) map.get("enable");
+        if (enable == null) {
+            enable = true;
+        }
+        JPushInterface.setLbsEnable(context,enable);
     }
 
     private void setAuth(MethodCall call, Result result){
