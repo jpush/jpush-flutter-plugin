@@ -444,6 +444,11 @@ static NSMutableArray<FlutterResult>* getRidResults;
         content.sound = params[@"soundName"];
     }
     
+    if (@available(iOS 15.0, *)) {
+      content.interruptionLevel = UNNotificationInterruptionLevelActive;
+      content.relevanceScore = 1;
+    }
+    
     JPushNotificationTrigger *trigger = [[JPushNotificationTrigger alloc] init];
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 10.0) {
         if (params[@"fireTime"]) {
