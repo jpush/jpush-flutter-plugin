@@ -163,7 +163,10 @@ public class JPushHelper {
     }
     public  void onConnected( boolean isConnected) {
         Log.e(TAG,"[onConnected] :"+isConnected);
-
+        if (channel==null) {
+            Log.d("JPushPlugin", "the channel is null");
+            return;
+        }
         Map<String, Object> results= new HashMap<>();
         results.put("result", isConnected);
        channel.invokeMethod("onConnected", results);
