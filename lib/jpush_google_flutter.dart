@@ -67,6 +67,14 @@ class JPush {
     _channel.invokeMethod('setAuth', {'enable': enable});
   }
 
+  void setLbsEnable({bool enable = true}) {
+    if (_platform.isIOS) {
+      return;
+    }
+    print(flutter_log + "setLbsEnable:");
+    _channel.invokeMethod('setLbsEnable', {'enable': enable});
+  }
+
   ///
   /// 初始化 JPush 必须先初始化才能执行其他操作(比如接收事件传递)
   ///

@@ -1,3 +1,6 @@
+## 1.0.2
+开放setLbsEnable接口
+升级JPush 5.0.4+JCore 4.2.4
 ## 1.0.1
 
 新增IOS 更新
