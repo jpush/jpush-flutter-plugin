@@ -42,7 +42,7 @@ android: {
         JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
     ]
   }    
-
+```
 ##### iOS:
 
 - 在 xcode8 之后需要点开推送选项： TARGETS -> Capabilities -> Push Notification 设为 on 状态
