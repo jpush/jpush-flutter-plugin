@@ -1,8 +1,12 @@
 package com.jiguang.jpush;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -114,11 +118,37 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
             enableAutoWakeup(call, result);
         } else if (call.method.equals("setLbsEnable")) {
             setLbsEnable(call, result);
+        }else if (call.method.equals("setChannelAndSound")) {
+            setChannelAndSound(call, result);
         } else {
             result.notImplemented();
         }
     }
-
+    public void setChannelAndSound(MethodCall call, Result result) {
+        HashMap<String, Object> readableMap = call.arguments();
+        if (readableMap == null) {
+            return;
+        }
+        String channel = (String)readableMap.get("channel");
+        String channelId = (String)readableMap.get("channel_id");
+        String sound = (String)readableMap.get("sound");
+        try {
+            NotificationManager manager= (NotificationManager) context.getSystemService("notification");
+            if(Build.VERSION.SDK_INT<26){
+                return;
+            }
+            if(TextUtils.isEmpty(channel)||TextUtils.isEmpty(channelId)){
+                return;
+            }
+            NotificationChannel channel1=new NotificationChannel(channelId,channel, NotificationManager.IMPORTANCE_HIGH);
+            if(!TextUtils.isEmpty(sound)){
+                channel1.setSound(Uri.parse("android.resource://"+context.getPackageName()+"/raw/"+sound),null);
+            }
+            manager.createNotificationChannel(channel1);
+            JPushInterface.setChannel(context,channel);
+        }catch (Throwable throwable){
+        }
+    }
     private void setLbsEnable(MethodCall call, Result result) {
         HashMap<String, Object> map = call.arguments();
         if (map == null) {
