@@ -1,3 +1,5 @@
+## 1.0.3
+开放setChannelAndSound 
 ## 1.0.2
 开放setLbsEnable接口
 升级JPush 5.0.4+JCore 4.2.4
