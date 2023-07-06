@@ -140,13 +140,11 @@ public class JPushHelper {
             Log.d("JPushPlugin", "the channel is null");
             return;
         }
-
+        Log.d("JPushPlugin", "instance.dartIsReady ="+dartIsReady);
         if (dartIsReady) {
-            Log.d("JPushPlugin", "instance.dartIsReady is true");
             channel.invokeMethod("onOpenNotification", notification);
             openNotificationCache.remove(notification);
         }
-
     }
 
     public  void onNotifyMessageUnShow( NotificationMessage notificationMessage) {

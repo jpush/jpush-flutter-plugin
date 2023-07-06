@@ -45,6 +45,20 @@ class JPush {
     });
   }
 
+  void setChannelAndSound({
+    String channel = '',
+    String channelID = '',
+    String sound = '',
+  }) {
+    if (_platform.isIOS) {
+      return;
+    }
+    print(flutter_log + "setChannelAndSound:");
+
+    _channel.invokeMethod('setChannelAndSound',
+        {'channel': channel, 'channel_id': channelID, 'sound': sound});
+  }
+
   //APP活跃在前台时是否展示通知
   void setUnShowAtTheForeground({bool unShow = false}) {
     print(flutter_log + "setUnShowAtTheForeground:");
