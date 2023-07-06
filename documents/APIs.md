@@ -97,6 +97,27 @@ JPush jpush = new JPush();
 jpush.stopPush();
 ```
 
+
+####  setChannelAndSound
+动态配置 channel 、channel id 及sound，优先级比 AndroidManifest 里配置的高
+备注：channel、channel id为必须参数，否则接口调用失败。sound 可选
+
+#### 参数说明
+- Object
+
+|参数名称|参数类型|参数说明|
+|:-----:|:----:|:-----:|
+|channel|string|希望配置的 channel|
+|channel_id|string|希望配置的 channel id|
+|sound|string|希望配置的 sound(铃声名称，只有铃声名称即可，如AA.mp3,填写AA )|
+
+#### 示例
+```dart
+JPush jpush = new JPush();
+jpush.setChannelAndSound();
+```
+
+
 #### resumePush
 
 调用 stopPush 后，可以通过 resumePush 方法恢复推送。
