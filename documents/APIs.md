@@ -242,7 +242,7 @@ jpush.applyPushAuthority(new NotificationSettingsIOS(
 
 #### setBadge
 
-**iOS Only **
+**iOS Only**
 
 设置应用 badge 值，该方法还会同步 JPush 服务器的的 badge 值，JPush 服务器的 badge 值用于推送 badge 自动 +1 时会用到。
 
