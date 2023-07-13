@@ -1,3 +1,5 @@
+## 2.4.7
+开放requestRequiredPermission API 
 ## 2.4.6
 开放setChannelAndSound API 
 ## 2.4.5
