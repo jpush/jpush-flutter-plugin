@@ -1,5 +1,6 @@
 package com.jiguang.jpush;
 
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -29,6 +30,8 @@ import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.NotificationMessage;
 import cn.jpush.android.data.JPushLocalNotification;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -37,9 +40,10 @@ import io.flutter.plugin.common.MethodChannel.Result;
 /**
  * JPushPlugin
  */
-public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
+public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
     private static String TAG = "| JPUSH | Flutter | Android | ";
     private Context context;
+    private Activity mActivity;
     private int sequence;
     public JPushPlugin() {
         this.sequence = 0;
@@ -53,8 +57,26 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         JPushHelper.getInstance().setMethodChannel(channel);
         JPushHelper.getInstance().setContext(context);
     }
+    @Override
+    public void onAttachedToActivity(ActivityPluginBinding activityPluginBinding) {
+        if(activityPluginBinding!=null){
+            mActivity = activityPluginBinding.getActivity();
+        }
+    }
 
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
 
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(ActivityPluginBinding activityPluginBinding) {
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+
+    }
     @Override
     public void onDetachedFromEngine(FlutterPluginBinding binding) {
         MethodChannel  channel =JPushHelper.getInstance().getChannel();
@@ -120,9 +142,14 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
             setLbsEnable(call, result);
         }else if (call.method.equals("setChannelAndSound")) {
             setChannelAndSound(call, result);
+        }else if (call.method.equals("requestRequiredPermission")) {
+            requestRequiredPermission(call, result);
         } else {
             result.notImplemented();
         }
+    }
+    public void requestRequiredPermission(MethodCall call, Result result){
+        JPushInterface.requestRequiredPermission(mActivity);
     }
     public void setChannelAndSound(MethodCall call, Result result) {
         HashMap<String, Object> readableMap = call.arguments();

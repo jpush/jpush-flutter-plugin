@@ -398,6 +398,13 @@ class JPush {
   void openSettingsForNotification() {
     _channel.invokeMethod('openSettingsForNotification');
   }
+
+  void requestRequiredPermission() {
+    if (_platform.isIOS) {
+      return;
+    }
+    _channel.invokeMethod('requestRequiredPermission');
+  }
 }
 
 class NotificationSettingsIOS {
