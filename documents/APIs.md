@@ -4,6 +4,7 @@
 - [setup](#setup)
 - [getRegistrationID](#getregistrationid)
 - [stopPush](#stoppush)
+- [setChannelAndSound](#setChannelAndSound)
 - [resumePush](#resumepush)
 - [setAlias](#setalias)
 - [getAlias](#getAlias)
@@ -15,6 +16,7 @@
 - [getAllTags](getalltags)
 - [sendLocalNotification](#sendlocalnotification)
 - [clearAllNotifications](#clearallnotifications)
+
 
 [iOS Only]()
 
@@ -240,9 +242,9 @@ jpush.applyPushAuthority(new NotificationSettingsIOS(
       badge: true));
 ```
 
-#### setBadge
-
 **iOS Only**
+
+#### setBadge
 
 设置应用 badge 值，该方法还会同步 JPush 服务器的的 badge 值，JPush 服务器的 badge 值用于推送 badge 自动 +1 时会用到。
 
