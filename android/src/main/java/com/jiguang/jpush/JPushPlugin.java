@@ -171,7 +171,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler {
         List<Object> tempList = new ArrayList<Object>();
 
         if (dartIsReady) {
-            // try to shedule notifcation cache
+            // try to schedule notification cache
             List<Map<String, Object>> openNotificationCacheList = JPushPlugin.openNotificationCache;
             for (Map<String, Object> notification : openNotificationCacheList) {
                 JPushPlugin.instance.channel.invokeMethod("onOpenNotification", notification);
