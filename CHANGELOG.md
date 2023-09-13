@@ -1,3 +1,5 @@
+## 2.4.8
+修复不能清理本地通知问题
 ## 2.4.7
 开放requestRequiredPermission API 
 ## 2.4.6
