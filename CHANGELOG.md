@@ -1,3 +1,5 @@
+## 1.0.4
+开放clearLocalNotifications和requestRequiredPermission
 ## 1.0.3
 开放setChannelAndSound 
 ## 1.0.2
