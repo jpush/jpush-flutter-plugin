@@ -116,6 +116,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             resumePush(call, result);
         } else if (call.method.equals("clearAllNotifications")) {
             clearAllNotifications(call, result);
+        }else if (call.method.equals("clearLocalNotifications")) {
+            clearLocalNotifications(call, result);
         } else if (call.method.equals("clearNotification")) {
             clearNotification(call, result);
         } else if (call.method.equals("getLaunchAppNotification")) {
@@ -342,7 +344,10 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 
         JPushInterface.clearAllNotifications(context);
     }
-
+    public void clearLocalNotifications(MethodCall call, Result result) {
+        Log.d(TAG, "clearLocalNotifications: ");
+        JPushInterface.clearLocalNotifications(context);
+    }
     public void clearNotification(MethodCall call, Result result) {
         Log.d(TAG, "clearNotification: ");
         Object id = call.arguments;

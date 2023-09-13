@@ -337,7 +337,13 @@ class JPush {
 
     await _channel.invokeMethod('clearAllNotifications');
   }
-
+  Future clearLocalNotifications() async {
+    if (_platform.isIOS) {
+      return;
+    }
+    print(flutter_log + "clearLocalNotifications:");
+    await _channel.invokeMethod('clearLocalNotifications');
+  }
   ///
   /// 清空通知栏上某个通知
   /// @param notificationId 通知 id，即：LocalNotification id
