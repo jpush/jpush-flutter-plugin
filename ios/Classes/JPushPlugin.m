@@ -149,7 +149,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
     } else if([@"stopPush" isEqualToString:call.method]) {
         [self stopPush:call result:result];
     } else if([@"resumePush" isEqualToString:call.method]) {
-        JPLog(@"ios platform not support resume push.");
+        [self resumePush:call result:result];
         //[self applyPushAuthority:call result:result];
     } else if([@"clearAllNotifications" isEqualToString:call.method]) {
         [self clearAllNotifications:call result:result];
@@ -352,6 +352,12 @@ static NSMutableArray<FlutterResult>* getRidResults;
     JPLog(@"stopPush:");
     [[UIApplication sharedApplication] unregisterForRemoteNotifications];
 }
+
+- (void)resumePush:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"resumePush:");
+    [[UIApplication sharedApplication] registerForRemoteNotifications];
+}
+
 - (void)clearAllNotifications:(FlutterMethodCall*)call result:(FlutterResult)result {
     JPLog(@"clearAllNotifications:");
     
