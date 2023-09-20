@@ -203,7 +203,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     private void testCountryCode(MethodCall call, Result result){
         String code = call.arguments();
         Log.d(TAG,"testCountryCode code="+code);
-        JCoreInterface.testCountryCode(code);
+        JCoreInterface.testCountryCode(context,code);
     }
     private void setWakeEnable(MethodCall call, Result result) {
         HashMap<String, Object> map = call.arguments();

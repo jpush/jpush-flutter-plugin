@@ -162,7 +162,7 @@ packages:
       sha256: "2ec25704aba361659e10e3e5f5d672068d332fc8ac516421d483a11e5cbd061e"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.0.4"
+    version: "1.0.5"
   jpush_google_flutter:
     dependency: "direct dev"
     description:
