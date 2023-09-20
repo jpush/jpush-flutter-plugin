@@ -1,3 +1,5 @@
+## 1.0.5
+修复testCountryCode 报错
 ## 1.0.4
 开放clearLocalNotifications和requestRequiredPermission
 ## 1.0.3
