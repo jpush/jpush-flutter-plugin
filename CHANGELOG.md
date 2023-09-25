@@ -1,3 +1,5 @@
+## 1.0.6
+更新JPush 520和 JCore 440
 ## 1.0.5
 修复testCountryCode 报错
 ## 1.0.4
