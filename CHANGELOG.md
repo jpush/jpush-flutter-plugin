@@ -1,3 +1,5 @@
+## 2.5.0
+更新JCore 440 JPush 520
 ## 2.4.9
 修复testCountryCode报错问题
 ## 2.4.8
