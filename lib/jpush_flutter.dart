@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:platform/platform.dart';
+import 'dart:io' show Platform;
 
 typedef Future<dynamic> EventHandler(Map<String, dynamic> event);
 
@@ -11,15 +11,12 @@ class JPush {
   factory JPush() => _instance;
 
   final MethodChannel _channel;
-  final Platform _platform;
 
   @visibleForTesting
-  JPush.private(MethodChannel channel, Platform platform)
-      : _channel = channel,
-        _platform = platform;
+  JPush.private(MethodChannel channel) : _channel = channel;
 
   static final JPush _instance =
-      new JPush.private(const MethodChannel('jpush'), const LocalPlatform());
+      new JPush.private(const MethodChannel('jpush'));
 
   EventHandler? _onReceiveNotification;
   EventHandler? _onOpenNotification;
@@ -50,7 +47,7 @@ class JPush {
     String channelID = '',
     String sound = '',
   }) {
-    if (_platform.isIOS) {
+    if (Platform.isIOS) {
       return;
     }
     print(flutter_log + "setChannelAndSound:");
@@ -70,7 +67,7 @@ class JPush {
   }
 
   void enableAutoWakeup({bool enable = false}) {
-    if (_platform.isIOS) {
+    if (Platform.isIOS) {
       return;
     }
     _channel.invokeMethod('enableAutoWakeup', {'enable': enable});
@@ -82,7 +79,7 @@ class JPush {
   }
 
   void setLbsEnable({bool enable = true}) {
-    if (_platform.isIOS) {
+    if (Platform.isIOS) {
       return;
     }
     print(flutter_log + "setLbsEnable:");
@@ -149,7 +146,7 @@ class JPush {
       [NotificationSettingsIOS iosSettings = const NotificationSettingsIOS()]) {
     print(flutter_log + "applyPushAuthority:");
 
-    if (!_platform.isIOS) {
+    if (!Platform.isIOS) {
       return;
     }
 
@@ -160,7 +157,7 @@ class JPush {
   // 进入页面， pageName：页面名  请与pageLeave配套使用
   void pageEnterTo(String pageName) {
     print(flutter_log + "pageEnterTo:" + pageName);
-    if (!_platform.isIOS) {
+    if (!Platform.isIOS) {
       return;
     }
     _channel.invokeMethod('pageEnterTo', pageName);
@@ -170,7 +167,7 @@ class JPush {
   // 离开页面，pageName：页面名， 请与pageEnterTo配套使用
   void pageLeave(String pageName) {
     print(flutter_log + "pageLeave:" + pageName);
-    if (!_platform.isIOS) {
+    if (!Platform.isIOS) {
       return;
     }
     _channel.invokeMethod('pageLeave', pageName);
@@ -339,7 +336,7 @@ class JPush {
   }
 
   Future clearLocalNotifications() async {
-    if (_platform.isIOS) {
+    if (Platform.isIOS) {
       return;
     }
     print(flutter_log + "clearLocalNotifications:");
@@ -408,7 +405,7 @@ class JPush {
   }
 
   void requestRequiredPermission() {
-    if (_platform.isIOS) {
+    if (Platform.isIOS) {
       return;
     }
     _channel.invokeMethod('requestRequiredPermission');

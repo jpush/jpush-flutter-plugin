@@ -1,6 +1,6 @@
 [![QQ Group](https://img.shields.io/badge/QQ%20Group-862401307-red.svg)]()
 # JPush Flutter Plugin
-
+> flutter 3.0 请切换至 dev-3.x 分支。
 ### 安装
 
 在工程 pubspec.yaml 中加入 dependencies
@@ -12,11 +12,11 @@ dependencies:
   jpush_flutter:
     git:
       url: git://github.com/jpush/jpush-flutter-plugin.git
-      ref: dev-2.x
+      ref: dev-3.x
       
 // pub 集成
 dependencies:
-  jpush_flutter: 2.4.9
+  jpush_flutter: 3.0.0
 ```
 
 ### 配置
