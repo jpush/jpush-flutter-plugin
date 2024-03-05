@@ -35,5 +35,5 @@ android {
 }
 
 dependencies {
-    implementation 'cn.jiguang.sdk:jpush:5.2.0'
+    implementation 'cn.jiguang.sdk:jpush:5.2.3'
 }
