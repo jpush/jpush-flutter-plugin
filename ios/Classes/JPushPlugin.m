@@ -683,6 +683,9 @@ static NSMutableArray<FlutterResult>* getRidResults;
             [_channel invokeMethod:@"onReceiveNotification" arguments: [self jpushFormatAPNSDic:userInfo]];
         }
     }else{
+        if (@available(iOS 10 , *)) {
+            [_channel invokeMethod:@"onReceiveNotification" arguments: [self jpushFromLocalPushDic:notification.request]];
+        }
         JPLog(@"iOS10 前台收到本地通知:userInfo：%@",userInfo);
     }
     if (!self.unShow) completionHandler(notificationTypes);
@@ -697,32 +700,38 @@ static NSMutableArray<FlutterResult>* getRidResults;
     }else{
         // iOS 10 以上点击本地通知
         JPLog(@"iOS10 点击本地通知");
-        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-        NSString *identifier = response.notification.request.identifier;
-        NSString *body = response.notification.request.content.body;
-        NSString *categoryIdentifier = response.notification.request.content.categoryIdentifier;
-        NSString *title = response.notification.request.content.title;
-        NSString *subtitle = response.notification.request.content.subtitle;
-        NSString *threadIdentifier = response.notification.request.content.threadIdentifier;
-        
-        [dic setValue:body?:@"" forKey:@"body"];
-        [dic setValue:title?:@"" forKey:@"title"];
-        [dic setValue:subtitle?:@"" forKey:@"subtitle"];
-        [dic setValue:identifier?:@"" forKey:@"identifier"];
-        [dic setValue:threadIdentifier?:@"" forKey:@"threadIdentifier"];
-        [dic setValue:categoryIdentifier?:@"" forKey:@"categoryIdentifier"];
-        if (userInfo && userInfo.count) {
-            NSMutableDictionary *extras = [NSMutableDictionary dictionary];
-            for (NSString *key in userInfo) {
-                extras[key] = userInfo[key];
-            }
-            dic[@"extras"] = extras;
-        }
+        NSDictionary *dic = [self jpushFromLocalPushDic:response.notification.request];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.channel invokeMethod:@"onOpenNotification" arguments:dic];
         });
     }
     completionHandler();
+}
+
+- (NSDictionary *)jpushFromLocalPushDic:(UNNotificationRequest *)request {
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    NSString *identifier = request.identifier;
+    NSString *body = request.content.body;
+    NSString *categoryIdentifier = request.content.categoryIdentifier;
+    NSString *title = request.content.title;
+    NSString *subtitle = request.content.subtitle;
+    NSString *threadIdentifier = request.content.threadIdentifier;
+    NSDictionary * userInfo = request.content.userInfo;
+    
+    [dic setValue:body?:@"" forKey:@"body"];
+    [dic setValue:title?:@"" forKey:@"title"];
+    [dic setValue:subtitle?:@"" forKey:@"subtitle"];
+    [dic setValue:identifier?:@"" forKey:@"identifier"];
+    [dic setValue:threadIdentifier?:@"" forKey:@"threadIdentifier"];
+    [dic setValue:categoryIdentifier?:@"" forKey:@"categoryIdentifier"];
+    if (userInfo && userInfo.count) {
+        NSMutableDictionary *extras = [NSMutableDictionary dictionary];
+        for (NSString *key in userInfo) {
+            extras[key] = userInfo[key];
+        }
+        dic[@"extras"] = extras;
+    }
+    return dic;
 }
 
 - (void)jpushNotificationAuthorization:(JPAuthorizationStatus)status withInfo:(NSDictionary *)info {
