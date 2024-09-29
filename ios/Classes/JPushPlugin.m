@@ -173,6 +173,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [self pageLeave:call];
     } else if ([@"setCollectControl" isEqualToString:call.method]) {
         [self setCollectControl:call result:result];
+    } else if ([@"setSmartPushEnable" isEqualToString:call.method]) {
+        [self setSmartPushEnable:call result:result];
     } else{
         result(FlutterMethodNotImplemented);
     }
@@ -182,9 +184,20 @@ static NSMutableArray<FlutterResult>* getRidResults;
 - (void)setCollectControl:(FlutterMethodCall*)call result:(FlutterResult)result {
     JPLog(@"setCollectControl:%@",call.arguments);
     BOOL gps = [call.arguments[@"gps"] boolValue];
+    BOOL bssid = [call.arguments[@"bssid"] boolValue];
+    BOOL ssid = [call.arguments[@"ssid"] boolValue];
+    BOOL cell = [call.arguments[@"cell"] boolValue];
     JPushCollectControl *control = [[JPushCollectControl alloc] init];
     control.gps = gps;
+    control.bssid = bssid;
+    control.ssid = ssid;
+    control.cell = cell;
     [JPUSHService setCollectControl:control];
+}
+
+- (void)setSmartPushEnable:(FlutterMethodCall*)call result:(FlutterResult)result{
+    BOOL enable = [call.arguments[@"enable"] boolValue];
+    [JPUSHService setSmartPushEnable:enable];
 }
 
 - (void)setup:(FlutterMethodCall*)call result:(FlutterResult)result {
