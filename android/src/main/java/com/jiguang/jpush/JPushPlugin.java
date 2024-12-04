@@ -522,95 +522,95 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
      * 接收自定义消息,通知,通知点击事件等事件的广播
      * 文档链接:http://docs.jiguang.cn/client/android_api/
      */
-    public static class JPushReceiver extends BroadcastReceiver {
-
-        private static final List<String> IGNORED_EXTRAS_KEYS = Arrays.asList("cn.jpush.android.TITLE",
-                "cn.jpush.android.MESSAGE", "cn.jpush.android.APPKEY", "cn.jpush.android.NOTIFICATION_CONTENT_TITLE", "key_show_entity", "platform");
-
-        public JPushReceiver() {
-        }
-
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-
-            if (action.equals(JPushInterface.ACTION_REGISTRATION_ID)) {
-                String rId = intent.getStringExtra(JPushInterface.EXTRA_REGISTRATION_ID);
-                Log.d("JPushPlugin", "on get registration");
-                JPushHelper.getInstance().transmitReceiveRegistrationId(rId);
-
-            } else if (action.equals(JPushInterface.ACTION_MESSAGE_RECEIVED)) {
-                handlingMessageReceive(intent);
-            } else if (action.equals(JPushInterface.ACTION_NOTIFICATION_RECEIVED)) {
-                handlingNotificationReceive(context, intent);
-            } else if (action.equals(JPushInterface.ACTION_NOTIFICATION_OPENED)) {
-                handlingNotificationOpen(context, intent);
-            }
-        }
-
-        private void handlingMessageReceive(Intent intent) {
-            Log.d(TAG, "handlingMessageReceive " + intent.getAction());
-
-            String msg = intent.getStringExtra(JPushInterface.EXTRA_MESSAGE);
-            String title = intent.getStringExtra(JPushInterface.EXTRA_TITLE);
-            Map<String, Object> extras = getNotificationExtras(intent);
-            JPushHelper.getInstance().transmitMessageReceive(msg, title,extras);
-        }
-
-        private void handlingNotificationOpen(Context context, Intent intent) {
-            Log.d(TAG, "handlingNotificationOpen " + intent.getAction());
-
-            String title = intent.getStringExtra(JPushInterface.EXTRA_NOTIFICATION_TITLE);
-            String alert = intent.getStringExtra(JPushInterface.EXTRA_ALERT);
-            Map<String, Object> extras = getNotificationExtras(intent);
-            JPushHelper.getInstance().transmitNotificationOpen(title, alert, extras);
-        }
-
-        private void handlingNotificationReceive(Context context, Intent intent) {
-            Log.d(TAG, "handlingNotificationReceive " + intent.getAction());
-
-            String title = intent.getStringExtra(JPushInterface.EXTRA_NOTIFICATION_TITLE);
-            String alert = intent.getStringExtra(JPushInterface.EXTRA_ALERT);
-            Map<String, Object> extras = getNotificationExtras(intent);
-            JPushHelper.getInstance().transmitNotificationReceive(title, alert, extras);
-        }
-
-        private Map<String, Object> getNotificationExtras(Intent intent) {
-            Map<String, Object> extrasMap = new HashMap<String, Object>();
-            Bundle extras = intent.getExtras();
-            for (String key : extras.keySet()) {
-                Object value = extras.get(key);
-                if (!IGNORED_EXTRAS_KEYS.contains(key)) {
-                    if (key.equals(JPushInterface.EXTRA_NOTIFICATION_ID)) {
-                        extrasMap.put(key, intent.getIntExtra(key, 0));
-                    }else if(key.equals("cn.jpush.android.EXTRA")){
-                        try {
-                            JSONObject object=new JSONObject((String)value);
-                            Map<String, Object> useExtra = new HashMap<String, Object>();
-                            jsonToMap(object,useExtra);
-                            extrasMap.put(key,useExtra);
-                        }catch (Throwable throwable){
-                        }
-                    } else {
-                        extrasMap.put(key, value);
-                    }
-                }
-            }
-            return extrasMap;
-        }
-        public static void jsonToMap(JSONObject object,Map<String, Object> map) {
-            try {
-                Iterator<String> keys = object.keys();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    Object value = object.get(key);
-                    map.put(key, value);
-                }
-            }catch (Throwable throwable){
-            }
-        }
-    }
+//    public static class JPushReceiver extends BroadcastReceiver {
+//
+//        private static final List<String> IGNORED_EXTRAS_KEYS = Arrays.asList("cn.jpush.android.TITLE",
+//                "cn.jpush.android.MESSAGE", "cn.jpush.android.APPKEY", "cn.jpush.android.NOTIFICATION_CONTENT_TITLE", "key_show_entity", "platform");
+//
+//        public JPushReceiver() {
+//        }
+//
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String action = intent.getAction();
+//
+//            if (action.equals(JPushInterface.ACTION_REGISTRATION_ID)) {
+//                String rId = intent.getStringExtra(JPushInterface.EXTRA_REGISTRATION_ID);
+//                Log.d("JPushPlugin", "on get registration");
+//                JPushHelper.getInstance().transmitReceiveRegistrationId(rId);
+//
+//            } else if (action.equals(JPushInterface.ACTION_MESSAGE_RECEIVED)) {
+//                handlingMessageReceive(intent);
+//            } else if (action.equals(JPushInterface.ACTION_NOTIFICATION_RECEIVED)) {
+//                handlingNotificationReceive(context, intent);
+//            } else if (action.equals(JPushInterface.ACTION_NOTIFICATION_OPENED)) {
+//                handlingNotificationOpen(context, intent);
+//            }
+//        }
+//
+//        private void handlingMessageReceive(Intent intent) {
+//            Log.d(TAG, "handlingMessageReceive " + intent.getAction());
+//
+//            String msg = intent.getStringExtra(JPushInterface.EXTRA_MESSAGE);
+//            String title = intent.getStringExtra(JPushInterface.EXTRA_TITLE);
+//            Map<String, Object> extras = getNotificationExtras(intent);
+//            JPushHelper.getInstance().transmitMessageReceive(msg, title,extras);
+//        }
+//
+//        private void handlingNotificationOpen(Context context, Intent intent) {
+//            Log.d(TAG, "handlingNotificationOpen " + intent.getAction());
+//
+//            String title = intent.getStringExtra(JPushInterface.EXTRA_NOTIFICATION_TITLE);
+//            String alert = intent.getStringExtra(JPushInterface.EXTRA_ALERT);
+//            Map<String, Object> extras = getNotificationExtras(intent);
+//            JPushHelper.getInstance().transmitNotificationOpen(title, alert, extras);
+//        }
+//
+//        private void handlingNotificationReceive(Context context, Intent intent) {
+//            Log.d(TAG, "handlingNotificationReceive " + intent.getAction());
+//
+//            String title = intent.getStringExtra(JPushInterface.EXTRA_NOTIFICATION_TITLE);
+//            String alert = intent.getStringExtra(JPushInterface.EXTRA_ALERT);
+//            Map<String, Object> extras = getNotificationExtras(intent);
+//            JPushHelper.getInstance().transmitNotificationReceive(title, alert, extras);
+//        }
+//
+//        private Map<String, Object> getNotificationExtras(Intent intent) {
+//            Map<String, Object> extrasMap = new HashMap<String, Object>();
+//            Bundle extras = intent.getExtras();
+//            for (String key : extras.keySet()) {
+//                Object value = extras.get(key);
+//                if (!IGNORED_EXTRAS_KEYS.contains(key)) {
+//                    if (key.equals(JPushInterface.EXTRA_NOTIFICATION_ID)) {
+//                        extrasMap.put(key, intent.getIntExtra(key, 0));
+//                    }else if(key.equals("cn.jpush.android.EXTRA")){
+//                        try {
+//                            JSONObject object=new JSONObject((String)value);
+//                            Map<String, Object> useExtra = new HashMap<String, Object>();
+//                            jsonToMap(object,useExtra);
+//                            extrasMap.put(key,useExtra);
+//                        }catch (Throwable throwable){
+//                        }
+//                    } else {
+//                        extrasMap.put(key, value);
+//                    }
+//                }
+//            }
+//            return extrasMap;
+//        }
+//        public static void jsonToMap(JSONObject object,Map<String, Object> map) {
+//            try {
+//                Iterator<String> keys = object.keys();
+//                while (keys.hasNext()) {
+//                    String key = keys.next();
+//                    Object value = object.get(key);
+//                    map.put(key, value);
+//                }
+//            }catch (Throwable throwable){
+//            }
+//        }
+//    }
 
 
 
