@@ -39,6 +39,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
 }
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
+    JPLog(@"registerWithRegistrar");
     getRidResults = @[].mutableCopy;
     FlutterMethodChannel* channel = [FlutterMethodChannel
                                      methodChannelWithName:@"jpush"
@@ -242,6 +243,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
     JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
     entity.types = notificationTypes;
     [JPUSHService registerForRemoteNotificationConfig:entity delegate:self];
+    
+    JPLog(@"applyPushAuthority : delegate%@",[UNUserNotificationCenter currentNotificationCenter].delegate);
 }
 
 - (void)setTags:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -559,7 +562,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
         _launchNotification = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
         _launchNotification = [self jpushFormatAPNSDic:_launchNotification.copy];
     }
-    
+    JPLog(@"didFinishLaunchingWithOptions:%@",_launchNotification);
     if ([launchOptions valueForKey:UIApplicationLaunchOptionsLocalNotificationKey]) {
         UILocalNotification *localNotification = [launchOptions valueForKey:UIApplicationLaunchOptionsLocalNotificationKey];
         NSMutableDictionary *localNotificationEvent = @{}.mutableCopy;
@@ -611,17 +614,33 @@ static NSMutableArray<FlutterResult>* getRidResults;
   [JPUSHService addNotification:request];
 }
 
-
-- (void)applicationDidEnterBackground:(UIApplication *)application {
-    //  _resumingFromBackground = YES;
-}
-
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     //  application.applicationIconBadgeNumber = 1;
     //  application.applicationIconBadgeNumber = 0;
+    JPLog(@"applicationDidBecomeActive:  %@  applidelegate:%@",[UNUserNotificationCenter currentNotificationCenter].delegate, [UIApplication sharedApplication].delegate);
+}
+
+- (void)applicationWillResignActive:(UIApplication *)application {
+    JPLog(@"applicationWillResignActive: %@  applidelegate:%@",[UNUserNotificationCenter currentNotificationCenter].delegate, [UIApplication sharedApplication].delegate);
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    //  _resumingFromBackground = YES;
+    JPLog(@"applicationDidEnterBackground: %@  applidelegate:%@",[UNUserNotificationCenter currentNotificationCenter].delegate, [UIApplication sharedApplication].delegate);
+}
+
+- (void)applicationWillEnterForeground:(UIApplication *)application {
+    JPLog(@"applicationWillEnterForeground: %@  applidelegate:%@",[UNUserNotificationCenter currentNotificationCenter].delegate, [UIApplication sharedApplication].delegate);
+}
+/**
+ Called if this has been registered for `UIApplicationDelegate` callbacks.
+ */
+- (void)applicationWillTerminate:(UIApplication*)application {
+    JPLog(@"applicationWillEnterForeground: %@  applidelegate:%@",[UNUserNotificationCenter currentNotificationCenter].delegate, [UIApplication sharedApplication].delegate);
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    JPLog(@"application:didRegisterForRemoteNotificationsWithDeviceToken,%@",deviceToken);
     [JPUSHService registerDeviceToken:deviceToken];
 }
 
@@ -636,6 +655,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
 
 - (BOOL)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     JPLog(@"application:didReceiveRemoteNotification:fetchCompletionHandler");
+    JPLog(@"UNUserNotificationCenter.delegate:%@  applidelegate:%@",[UNUserNotificationCenter currentNotificationCenter].delegate, [UIApplication sharedApplication].delegate);
     [JPUSHService handleRemoteNotification:userInfo];
     if (@available(* ,iOS 10)) {
         [_channel invokeMethod:@"onReceiveNotification" arguments:userInfo];
@@ -646,7 +666,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
          * 因为不走didReceiveNotificationResponse：回调 所以没有onOpenNotification回调。这跟生命周期有关，didReceiveNotificationResponse:的代理需要通知的远程代理设置要在didFinishLaunch结束之前。但是flutter初始化jpush是在didFinishLaunch之后。
          * 在这个方法里做一个判断吧，如果收到的消息和启动时的消息是同一个消息，则判断该消息为app杀死状态下通过点击通知唤醒的。
          */
-        
+        JPLog(@"didReceiveRemoteNotification:%@ - %@", _launchNotification, userInfo);
         if (_launchNotification && userInfo && [_launchNotification isKindOfClass:[NSDictionary class]] && [userInfo isKindOfClass:[NSDictionary class]]) {
             // 拿到启动时的推送数据里的msgid
             NSNumber *launchMsgid = [_launchNotification valueForKey:@"_j_msgid"];
@@ -654,6 +674,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
             NSNumber *msgid = [userInfo valueForKey:@"_j_msgid"];
             // 如果消息id一致
             if ([launchMsgid isKindOfClass:[NSNumber class]] && [msgid isKindOfClass:[NSNumber class]] && [[launchMsgid stringValue] isEqualToString:[msgid stringValue]]) {
+                JPLog(@"didReceiveRemoteNotification:消息id一致，回调通知点击");
                 [_channel invokeMethod:@"onOpenNotification" arguments:_launchNotification];
             }
         }
@@ -688,8 +709,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
 
 //前台收到本地通知
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(NSInteger))completionHandler  API_AVAILABLE(ios(10.0)){
-    JPLog(@"jpushNotificationCenter:willPresentNotification::");
     NSDictionary * userInfo = notification.request.content.userInfo;
+    JPLog(@"jpushNotificationCenter:willPresentNotification::%@",userInfo);
     if([notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
         [JPUSHService handleRemoteNotification:userInfo];
         if (@available(iOS 10 , *)) {
@@ -705,9 +726,10 @@ static NSMutableArray<FlutterResult>* getRidResults;
 }
 
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler  API_AVAILABLE(ios(10.0)){
-    JPLog(@"jpushNotificationCenter:didReceiveNotificationResponse::");
     NSDictionary * userInfo = response.notification.request.content.userInfo;
+    JPLog(@"jpushNotificationCenter:didReceiveNotificationResponse::%@",userInfo);
     if([response.notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
+        JPLog(@"iOS10 点击远程通知");
         [JPUSHService handleRemoteNotification:userInfo];
         [_channel invokeMethod:@"onOpenNotification" arguments: [self jpushFormatAPNSDic:userInfo]];
     }else{
