@@ -1,3 +1,5 @@
+## 1.1.2
+修复onCommandResult 方法崩溃
 ## 1.1.1
 修复后台不能获取回调的问题
 修复onCommandResult 方法中没有 extra 参数问题，都放到map中
