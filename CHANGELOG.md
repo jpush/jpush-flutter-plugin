@@ -1,3 +1,5 @@
+## 2.5.8
+修复onCommandResult 方法崩溃
 ## 2.5.7
 修复onCommandResult 方法中没有 extra 参数问题，都放到map中
 ## 2.5.6
