@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import cn.jpush.android.api.CmdMessage;
+import cn.jpush.android.api.CustomMessage;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.JPushMessage;
 import cn.jpush.android.api.NotificationMessage;
@@ -21,11 +23,59 @@ import cn.jpush.android.service.JPushMessageReceiver;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class JPushEventReceiver extends JPushMessageReceiver {
+    @Override
+    public void onNotifyMessageArrived(Context context, NotificationMessage notificationMessage) {
+        JPushHelper.getInstance().getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                JPushHelper.getInstance().transmitNotificationReceive(notificationMessage);
+            }
+        });
+    }
 
+    @Override
+    public void onNotifyMessageOpened(Context context, NotificationMessage notificationMessage) {
+        JPushHelper.getInstance().getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                JPushHelper.getInstance().transmitNotificationOpen(notificationMessage);
+            }
+        });
+    }
+
+    @Override
+    public void onMessage(Context context, CustomMessage customMessage) {
+        JPushHelper.getInstance().getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                JPushHelper.getInstance().transmitMessageReceive(customMessage);
+            }
+        });
+    }
+
+    @Override
+    public void onRegister(Context context, String s) {
+        JPushHelper.getInstance().getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                JPushHelper.getInstance().transmitReceiveRegistrationId(s);
+            }
+        });
+    }
+
+    @Override
+    public void onCommandResult(Context context,final CmdMessage cmdMessage) {
+        JPushHelper.getInstance().getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                JPushHelper.getInstance().onCommandResult(cmdMessage);
+            }
+        });
+    }
     @Override
     public void onNotifyMessageUnShow(Context context,final NotificationMessage notificationMessage) {
         super.onNotifyMessageUnShow(context,notificationMessage);
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+        JPushHelper.getInstance().getHandler().post(new Runnable() {
             @Override
             public void run() {
                 JPushHelper.getInstance().onNotifyMessageUnShow(notificationMessage);
@@ -35,7 +85,7 @@ public class JPushEventReceiver extends JPushMessageReceiver {
     @Override
     public void onConnected(Context context,final boolean isConnected) {
         //连接状态
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+        JPushHelper.getInstance().getHandler().post(new Runnable() {
             @Override
             public void run() {
                 JPushHelper.getInstance().onConnected(isConnected);
@@ -46,7 +96,7 @@ public class JPushEventReceiver extends JPushMessageReceiver {
     @Override
     public void onInAppMessageShow(Context context,final NotificationMessage message) {
         Log.i("JPushPlugin", "[onInAppMessageShow], " + message.toString());
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+        JPushHelper.getInstance().getHandler().post(new Runnable() {
             @Override
             public void run() {
                 JPushHelper.getInstance().onInAppMessageShow(message);
@@ -57,7 +107,7 @@ public class JPushEventReceiver extends JPushMessageReceiver {
     @Override
     public void onInAppMessageClick(Context context,final NotificationMessage message) {
         Log.i("JPushPlugin", "[onInAppMessageClick], " + message.toString());
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+        JPushHelper.getInstance().getHandler().post(new Runnable() {
             @Override
             public void run() {
                 JPushHelper.getInstance().onInAppMessageClick(message);
@@ -84,7 +134,7 @@ public class JPushEventReceiver extends JPushMessageReceiver {
             return;
         }
 
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+        JPushHelper.getInstance().getHandler().post(new Runnable() {
             @Override
             public void run() {
                 if (jPushMessage.getErrorCode() == 0) { // success
@@ -126,7 +176,7 @@ public class JPushEventReceiver extends JPushMessageReceiver {
             return;
         }
 
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+        JPushHelper.getInstance().getHandler().post(new Runnable() {
             @Override
             public void run() {
                 if (jPushMessage.getErrorCode() == 0) {
@@ -159,7 +209,7 @@ public class JPushEventReceiver extends JPushMessageReceiver {
             return;
         }
 
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+        JPushHelper.getInstance().getHandler().post(new Runnable() {
             @Override
             public void run() {
                 if (jPushMessage.getErrorCode() == 0) { // success

@@ -1,3 +1,7 @@
+## 1.1.1
+修复后台不能获取回调的问题
+修复onCommandResult 方法中没有 extra 参数问题，都放到map中
+修复在map中且套map不能获取数据问题: 主要由原来的string 类型 修改为 map 类型。
 ## 1.1.0
 1、升级 iOS SDK JPush 5.3.0, 升级 android  JPush 5.4.0
 2、开放 setLinkMergeEnable、setGeofenceEnable、setSmartPushEnable、setCollectControl 接口设置
