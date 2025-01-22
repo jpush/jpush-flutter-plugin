@@ -1,5 +1,5 @@
 ## 3.2.0
-更新Jpush 560+JCore 490
+更新android Jpush 560+JCore 490, 更新 iOS JPush 5.5.0 +JCore 4.9.0
 ## 3.1.9
 开放本地通知在点击时候能直接进入应用主页
 ## 3.1.8
