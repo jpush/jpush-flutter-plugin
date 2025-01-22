@@ -328,8 +328,18 @@ public class JPushHelper {
                 if ("intent_component".equals(key) || "intent_action".equals(key)) {
                     continue;
                 }
-                Object value = bundle.get(key);
-                map.put(key, value);
+                try {
+                    Object value = bundle.get(key);
+                    if (value instanceof Integer
+                            || value instanceof Long
+                            || value instanceof Boolean
+                            || value instanceof String) {
+                        map.put(key, value);
+                    } else {
+                        map.put(key, String.valueOf(value));
+                    }
+                } catch (Throwable throwable) {
+                }
             }
         }
         return map;
@@ -344,9 +354,20 @@ public class JPushHelper {
             JSONObject object = new JSONObject(extra);
             Iterator<String> keys = object.keys();
             while (keys.hasNext()) {
-                String key = keys.next();
-                Object value = object.get(key);
-                useExtra.put(key, value);
+                try {
+                    String key = keys.next();
+                    Object value = object.get(key);
+                    if (value instanceof Integer
+                            || value instanceof Long
+                            || value instanceof Boolean
+                            || value instanceof String) {
+                        useExtra.put(key, value);
+                    } else {
+                        useExtra.put(key, String.valueOf(value));
+                    }
+                } catch (Throwable throwable) {
+
+                }
             }
         } catch (Throwable throwable) {
         }
