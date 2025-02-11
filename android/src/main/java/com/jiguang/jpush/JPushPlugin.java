@@ -1,4 +1,5 @@
 package com.jiguang.jpush;
+
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -19,9 +20,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import cn.jiguang.api.JCoreManager;
 import cn.jpush.android.data.JPushConfig;
 import cn.jiguang.api.JCoreInterface;
 import cn.jiguang.api.utils.JCollectionAuth;
@@ -30,20 +34,21 @@ import cn.jpush.android.api.NotificationMessage;
 import cn.jpush.android.data.JPushCollectControl;
 import cn.jpush.android.data.JPushLocalNotification;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.embedding.engine.plugins.activity.ActivityAware;
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
+
 /**
  * JPushPlugin
  */
 public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
     private static String TAG = "| JPUSH | Flutter | Android | ";
     private Context context;
-    private int sequence;
     private Activity mActivity;
+    private int sequence;
     public JPushPlugin() {
         this.sequence = 0;
     }
@@ -76,7 +81,6 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     public void onDetachedFromActivity() {
 
     }
-
     @Override
     public void onDetachedFromEngine(FlutterPluginBinding binding) {
         MethodChannel  channel =JPushHelper.getInstance().getChannel();
@@ -128,6 +132,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             sendLocalNotification(call, result);
         } else if (call.method.equals("setBadge")) {
             setBadge(call, result);
+        } else if (call.method.equals("setHBInterval")) {
+            setHBInterval(call, result);
         } else if (call.method.equals("isNotificationEnabled")) {
             isNotificationEnabled(call, result);
         } else if (call.method.equals("openSettingsForNotification")) {
@@ -152,12 +158,35 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             setChannelAndSound(call, result);
         }else if (call.method.equals("requestRequiredPermission")) {
             requestRequiredPermission(call, result);
+        }else if (call.method.equals("setThirdToken")) {
+            setThirdToken(call, result);
         } else {
             result.notImplemented();
         }
     }
     public void requestRequiredPermission(MethodCall call, Result result){
         JPushInterface.requestRequiredPermission(mActivity);
+    }
+    public void setHBInterval(MethodCall call, Result result){
+        HashMap<String, Object> map = call.arguments();
+        Object numObject = map.get("hb_interval");
+        if (numObject != null) {
+            int num = (int) numObject;
+            Bundle bundle = new Bundle();
+            // 设置心跳30s，心跳间隔默认是4min50s
+            bundle.putInt("heartbeat_interval", num);
+            JCoreManager.setSDKConfigs(context, bundle);
+        }
+
+
+    }
+    public void setThirdToken(MethodCall call, Result result) {
+        HashMap<String, Object> readableMap = call.arguments();
+        if (readableMap == null) {
+            return;
+        }
+        String token = (String)readableMap.get("third_token");
+        JPushInterface.setThirdToken(context,token);
     }
     public void setChannelAndSound(MethodCall call, Result result) {
         HashMap<String, Object> readableMap = call.arguments();
@@ -181,6 +210,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             }
             manager.createNotificationChannel(channel1);
             JPushInterface.setChannel(context,channel);
+            Log.d(TAG,"setChannelAndSound channelId="+channelId+" channel="+channel+" sound="+sound);
+
         }catch (Throwable throwable){
         }
     }
