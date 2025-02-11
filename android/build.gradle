@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.0'
+        classpath 'com.android.tools.build:gradle:8.6.0'
     }
 }
 
@@ -24,10 +24,13 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace "com.jiguang.jpush"
-    compileSdkVersion 33
+    if (project.android.hasProperty("namespace")) {
+        namespace = "com.jiguang.jpush"
+    }
+
+    compileSdk 34
     defaultConfig {
-        minSdkVersion 19
+        minSdk 19
     }
     lintOptions {
         disable 'InvalidPackage'

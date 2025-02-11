@@ -2,6 +2,15 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven {
+            allowInsecureProtocol true
+            url 'https://maven.aliyun.com/nexus/content/repositories/jcenter'
+        }
+        maven {
+            allowInsecureProtocol true
+            url 'https://developer.huawei.com/repo/'
+        }
+        maven { url 'https://developer.hihonor.com/repo' }
     }
 }
 
