@@ -157,6 +157,19 @@ public class JPushHelper {
         channel.invokeMethod("onReceiveMessage", msg);
     }
 
+    private void openApp() {
+        Context context = mContext.get();
+        if (context == null) {
+            return;
+        }
+        Intent launch = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+        if (launch != null) {
+            launch.addCategory(Intent.CATEGORY_LAUNCHER);
+            launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            context.startActivity(launch);
+        }
+    }
+
     public void transmitNotificationOpen(NotificationMessage notificationMessage) {
         Log.d(TAG, "transmitNotificationOpen notificationMessage=" + notificationMessage);
         Map<String, Object> notification = new HashMap<>();
@@ -164,7 +177,11 @@ public class JPushHelper {
         notification.put("alert", notificationMessage.notificationContent);
         notification.put("extras", getExtras(notificationMessage));
         openNotificationCache.add(notification);
+        if (1 == notificationMessage.notificationType) {
+            openApp();
+        }
         Log.d(TAG, "transmitNotificationOpen notification=" + notification);
+
         if (channel == null) {
             Log.d(TAG, "the channel is null");
             return;
@@ -303,19 +320,31 @@ public class JPushHelper {
         }
         return extras;
     }
+
     public static Map<String, Object> bundleToMap(Bundle bundle) {
         Map<String, Object> map = new HashMap<>();
         if (bundle != null) {
             for (String key : bundle.keySet()) {
-                if("intent_component".equals(key)||"intent_action".equals(key)){
+                if ("intent_component".equals(key) || "intent_action".equals(key)|| "intent_flags".equals(key)) {
                     continue;
                 }
-                Object value = bundle.get(key);
-                map.put(key, value);
+                try {
+                    Object value = bundle.get(key);
+                    if (value instanceof Integer
+                            || value instanceof Long
+                            || value instanceof Boolean
+                            || value instanceof String) {
+                        map.put(key, value);
+                    } else {
+                        map.put(key, String.valueOf(value));
+                    }
+                } catch (Throwable throwable) {
+                }
             }
         }
         return map;
     }
+
     public Map<String, Object> stringToMap(String extra) {
         Map<String, Object> useExtra = new HashMap<String, Object>();
         try {
@@ -325,9 +354,20 @@ public class JPushHelper {
             JSONObject object = new JSONObject(extra);
             Iterator<String> keys = object.keys();
             while (keys.hasNext()) {
-                String key = keys.next();
-                Object value = object.get(key);
-                useExtra.put(key, value);
+                try {
+                    String key = keys.next();
+                    Object value = object.get(key);
+                    if (value instanceof Integer
+                            || value instanceof Long
+                            || value instanceof Boolean
+                            || value instanceof String) {
+                        useExtra.put(key, value);
+                    } else {
+                        useExtra.put(key, String.valueOf(value));
+                    }
+                } catch (Throwable throwable) {
+
+                }
             }
         } catch (Throwable throwable) {
         }

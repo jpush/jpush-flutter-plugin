@@ -12,11 +12,11 @@ dependencies:
   jpush_flutter:
     git:
       url: git://github.com/jpush/jpush-flutter-plugin.git
-      ref: dev-2.x-google
+      ref: dev-3.x-google
       
 // pub 集成
 dependencies:
-  jpush_google_flutter: 1.1.2
+  jpush_google_flutter: 3.0.0
 ```
 
 ### 配置

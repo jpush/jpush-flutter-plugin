@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'dart:io' show Platform;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:platform/platform.dart';
 
 typedef Future<dynamic> EventHandler(Map<String, dynamic> event);
 
@@ -11,15 +12,12 @@ class JPush {
   factory JPush() => _instance;
 
   final MethodChannel _channel;
-  final Platform _platform;
 
   @visibleForTesting
-  JPush.private(MethodChannel channel, Platform platform)
-      : _channel = channel,
-        _platform = platform;
+  JPush.private(MethodChannel channel) : _channel = channel;
 
   static final JPush _instance =
-      new JPush.private(const MethodChannel('jpush'), const LocalPlatform());
+      new JPush.private(const MethodChannel('jpush'));
 
   EventHandler? _onReceiveNotification;
   EventHandler? _onOpenNotification;
@@ -29,6 +27,7 @@ class JPush {
   EventHandler? _onConnected;
   EventHandler? _onInAppMessageClick;
   EventHandler? _onInAppMessageShow;
+  EventHandler? _onCommandResult;
   void setup({
     String appKey = '',
     bool production = false,
@@ -50,7 +49,7 @@ class JPush {
     String channelID = '',
     String sound = '',
   }) {
-    if (_platform.isIOS) {
+    if (Platform.isIOS) {
       return;
     }
     print(flutter_log + "setChannelAndSound:");
@@ -59,8 +58,19 @@ class JPush {
         {'channel': channel, 'channel_id': channelID, 'sound': sound});
   }
 
+  void setThirdToken({String token = ''}) {
+    if (Platform.isIOS) {
+      return;
+    }
+    print(flutter_log + "setThirdToken:");
+    _channel.invokeMethod('setThirdToken', {'third_token': token});
+  }
+
   //APP活跃在前台时是否展示通知
   void setUnShowAtTheForeground({bool unShow = false}) {
+    if (Platform.isAndroid) {
+      return;
+    }
     print(flutter_log + "setUnShowAtTheForeground:");
     _channel.invokeMethod('setUnShowAtTheForeground', {'UnShow': unShow});
   }
@@ -70,7 +80,7 @@ class JPush {
   }
 
   void enableAutoWakeup({bool enable = false}) {
-    if (_platform.isIOS) {
+    if (Platform.isIOS) {
       return;
     }
     _channel.invokeMethod('enableAutoWakeup', {'enable': enable});
@@ -82,7 +92,7 @@ class JPush {
   }
 
   void setLinkMergeEnable({bool enable = true}) {
-    if (_platform.isIOS) {
+    if (Platform.isIOS) {
       return;
     }
     print(flutter_log + "setLinkMergeEnable:");
@@ -90,7 +100,7 @@ class JPush {
   }
 
   void setGeofenceEnable({bool enable = true}) {
-    if (_platform.isIOS) {
+    if (Platform.isIOS) {
       return;
     }
     print(flutter_log + "setGeofenceEnable:");
@@ -98,7 +108,7 @@ class JPush {
   }
 
   void setSmartPushEnable({bool enable = true}) {
-    if (_platform.isIOS) {
+    if (Platform.isIOS) {
       return;
     }
     print(flutter_log + "setSmartPushEnable:");
@@ -141,6 +151,7 @@ class JPush {
     EventHandler? onConnected,
     EventHandler? onInAppMessageClick,
     EventHandler? onInAppMessageShow,
+    EventHandler? onCommandResult,
   }) {
     print(flutter_log + "addEventHandler:");
 
@@ -152,6 +163,7 @@ class JPush {
     _onConnected = onConnected;
     _onInAppMessageClick = onInAppMessageClick;
     _onInAppMessageShow = onInAppMessageShow;
+    _onCommandResult = onCommandResult;
     _channel.setMethodCallHandler(_handleMethod);
   }
 
@@ -176,6 +188,8 @@ class JPush {
         return _onInAppMessageClick!(call.arguments.cast<String, dynamic>());
       case "onInAppMessageShow":
         return _onInAppMessageShow!(call.arguments.cast<String, dynamic>());
+      case "onCommandResult":
+        return _onCommandResult!(call.arguments.cast<String, dynamic>());
       default:
         throw new UnsupportedError("Unrecognized Event");
     }
@@ -189,7 +203,7 @@ class JPush {
       [NotificationSettingsIOS iosSettings = const NotificationSettingsIOS()]) {
     print(flutter_log + "applyPushAuthority:");
 
-    if (!_platform.isIOS) {
+    if (!Platform.isIOS) {
       return;
     }
 
@@ -200,7 +214,7 @@ class JPush {
   // 进入页面， pageName：页面名  请与pageLeave配套使用
   void pageEnterTo(String pageName) {
     print(flutter_log + "pageEnterTo:" + pageName);
-    if (!_platform.isIOS) {
+    if (!Platform.isIOS) {
       return;
     }
     _channel.invokeMethod('pageEnterTo', pageName);
@@ -210,7 +224,7 @@ class JPush {
   // 离开页面，pageName：页面名， 请与pageEnterTo配套使用
   void pageLeave(String pageName) {
     print(flutter_log + "pageLeave:" + pageName);
-    if (!_platform.isIOS) {
+    if (!Platform.isIOS) {
       return;
     }
     _channel.invokeMethod('pageLeave', pageName);
@@ -351,6 +365,14 @@ class JPush {
     await _channel.invokeMethod('setBadge', {"badge": badge});
   }
 
+  Future setHBInterval(int hbinterval) async {
+    if (Platform.isIOS) {
+      return;
+    }
+    print(flutter_log + "setHBInterval");
+    await _channel.invokeMethod('setHBInterval', {"hb_interval": hbinterval});
+  }
+
   ///
   /// 停止接收推送，调用该方法后应用将不再受到推送，如果想要重新收到推送可以调用 resumePush。
   ///
@@ -379,7 +401,7 @@ class JPush {
   }
 
   Future clearLocalNotifications() async {
-    if (_platform.isIOS) {
+    if (Platform.isIOS) {
       return;
     }
     print(flutter_log + "clearLocalNotifications:");
@@ -448,7 +470,7 @@ class JPush {
   }
 
   void requestRequiredPermission() {
-    if (_platform.isIOS) {
+    if (Platform.isIOS) {
       return;
     }
     _channel.invokeMethod('requestRequiredPermission');
