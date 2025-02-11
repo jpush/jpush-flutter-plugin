@@ -325,7 +325,7 @@ public class JPushHelper {
         Map<String, Object> map = new HashMap<>();
         if (bundle != null) {
             for (String key : bundle.keySet()) {
-                if ("intent_component".equals(key) || "intent_action".equals(key)) {
+                if ("intent_component".equals(key) || "intent_action".equals(key)|| "intent_flags".equals(key)) {
                     continue;
                 }
                 try {
