@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jpush_google_flutter/jpush_google_flutter.dart';
 
@@ -57,6 +57,11 @@ class _MyAppState extends State<MyApp> {
         print("flutter onInAppMessageShow: $message");
         setState(() {
           debugLable = "flutter onInAppMessageShow: $message";
+        });
+      }, onCommandResult: (Map<String, dynamic> message) async {
+        print("flutter onCommandResult: $message");
+        setState(() {
+          debugLable = "flutter onCommandResult: $message";
         });
       }, onInAppMessageClick: (Map<String, dynamic> message) async {
         print("flutter onInAppMessageClick: $message");
