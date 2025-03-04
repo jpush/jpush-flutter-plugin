@@ -1,6 +1,6 @@
-## 3.0.1
-更新iOS jpush550
 ## 3.0.0
+更新iOS jpush550
+更新android jpush560
 适配flutter 3.0.0
 # 1.1.2
 修复onCommandResult 方法崩溃
