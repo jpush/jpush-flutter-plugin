@@ -133,6 +133,7 @@ public class JPushEventReceiver extends JPushMessageReceiver {
             Log.i("JPushPlugin", "Unexpected error, callback is null!");
             return;
         }
+        JPushHelper.getInstance().removeCallback(sequence);
 
         JPushHelper.getInstance().getHandler().post(new Runnable() {
             @Override
@@ -152,7 +153,6 @@ public class JPushEventReceiver extends JPushMessageReceiver {
                     callback.error(Integer.toString(jPushMessage.getErrorCode()), "", "");
                 }
 
-                JPushHelper.getInstance().removeCallback(sequence);
             }
         });
 
@@ -175,6 +175,7 @@ public class JPushEventReceiver extends JPushMessageReceiver {
             Log.i("JPushPlugin", "Unexpected error, callback is null!");
             return;
         }
+        JPushHelper.getInstance().removeCallback(sequence);
 
         JPushHelper.getInstance().getHandler().post(new Runnable() {
             @Override
@@ -190,7 +191,6 @@ public class JPushEventReceiver extends JPushMessageReceiver {
                     callback.error(Integer.toString(jPushMessage.getErrorCode()), "", "");
                 }
 
-                JPushHelper.getInstance().removeCallback(sequence);
             }
         });
     }
@@ -208,6 +208,7 @@ public class JPushEventReceiver extends JPushMessageReceiver {
             Log.i("JPushPlugin", "Unexpected error, callback is null!");
             return;
         }
+        JPushHelper.getInstance().removeCallback(sequence);
 
         JPushHelper.getInstance().getHandler().post(new Runnable() {
             @Override
@@ -221,7 +222,6 @@ public class JPushEventReceiver extends JPushMessageReceiver {
                     callback.error(Integer.toString(jPushMessage.getErrorCode()), "", "");
                 }
 
-                JPushHelper.getInstance().removeCallback(sequence);
             }
         });
     }
