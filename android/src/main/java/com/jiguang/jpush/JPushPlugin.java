@@ -87,6 +87,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         if(channel!=null){
             channel.setMethodCallHandler(null);
         }
+        JPushHelper.getInstance().setMethodChannel(null);
         JPushHelper.getInstance().setDartIsReady(false);
     }
 

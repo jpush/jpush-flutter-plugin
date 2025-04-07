@@ -31,7 +31,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 public class JPushHelper {
     private static String TAG = "| JPUSH | Flutter | Android | ";
     private List<Map<String, Object>> openNotificationCache = new ArrayList<>();
-
+    private List<Map<String, Object>> openMessageCache = new ArrayList<>();
     private boolean dartIsReady = false;
     private boolean jpushDidinit = false;
     private Handler mHandler;
@@ -117,6 +117,14 @@ public class JPushHelper {
             }
             openNotificationCacheList.removeAll(tempList);
             tempList.clear();
+
+            List<Map<String, Object>> openMessageCacheList = openMessageCache;
+            for (Map<String, Object> msg : openMessageCacheList) {
+                channel.invokeMethod("onReceiveMessage", msg);
+                tempList.add(msg);
+            }
+            openMessageCacheList.removeAll(tempList);
+            tempList.clear();
         }
     }
 
@@ -144,17 +152,21 @@ public class JPushHelper {
 
     public void transmitMessageReceive(CustomMessage customMessage) {
         Log.d(TAG, "transmitMessageReceive " + "customMessage=" + customMessage);
-
-        if (channel == null) {
-            Log.d(TAG, "the instance is null");
-            return;
-        }
         Map<String, Object> msg = new HashMap<>();
         msg.put("message", customMessage.message);
         msg.put("alert", customMessage.title);
         msg.put("extras", getExtras(customMessage));
+        openMessageCache.add(msg);
         Log.d(TAG, "transmitMessageReceive msg=" + msg);
-        channel.invokeMethod("onReceiveMessage", msg);
+        if (channel == null) {
+            Log.d(TAG, "the instance is null");
+            return;
+        }
+        Log.d(TAG, "instance.dartIsReady =" + dartIsReady);
+        if (dartIsReady) {
+            channel.invokeMethod("onReceiveMessage", msg);
+            openMessageCache.remove(msg);
+        }
     }
 
     private void openApp() {

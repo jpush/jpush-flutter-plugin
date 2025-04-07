@@ -1,3 +1,6 @@
+## 3.2.1
+在flutter 通信channel断开时候，把channel置为空
+自定义消息增加缓存
 ## 3.2.0
 更新android Jpush 560+JCore 490, 更新 iOS JPush 5.5.0 +JCore 4.9.0
 ## 3.1.9
