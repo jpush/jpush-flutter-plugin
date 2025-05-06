@@ -115,6 +115,14 @@ class JPush {
     _channel.invokeMethod('setSmartPushEnable', {'enable': enable});
   }
 
+  void setDataInsightsEnable({bool enable = true}) {
+    if (Platform.isIOS) {
+      return;
+    }
+    print(flutter_log + "setDataInsightsEnable:");
+    _channel.invokeMethod('setDataInsightsEnable', {'enable': enable});
+  }
+
   void setCollectControl({
     bool imsi = true, // only android
     bool mac = true, // only android

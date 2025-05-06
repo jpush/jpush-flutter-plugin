@@ -161,6 +161,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             requestRequiredPermission(call, result);
         }else if (call.method.equals("setThirdToken")) {
             setThirdToken(call, result);
+        }else if (call.method.equals("setDataInsightsEnable")) {
+            setDataInsightsEnable(call, result);
         } else {
             result.notImplemented();
         }
@@ -188,6 +190,18 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         }
         String token = (String)readableMap.get("third_token");
         JPushInterface.setThirdToken(context,token);
+    }
+
+    private void setDataInsightsEnable(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) {
+            return;
+        }
+        Boolean enable = (Boolean) map.get("enable");
+        if (enable == null) {
+            enable = true;
+        }
+        JPushInterface.setDataInsightsEnable(context,enable);
     }
     public void setChannelAndSound(MethodCall call, Result result) {
         HashMap<String, Object> readableMap = call.arguments();

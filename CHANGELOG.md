@@ -1,3 +1,5 @@
+## 3.2.4
+更新 android JPush 5.7.0, 新增 android setDataInsightsEnable 接口
 ## 3.2.3
 更新 iOS JPush 5.6.0
 ## 3.2.2
