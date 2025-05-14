@@ -1,3 +1,5 @@
+## 3.2.5
+更新 android JCore 491 版本
 ## 3.2.4
 更新 android JPush 5.7.0, 新增 android setDataInsightsEnable 接口
 ## 3.2.3
