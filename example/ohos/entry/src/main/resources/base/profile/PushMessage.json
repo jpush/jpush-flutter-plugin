@@ -1,0 +1,5 @@
+{
+  "path": "pushmessage/t_push_message",
+  "type": "rdb",
+  "scope": "application"
+}

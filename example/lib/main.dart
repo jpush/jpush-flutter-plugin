@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:jpush_flutter/jpush_flutter.dart';
+import 'package:jpush_flutter/jpush_interface.dart';
 
 void main() => runApp(new MyApp());
 
@@ -13,7 +16,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String? debugLable = 'Unknown';
-  final JPush jpush = new JPush();
+  final JPushFlutterInterface jpush = JPush.newJPush();
 
   @override
   void initState() {
@@ -26,6 +29,15 @@ class _MyAppState extends State<MyApp> {
     String? platformVersion;
 
     try {
+      jpush.setCallBackHarmony((eventName, data) async {
+        print("flutter_log_MyApp:eventName:$eventName");
+        print("flutter_log_MyApp:data:$data");
+        setState(() {
+          print("flutter_log_MyApp:setState");
+          debugLable = "flutter CallBackHarmony: $eventName:$data";
+        });
+      });
+
       jpush.addEventHandler(
           onReceiveNotification: (Map<String, dynamic> message) async {
         print("flutter onReceiveNotification: $message");
@@ -80,7 +92,7 @@ class _MyAppState extends State<MyApp> {
 
     jpush.setAuth(enable: true);
     jpush.setup(
-      appKey: "xxxxx", //你自己应用的 AppKey
+      appKey: "b266cd5c8544ba09b23733e3", //你自己应用的 AppKey
       channel: "theChannel",
       production: false,
       debug: true,
@@ -225,15 +237,27 @@ class _MyAppState extends State<MyApp> {
                 new CustomButton(
                     title: "getAllTags",
                     onPressed: () {
-                      jpush.getAllTags().then((map) {
-                        setState(() {
-                          debugLable = "getAllTags success: $map";
+                      if (Platform.isIOS || Platform.isAndroid) {
+                        jpush.getAllTags().then((map) {
+                          setState(() {
+                            debugLable = "getAllTags success: $map";
+                          });
+                        }).catchError((error) {
+                          setState(() {
+                            debugLable = "getAllTags error: $error";
+                          });
                         });
-                      }).catchError((error) {
-                        setState(() {
-                          debugLable = "getAllTags error: $error";
+                      } else {
+                        jpush.getTags(1).then((map) {
+                          setState(() {
+                            debugLable = "getTags success: $map";
+                          });
+                        }).catchError((error) {
+                          setState(() {
+                            debugLable = "getTags error: $error";
+                          });
                         });
-                      });
+                      }
                     }),
                 new Text(" "),
                 new CustomButton(
@@ -361,6 +385,25 @@ class _MyAppState extends State<MyApp> {
                   title: "打开系统设置",
                   onPressed: () {
                     jpush.openSettingsForNotification();
+                  }),
+            ],
+          ),
+          new Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              new Text(" "),
+              new CustomButton(
+                  title: "getRegistrationID",
+                  onPressed: () {
+                    jpush.getRegistrationID().then((rid) {
+                      setState(() {
+                        debugLable = "getRegistrationID: $rid";
+                      });
+                    }).catchError((onError) {
+                      setState(() {
+                        debugLable = "getRegistrationID: ${onError.toString()}";
+                      });
+                    });
                   }),
             ],
           ),

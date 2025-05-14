@@ -1,3 +1,5 @@
+## 3.2.5
+添加harmony平台
 ## 3.2.4
 更新 android JPush 5.7.0, 新增 android setDataInsightsEnable 接口
 ## 3.2.3

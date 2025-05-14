@@ -16,7 +16,7 @@ dependencies:
       
 // pub 集成
 dependencies:
-  jpush_flutter: 3.2.3
+  jpush_flutter: 3.2.5
 ```
 
 ### 配置
@@ -41,6 +41,11 @@ android: {
 ##### iOS:
 
 - 在 xcode8 之后需要点开推送选项： TARGETS -> Capabilities -> Push Notification 设为 on 状态
+
+
+##### Harmony:
+
+- [Harmony](./README_Harmony.md)
 
 ### 使用
 

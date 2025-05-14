@@ -1,0 +1,27 @@
+如何不想配置太多环境，最好，在DevEco Studio 的Terminal上打命令
+
+编译：flutter build hap --debug
+
+添加插件代码，方便修改：build-profile.json5："modules":中
+    {
+      "name": "jpush_flutter",
+      "srcPath": "../../ohos"
+    }
+
+
+
+
+    参考：
+
+    flutter sdk库
+    https://gitee.com/openharmony-sig/flutter_flutter
+    flutter engine扩展库
+    https://gitee.com/openharmony-sig/flutter_engine
+    flutter packages仓
+    https://gitee.com/openharmony-sig/flutter_packages
+    可通过此链接查看Flutter三方库：https://docs.qq.com/sheet/DVVJDWWt1V09zUFN2?tab=BB08J2
+    其他资料库：
+     https://gitee.com/openharmony-sig/flutter_samples/tree/master/ohos/pictures_provider_demo/
+    https://3ms.huawei.com/km/blogs/details/14918330?l=zh-cn----失效的
+    https://3ms.huawei.com/km/groups/3943104/blogs/details/15477174?moduleId=954161786233102336---失效的
+    https://gitee.com/openharmony-sig/flutter_samples/blob/master/ohos/docs/03_environment/%E9%B8%BF%E8%92%99%E7%89%88Flutter%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E6%8C%87%E5%AF%BC.md

@@ -1,16 +1,19 @@
 name: jpush_flutter
 description: JIGUANG officially supported JPush Flutter plugin (Android & iOS). 极光推送官方支持的 Flutter 插件（Android & iOS）(https://www.jiguang.cn).
-version: 3.2.4
+version: 3.2.5
 # author: xudong.rao <xudong.rao@outlook.com>
 homepage: https://www.jiguang.cn
 
 environment:
-  sdk: '>=3.1.3 <4.0.0'
+#  sdk: '>=3.1.3 <4.0.0'
+  sdk: ">=2.19.6 <3.0.0"  # 改为你当前 SDK 版本
   flutter: '>=3.3.0'
+#  flutter: ">=2.5.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  plugin_platform_interface: ^2.0.2
 
 dev_dependencies:
   flutter_test:
@@ -29,6 +32,9 @@ flutter:
         pluginClass: JPushPlugin
       ios:
         pluginClass: JPushPlugin
+      ohos:
+        package: com.jiguang.jpush
+        pluginClass: JpushHarmonySdkPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
