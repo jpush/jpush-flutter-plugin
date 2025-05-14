@@ -1,5 +1,9 @@
 ## 3.2.5
+<<<<<<< HEAD
 添加harmony平台
+=======
+更新 android JCore 491 版本
+>>>>>>> origin/dev-3.x
 ## 3.2.4
 更新 android JPush 5.7.0, 新增 android setDataInsightsEnable 接口
 ## 3.2.3
