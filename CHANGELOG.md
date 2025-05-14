@@ -1,3 +1,5 @@
+## 3.0.1
+更新android jcore-google 490
 ## 3.0.0
 更新iOS jpush550
 更新android jpush560
