@@ -1,5 +1,12 @@
 ## 3.2.6
 添加harmony平台
+使用方式变更
+```dart
+import 'package:jpush_flutter/jpush_flutter.dart';
+import 'package:jpush_flutter/jpush_interface.dart';
+
+final JPushFlutterInterface jpush = JPush.newJPush();
+```
 ## 3.2.5
 更新 android JCore 491 版本
 ## 3.2.4
