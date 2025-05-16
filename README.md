@@ -16,7 +16,7 @@ dependencies:
       
 // pub 集成
 dependencies:
-  jpush_flutter: 3.2.5
+  jpush_flutter: 3.2.6
 ```
 
 ### 配置
@@ -51,6 +51,9 @@ android: {
 
 ```dart
 import 'package:jpush_flutter/jpush_flutter.dart';
+import 'package:jpush_flutter/jpush_interface.dart';
+
+final JPushFlutterInterface jpush = JPush.newJPush();
 ```
 
 ### APIs
