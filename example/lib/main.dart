@@ -90,6 +90,7 @@ class _MyAppState extends State<MyApp> {
       platformVersion = 'Failed to get platform version.';
     }
 
+    jpush.setHeartBeatTimeInterval(interval: 30);
     jpush.setAuth(enable: true);
     jpush.setup(
       appKey: "b266cd5c8544ba09b23733e3", //你自己应用的 AppKey

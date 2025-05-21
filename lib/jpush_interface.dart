@@ -62,6 +62,10 @@ abstract class JPushFlutterInterface {
     print(flutter_log + "setDataInsightsEnable:has not been implemented.");
   }
 
+  void setHeartBeatTimeInterval({int interval = 290}) {
+    print(flutter_log + "setHeartBeatTimeInterval:has not been implemented.");
+  }
+
   void setCollectControl({
     bool imsi = true, // only android
     bool mac = true, // only android

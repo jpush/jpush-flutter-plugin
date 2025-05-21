@@ -176,6 +176,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [self setCollectControl:call result:result];
     } else if ([@"setSmartPushEnable" isEqualToString:call.method]) {
         [self setSmartPushEnable:call result:result];
+    } else if ([@"setHeartBeatTimeInterval" isEqualToString:call.method]) {
+        [self setHeartBeatTimeInterval:call result:result];
     } else{
         result(FlutterMethodNotImplemented);
     }
@@ -199,6 +201,11 @@ static NSMutableArray<FlutterResult>* getRidResults;
 - (void)setSmartPushEnable:(FlutterMethodCall*)call result:(FlutterResult)result{
     BOOL enable = [call.arguments[@"enable"] boolValue];
     [JPUSHService setSmartPushEnable:enable];
+}
+
+- (void)setHeartBeatTimeInterval:(FlutterMethodCall*)call result:(FlutterResult)result{
+    double interval = [call.arguments[@"interval"] doubleValue];
+    [JPUSHService setHeartBeatTimeInterval:interval];
 }
 
 - (void)setup:(FlutterMethodCall*)call result:(FlutterResult)result {
