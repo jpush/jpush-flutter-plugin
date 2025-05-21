@@ -33,19 +33,13 @@ echo $PATH
 
 使用完后：.bash_profile_back -》.bash_profile
 然后 source ~/.bash_profile
+#!/bin/sh
 
+# 恢复备份的配置文件
+cp -f ~/.bash_profile_back ~/.bash_profile
 
-    参考：
-
-    flutter sdk库
-    https://gitee.com/openharmony-sig/flutter_flutter
-    flutter engine扩展库
-    https://gitee.com/openharmony-sig/flutter_engine
-    flutter packages仓
-    https://gitee.com/openharmony-sig/flutter_packages
-    可通过此链接查看Flutter三方库：https://docs.qq.com/sheet/DVVJDWWt1V09zUFN2?tab=BB08J2
-    其他资料库：
-     https://gitee.com/openharmony-sig/flutter_samples/tree/master/ohos/pictures_provider_demo/
-    https://3ms.huawei.com/km/blogs/details/14918330?l=zh-cn----失效的
-    https://3ms.huawei.com/km/groups/3943104/blogs/details/15477174?moduleId=954161786233102336---失效的
-    https://gitee.com/openharmony-sig/flutter_samples/blob/master/ohos/docs/03_environment/%E9%B8%BF%E8%92%99%E7%89%88Flutter%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E6%8C%87%E5%AF%BC.md
+# 使原配置生效（需手动执行或通过点命令运行脚本）
+source ~/.bash_profile
+#查看
+cat ~/.bash_profile
+echo $PATH
