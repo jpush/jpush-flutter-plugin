@@ -1,6 +1,29 @@
 如何不想配置太多环境，最好，在DevEco Studio 的Terminal上打命令
 
+先复制一份.bash_profile  -》 .bash_profile_back
+然后.bash_profile_harmony - 》.bash_profile
+然后 source ~/.bash_profile
+
+#!/bin/sh
+
+# 备份原 .bash_profile
+cp -f ~/.bash_profile ~/.bash_profile_back
+
+# 替换为 harmony 版本
+mv -f ~/.bash_profile_harmony ~/.bash_profile
+
+# 使新配置生效
+source ~/.bash_profile
+
+#查看
+cat ~/.bash_profile
+echo $PATH
+
+编译
+  先到工程下example： cd example/
 编译：flutter build hap --debug
+
+用DevEco Studio 打开 example/ohos
 
 添加插件代码，方便修改：build-profile.json5："modules":中
     {
@@ -8,7 +31,8 @@
       "srcPath": "../../ohos"
     }
 
-
+使用完后：.bash_profile_back -》.bash_profile
+然后 source ~/.bash_profile
 
 
     参考：
