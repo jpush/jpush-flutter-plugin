@@ -104,4 +104,9 @@ class JpushHarmonySdk extends JPushFlutterInterface {
     print(flutter_log + "setBadge");
     await _jpushHarmonySdkPlugin.setBadgeNumber(badge);
   }
+
+  Future setHBInterval(int hbinterval) async {
+    print(flutter_log + "setHBInterval");
+    await _jpushHarmonySdkPlugin.setHBInterval(hbinterval);
+  }
 }

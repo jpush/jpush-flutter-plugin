@@ -106,6 +106,10 @@ class MethodChannelJpushHarmonySdk extends JpushHarmonySdkPlatform {
     methodChannel.invokeMethod("setBadgeNumber", badgeNumber);
   }
 
+  setHeartbeatTime(int heartbeatTime) {
+    methodChannel.invokeMethod("setHeartbeatTime", heartbeatTime);
+  }
+
   void printMy(msg) {
     if (debug) {
       print(flutter_log + "::" + msg);

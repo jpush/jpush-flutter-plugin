@@ -125,11 +125,6 @@ class JPush_A_I extends JPushFlutterInterface {
     _channel.invokeMethod('setDataInsightsEnable', {'enable': enable});
   }
 
-  void setHeartBeatTimeInterval({int interval = 290}) {
-    print(flutter_log + "setHeartBeatTimeInterval:");
-    _channel.invokeMethod('setHeartBeatTimeInterval', {'interval': interval});
-  }
-
   void setCollectControl({
     bool imsi = true, // only android
     bool mac = true, // only android

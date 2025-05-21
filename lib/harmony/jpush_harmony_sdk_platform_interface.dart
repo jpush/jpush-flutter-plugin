@@ -98,4 +98,8 @@ abstract class JpushHarmonySdkPlatform extends PlatformInterface {
   setBadgeNumber(int badgeNumber) {
     throw UnimplementedError('setBadgeNumber() has not been implemented.');
   }
+
+  setHeartbeatTime(int heartbeatTime) {
+    throw UnimplementedError('setHeartbeatTime() has not been implemented.');
+  }
 }

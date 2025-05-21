@@ -243,6 +243,8 @@ class JPushInterfaceImp {
       this.isPushStopped(result)
     } else if (call.method == "setBadgeNumber") {
       this.setBadgeNumber(call, result)
+    } else if (call.method == "setHeartbeatTime") {
+      this.setHeartbeatTime(call, result)
     } else {
       result.notImplemented()
     }
@@ -371,6 +373,12 @@ class JPushInterfaceImp {
   setBadgeNumber(call: MethodCall, result: MethodResult) {
     let badgeNumber: number = call.args
     JPushInterface.setBadgeNumber(badgeNumber)
+    result.success(true)
+  }
+
+  setHeartbeatTime(call: MethodCall, result: MethodResult) {
+    let heartbeatTime: number = call.args
+    JPushInterface.setHeartbeatTime(heartbeatTime)
     result.success(true)
   }
 }

@@ -78,4 +78,9 @@ class JpushHarmonySdkImp {
     JpushHarmonySdkPlatform.instance.setBadgeNumber(badgeNumber);
   }
 
+  setHBInterval(int hbinterval) {
+    JpushHarmonySdkPlatform.instance.setHeartbeatTime(hbinterval);
+  }
+
+
 }
