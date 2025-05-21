@@ -376,9 +376,6 @@ class JPush_A_I extends JPushFlutterInterface {
   }
 
   Future setHBInterval(int hbinterval) async {
-    if (Platform.isIOS) {
-      return;
-    }
     print(flutter_log + "setHBInterval");
     await _channel.invokeMethod('setHBInterval', {"hb_interval": hbinterval});
   }
