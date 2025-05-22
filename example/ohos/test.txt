@@ -10,7 +10,7 @@
 cp -f ~/.bash_profile ~/.bash_profile_back
 
 # 替换为 harmony 版本
-mv -f ~/.bash_profile_harmony ~/.bash_profile
+cp -f ~/.bash_profile_harmony ~/.bash_profile
 
 # 使新配置生效
 source ~/.bash_profile
