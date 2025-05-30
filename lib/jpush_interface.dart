@@ -62,6 +62,26 @@ abstract class JPushFlutterInterface {
     print(flutter_log + "setDataInsightsEnable:has not been implemented.");
   }
 
+/**
+ * 启用SDK本地日志，启动用SDK日志缓存本设备
+ *
+ * @param enable 是否启用日志（true表示启用，false表示禁用）
+ * @param uploadJgToServer 是否将日志上传到极光服务器（true表示上传，false表示不上传）
+ */
+  void enableSDKLocalLog({bool enable = false, bool uploadJgToServer = false}) {
+    print(flutter_log + "enableSDKLocalLog:has not been implemented.");
+  }
+
+  ///
+  /// 获取所有进程的新增SDK日志
+  ///
+  /// @param {Function} callback = (String) => {}
+  ///
+  Future<String> readNewLogs() async {
+    print(flutter_log + "readNewLogs:has not been implemented.");
+    return "";
+  }
+
   void setCollectControl({
     bool imsi = true, // only android
     bool mac = true, // only android
@@ -180,8 +200,6 @@ abstract class JPushFlutterInterface {
     print(flutter_log + "getTags:has not been implemented.");
     return {};
   }
-
-
 
   ///
   /// 获取所有当前绑定的 alias
@@ -309,7 +327,8 @@ abstract class JPushFlutterInterface {
 
   /// 调用此 API 跳转至系统设置中应用设置界面
   void openSettingsForNotification() {
-    print(flutter_log + "openSettingsForNotification:has not been implemented.");
+    print(
+        flutter_log + "openSettingsForNotification:has not been implemented.");
   }
 
   void requestRequiredPermission() {

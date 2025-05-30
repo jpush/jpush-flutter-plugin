@@ -1,5 +1,5 @@
 ## 3.2.8
-更新安卓 jcore 5.0.2
+更新安卓 jcore 5.0.2, 新增enableSDKLocalLog 和 readNewLogs 接口
 ## 3.2.7
 更新 harmony 到1.2.1，ios 更新到jpush5.6.1&jcore5.0.2
 

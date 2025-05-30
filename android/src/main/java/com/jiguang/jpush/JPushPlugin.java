@@ -163,6 +163,10 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             setThirdToken(call, result);
         }else if (call.method.equals("setDataInsightsEnable")) {
             setDataInsightsEnable(call, result);
+        }else if (call.method.equals("enableSDKLocalLog")) {
+            enableSDKLocalLog(call, result);
+        }else if (call.method.equals("readNewLogs")) {
+            readNewLogs(call, result);
         } else {
             result.notImplemented();
         }
@@ -202,6 +206,29 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             enable = true;
         }
         JPushInterface.setDataInsightsEnable(context,enable);
+    }
+
+    public void enableSDKLocalLog(MethodCall call, Result result) {
+        Log.d(TAG, "enableSDKLocalLog: ");
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) {
+            return;
+        }
+        Boolean enable = (Boolean) map.get("enable");
+        if (enable == null) {
+            enable = false;
+        }
+        Boolean uploadJgToServer = (Boolean) map.get("uploadJgToServer");
+        if (uploadJgToServer == null) {
+            uploadJgToServer = false;
+        }
+        JCoreInterface.enableSDKLocalLog(context, enable, uploadJgToServer);
+    }
+
+    public void readNewLogs(MethodCall call, Result result) {
+        Log.d(TAG, "readNewLogs ");
+         String logs = JCoreInterface.readNewLogs(context);
+         result.success(logs);
     }
     public void setChannelAndSound(MethodCall call, Result result) {
         HashMap<String, Object> readableMap = call.arguments();

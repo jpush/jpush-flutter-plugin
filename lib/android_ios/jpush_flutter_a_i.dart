@@ -125,6 +125,24 @@ class JPush_A_I extends JPushFlutterInterface {
     _channel.invokeMethod('setDataInsightsEnable', {'enable': enable});
   }
 
+  void enableSDKLocalLog({bool enable = false, bool uploadJgToServer = false}) {
+    if (Platform.isIOS) {
+      return;
+    }
+    print(flutter_log + "enableSDKLocalLog:");
+    _channel.invokeMethod('setDataInsightsEnable',
+        {'enable': enable, 'uploadJgToServer': uploadJgToServer});
+  }
+
+  Future<String> readNewLogs() async {
+    if (Platform.isIOS) {
+      return "";
+    }
+    print(flutter_log + "readNewLogs");
+    final String logs = await _channel.invokeMethod('readNewLogs', {});
+    return logs;
+  }
+
   void setCollectControl({
     bool imsi = true, // only android
     bool mac = true, // only android
