@@ -150,7 +150,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
     } else if([@"stopPush" isEqualToString:call.method]) {
         [self stopPush:call result:result];
     } else if([@"resumePush" isEqualToString:call.method]) {
-        JPLog(@"ios platform not support resume push.");
+        [self resumePush:call result:result];
         //[self applyPushAuthority:call result:result];
     } else if([@"clearAllNotifications" isEqualToString:call.method]) {
         [self clearAllNotifications:call result:result];
@@ -176,6 +176,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [self setCollectControl:call result:result];
     } else if ([@"setSmartPushEnable" isEqualToString:call.method]) {
         [self setSmartPushEnable:call result:result];
+    } else if ([@"setHBInterval" isEqualToString:call.method]) {
+        [self setHeartBeatTimeInterval:call result:result];
     } else{
         result(FlutterMethodNotImplemented);
     }
@@ -199,6 +201,11 @@ static NSMutableArray<FlutterResult>* getRidResults;
 - (void)setSmartPushEnable:(FlutterMethodCall*)call result:(FlutterResult)result{
     BOOL enable = [call.arguments[@"enable"] boolValue];
     [JPUSHService setSmartPushEnable:enable];
+}
+
+- (void)setHeartBeatTimeInterval:(FlutterMethodCall*)call result:(FlutterResult)result{
+    double interval = [call.arguments[@"hb_interval"] doubleValue];
+    [JPUSHService setHeartBeatTimeInterval:interval];
 }
 
 - (void)setup:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -376,6 +383,12 @@ static NSMutableArray<FlutterResult>* getRidResults;
     JPLog(@"stopPush:");
     [[UIApplication sharedApplication] unregisterForRemoteNotifications];
 }
+
+- (void)resumePush:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"resumePush:");
+    [[UIApplication sharedApplication] registerForRemoteNotifications];
+}
+
 - (void)clearAllNotifications:(FlutterMethodCall*)call result:(FlutterResult)result {
     JPLog(@"clearAllNotifications:");
     
@@ -466,6 +479,11 @@ static NSMutableArray<FlutterResult>* getRidResults;
     
     if (params[@"soundName"] && ![params[@"soundName"] isEqualToString:@"<null>"]) {
         content.sound = params[@"soundName"];
+    }
+    
+    if (@available(iOS 15.0, *)) {
+      content.interruptionLevel = UNNotificationInterruptionLevelActive;
+      content.relevanceScore = 1;
     }
     
     JPushNotificationTrigger *trigger = [[JPushNotificationTrigger alloc] init];
@@ -578,10 +596,6 @@ static NSMutableArray<FlutterResult>* getRidResults;
         _launchNotification = localNotificationEvent;
     }
     
-    JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
-    entity.types = JPAuthorizationOptionAlert;
-    [JPUSHService registerForRemoteNotificationConfig:entity delegate:self];
-    
     //[self performSelector:@selector(addNotificationWithDateTrigger) withObject:nil afterDelay:2];
     return YES;
 }
@@ -662,7 +676,29 @@ static NSMutableArray<FlutterResult>* getRidResults;
     JPLog(@"application:didReceiveRemoteNotification:fetchCompletionHandler");
     JPLog(@"UNUserNotificationCenter.delegate:%@  applidelegate:%@",[UNUserNotificationCenter currentNotificationCenter].delegate, [UIApplication sharedApplication].delegate);
     [JPUSHService handleRemoteNotification:userInfo];
-    [_channel invokeMethod:@"onReceiveNotification" arguments:userInfo];
+    if (@available(* ,iOS 10)) {
+        [_channel invokeMethod:@"onReceiveNotification" arguments:userInfo];
+       
+        /**
+         * 下面这段代码是解决 app处于杀死状态,点击通知启动app,但是不回调onOpenNotification的问题。
+         * 上诉情况不会走didReceiveNotificationResponse：回调。但是会走didReceiveRemoteNotification:fetchCompletionHandler:回调。iOS原生项目中正常情况下，点击通知冷启动app是会回调didReceiveNotificationResponse，不回调didReceiveRemoteNotification:fetchCompletionHandler:的。
+         * 因为不走didReceiveNotificationResponse：回调 所以没有onOpenNotification回调。这跟生命周期有关，didReceiveNotificationResponse:的代理需要通知的远程代理设置要在didFinishLaunch结束之前。但是flutter初始化jpush是在didFinishLaunch之后。
+         * 在这个方法里做一个判断吧，如果收到的消息和启动时的消息是同一个消息，则判断该消息为app杀死状态下通过点击通知唤醒的。
+         */
+        JPLog(@"didReceiveRemoteNotification:%@ - %@", _launchNotification, userInfo);
+        if (_launchNotification && userInfo && [_launchNotification isKindOfClass:[NSDictionary class]] && [userInfo isKindOfClass:[NSDictionary class]]) {
+            // 拿到启动时的推送数据里的msgid
+            NSNumber *launchMsgid = [_launchNotification valueForKey:@"_j_msgid"];
+            // 拿到收到的消息的msgid
+            NSNumber *msgid = [userInfo valueForKey:@"_j_msgid"];
+            // 如果消息id一致
+            if ([launchMsgid isKindOfClass:[NSNumber class]] && [msgid isKindOfClass:[NSNumber class]] && [[launchMsgid stringValue] isEqualToString:[msgid stringValue]]) {
+                JPLog(@"didReceiveRemoteNotification:消息id一致，回调通知点击");
+                [_channel invokeMethod:@"onOpenNotification" arguments:_launchNotification];
+            }
+        }
+    }
+
     completionHandler(UIBackgroundFetchResultNewData);
     return YES;
 }
