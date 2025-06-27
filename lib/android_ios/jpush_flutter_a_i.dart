@@ -193,6 +193,10 @@ class JPush_A_I extends JPushFlutterInterface {
     _onInAppMessageShow = onInAppMessageShow;
     _onCommandResult = onCommandResult;
     _channel.setMethodCallHandler(_handleMethod);
+
+    if (Platform.isIOS) {
+      _channel.invokeMethod('addEventHandler');
+    }
   }
 
   Future<dynamic> _handleMethod(MethodCall call) async {
