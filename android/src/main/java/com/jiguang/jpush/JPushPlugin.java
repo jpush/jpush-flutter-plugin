@@ -404,7 +404,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     public void scheduleCache() {
         Log.d(TAG, "scheduleCache:");
       JPushHelper.getInstance().dispatchNotification();
-      JPushHelper.getInstance().dispatchRid();
+      JPushHelper.getInstance().dispatchRid("");
     }
 
     public void setTags(MethodCall call, Result result) {

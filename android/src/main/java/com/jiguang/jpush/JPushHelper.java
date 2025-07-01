@@ -128,25 +128,35 @@ public class JPushHelper {
         }
     }
 
-    public void dispatchRid() {
+    public void dispatchRid(String rId) {
+        if (rId != null && !rId.isEmpty() && dartIsReady ) {
+            Log.d(TAG, "dispatchRid msg=" + rId);
+            doDispatchRid(rId);
+            return;
+        }
         if (mContext == null || mContext.get() == null) {
             return;
         }
-        List<Object> tempList = new ArrayList<Object>();
         String rid = JPushInterface.getRegistrationID(mContext.get());
         boolean ridAvailable = rid != null && !rid.isEmpty();
         if (ridAvailable && dartIsReady) {
-            // try to schedule get rid cache
-            tempList.clear();
-            List<Result> resultList = getRidCache;
-            for (Result res : resultList) {
+            doDispatchRid(rid);
+        }
+    }
+
+    public void doDispatchRid(String rid) {
+         List<Object> tempList = new ArrayList<Object>();
+         // try to schedule get rid cache
+         tempList.clear();
+         List<Result> resultList = getRidCache;
+         for (Result res : resultList) {
                 Log.d(TAG, "scheduleCache rid = " + rid);
                 res.success(rid);
                 tempList.add(res);
-            }
-            resultList.removeAll(tempList);
-            tempList.clear();
-        }
+         }
+        resultList.removeAll(tempList);
+        tempList.clear();
+       
     }
 
 
@@ -391,7 +401,7 @@ public class JPushHelper {
         Log.d(TAG, "transmitReceiveRegistrationId： " + rId);
         jpushDidinit = true;
         dispatchNotification();
-        dispatchRid();
+        dispatchRid(rId);
     }
 
     // 主线程再返回数据
