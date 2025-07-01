@@ -1,3 +1,7 @@
+## 3.0.3
+修复安卓第一次运行getRegistrationID方法偶现获取不到rid的问题
+## 3.0.2
+同步dev-3.x iOS部分
 ## 3.0.1
 更新android jcore-google 490
 ## 3.0.0

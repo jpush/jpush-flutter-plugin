@@ -120,12 +120,15 @@ public class JPushHelper {
         }
     }
 
-    public void dispatchRid() {
-        if (mContext == null || mContext.get() == null) {
-            return;
+    public void dispatchRid(String rid) {
+        if (rid == null || rid.isEmpty()) {
+            if (mContext == null || mContext.get() == null) {
+                return;
+            }
+         rid = JPushInterface.getRegistrationID(mContext.get());
         }
+        
         List<Object> tempList = new ArrayList<Object>();
-        String rid = JPushInterface.getRegistrationID(mContext.get());
         boolean ridAvailable = rid != null && !rid.isEmpty();
         if (ridAvailable && dartIsReady) {
             // try to schedule get rid cache
@@ -140,7 +143,6 @@ public class JPushHelper {
             tempList.clear();
         }
     }
-
 
     public void transmitMessageReceive(CustomMessage customMessage) {
         Log.d(TAG, "transmitMessageReceive " + "customMessage=" + customMessage);
@@ -379,7 +381,7 @@ public class JPushHelper {
         Log.d(TAG, "transmitReceiveRegistrationId： " + rId);
         jpushDidinit = true;
         dispatchNotification();
-        dispatchRid();
+        dispatchRid(rId);
     }
 
     // 主线程再返回数据
