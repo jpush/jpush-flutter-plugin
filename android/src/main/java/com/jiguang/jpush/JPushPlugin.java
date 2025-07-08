@@ -55,7 +55,9 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 
     @Override
     public void onAttachedToEngine(FlutterPluginBinding flutterPluginBinding) {
+        Log.d(TAG,"onAttachedToEngine: " + flutterPluginBinding);
         MethodChannel  channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "jpush");
+        Log.d(TAG,"onAttachedToEngine channel: " + channel);
         channel.setMethodCallHandler(this);
          context = flutterPluginBinding.getApplicationContext();
         JPushHelper.getInstance().setMethodChannel(channel);
@@ -83,6 +85,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
     @Override
     public void onDetachedFromEngine(FlutterPluginBinding binding) {
+        Log.d(TAG,"onDetachedFromEngine: " + binding);
         MethodChannel  channel =JPushHelper.getInstance().getChannel();
         if(channel!=null){
             channel.setMethodCallHandler(null);
