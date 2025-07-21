@@ -1,3 +1,6 @@
+## 3.0.4
+android升级到jpush 5.8.0
+ios升级到jpush 5.7.0
 ## 3.0.3
 修复安卓第一次运行getRegistrationID方法偶现获取不到rid的问题
 ## 3.0.2
