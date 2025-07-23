@@ -1,3 +1,5 @@
+## 3.3.3
+iOS 新增 onReceiveDeviceToken 事件回调，用于获取设备DeviceToken
 ## 3.3.2
 android升级到jpush 5.8.0
 ios升级到jpush 5.7.0

@@ -85,6 +85,11 @@ class _MyAppState extends State<MyApp> {
         setState(() {
           debugLable = "flutter onConnected: $message";
         });
+      }, onReceiveDeviceToken: (Map<String, dynamic> message) async {
+        print("flutter onReceiveDeviceToken: $message");
+        setState(() {
+          debugLable = "flutter onReceiveDeviceToken: $message";
+        });
       });
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';

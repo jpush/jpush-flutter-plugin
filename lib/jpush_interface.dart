@@ -108,6 +108,7 @@ abstract class JPushFlutterInterface {
     EventHandler? onInAppMessageClick,
     EventHandler? onInAppMessageShow,
     EventHandler? onCommandResult,
+    EventHandler? onReceiveDeviceToken,
   }) {
     print(flutter_log + "addEventHandler:has not been implemented.");
   }

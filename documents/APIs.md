@@ -185,6 +185,11 @@ jpush.addEventHandler(
       onConnected: (Map<String, dynamic> message) async {
         print("flutter onConnected: $message");
       },
+      // iOS Only: 接收设备Token回调方法。
+      onReceiveDeviceToken: (Map<String, dynamic> message) async {
+        print("flutter onReceiveDeviceToken: $message");
+        // message 包含 {"deviceToken": "实际的设备deviceToken"}
+      },
   );
 ```
 

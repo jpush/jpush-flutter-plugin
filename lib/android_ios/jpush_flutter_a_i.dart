@@ -30,6 +30,7 @@ class JPush_A_I extends JPushFlutterInterface {
   EventHandler? _onInAppMessageClick;
   EventHandler? _onInAppMessageShow;
   EventHandler? _onCommandResult;
+  EventHandler? _onReceiveDeviceToken;
   void setup({
     String appKey = '',
     bool production = false,
@@ -180,6 +181,7 @@ class JPush_A_I extends JPushFlutterInterface {
     EventHandler? onInAppMessageClick,
     EventHandler? onInAppMessageShow,
     EventHandler? onCommandResult,
+    EventHandler? onReceiveDeviceToken,
   }) {
     print(flutter_log + "addEventHandler:");
 
@@ -192,6 +194,7 @@ class JPush_A_I extends JPushFlutterInterface {
     _onInAppMessageClick = onInAppMessageClick;
     _onInAppMessageShow = onInAppMessageShow;
     _onCommandResult = onCommandResult;
+    _onReceiveDeviceToken = onReceiveDeviceToken;
     _channel.setMethodCallHandler(_handleMethod);
 
     if (Platform.isIOS) {
@@ -222,6 +225,8 @@ class JPush_A_I extends JPushFlutterInterface {
         return _onInAppMessageShow!(call.arguments.cast<String, dynamic>());
       case "onCommandResult":
         return _onCommandResult!(call.arguments.cast<String, dynamic>());
+      case "onReceiveDeviceToken":
+        return _onReceiveDeviceToken!(call.arguments.cast<String, dynamic>());
       default:
         throw new UnsupportedError("Unrecognized Event");
     }
