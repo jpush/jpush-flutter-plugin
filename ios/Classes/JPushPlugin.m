@@ -108,6 +108,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
 
 - (void)networkDidClose:(NSNotification *)notification {
     _isJPushDidLogin = false;
+    [_channel invokeMethod:@"onConnected" arguments: @{@"result": @(0)}];
 }
 
 
@@ -117,6 +118,7 @@ static NSMutableArray<FlutterResult>* getRidResults;
         result([JPUSHService registrationID]);
     }
     [getRidResults removeAllObjects];
+    [_channel invokeMethod:@"onConnected" arguments: @{@"result": @(1)}];
 }
 
 - (void)networkDidReceiveMessage:(NSNotification *)notification {
