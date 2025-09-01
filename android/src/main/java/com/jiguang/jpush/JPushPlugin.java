@@ -100,6 +100,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
                 JPushHelper.getInstance().setMethodChannel(cachedChannel, bindingId);
                 JPushHelper.getInstance().setContext(context);
                 Log.d(TAG, "JPushPlugin successfully set channel from cache for bindingId: " + bindingId);
+                JPushHelper.getInstance().dispatchNotification();
             } else {
                 Log.w(TAG, "JPushPlugin channel not found in cache for bindingId: " + bindingId);
             }
