@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import cn.jiguang.api.JCoreManager;
 import cn.jpush.android.data.JPushConfig;
@@ -49,22 +50,67 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     private Context context;
     private Activity mActivity;
     private int sequence;
+    
+    // 缓存flutterPluginBinding和channel关系
+    private static final ConcurrentHashMap<String, MethodChannel> bindingChannelCache = new ConcurrentHashMap<>();
+    
     public JPushPlugin() {
         this.sequence = 0;
     }
 
     @Override
     public void onAttachedToEngine(FlutterPluginBinding flutterPluginBinding) {
-        Log.d(TAG,"onAttachedToEngine: " + flutterPluginBinding);
-        MethodChannel  channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "jpush");
-        Log.d(TAG,"onAttachedToEngine channel: " + channel);
+        Log.d(TAG,"JPushPlugin onAttachedToEngine: " + flutterPluginBinding);
+        
+        // 生成唯一的绑定标识符（使用字符串表示）
+        String bindingId = generateBindingId(flutterPluginBinding);
+        
+        MethodChannel channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "jpush");
+        Log.d(TAG,"JPushPlugin onAttachedToEngine channel: " + channel);
+        
+        // 缓存binding和channel的关系
+        bindingChannelCache.put(bindingId, channel);
+        Log.d(TAG,"JPushPlugin cached binding-channel relationship: " + bindingId + " -> " + channel);
+        
         channel.setMethodCallHandler(this);
-         context = flutterPluginBinding.getApplicationContext();
-        JPushHelper.getInstance().setMethodChannel(channel);
-        JPushHelper.getInstance().setContext(context);
+
+        context = flutterPluginBinding.getApplicationContext().getApplicationContext();
+        // 通过channel回调给Flutter，携带generateBindingId字符串
+        new Handler(Looper.getMainLooper()).post(() -> {
+            try {
+                channel.invokeMethod("onPluginAttached", bindingId);
+                Log.d(TAG, "JPushPlugin sent onPluginAttached callback with bindingId: " + bindingId);
+            } catch (Exception e) {
+                Log.e(TAG, "JPushPlugin failed to send onPluginAttached callback: " + e.getMessage());
+            }
+        });
+
     }
+
+    private void setPluginChannel(MethodCall call) {
+        Object arguments = call.arguments();
+        if (arguments instanceof String) {
+            String bindingId = (String) arguments;
+            Log.d(TAG, "JPushPlugin setPluginChannel called with bindingId: " + bindingId);
+            
+            // 从缓存中获取对应的channel
+            MethodChannel cachedChannel = bindingChannelCache.get(bindingId);
+            if (cachedChannel != null) {
+                // 设置channel时记录bindingId，用于后续清理
+                JPushHelper.getInstance().setMethodChannel(cachedChannel, bindingId);
+                JPushHelper.getInstance().setContext(context);
+                Log.d(TAG, "JPushPlugin successfully set channel from cache for bindingId: " + bindingId);
+            } else {
+                Log.w(TAG, "JPushPlugin channel not found in cache for bindingId: " + bindingId);
+            }
+        } else {
+            Log.w(TAG, "JPushPlugin setPluginChannel called with invalid arguments type: " + (arguments != null ? arguments.getClass().getSimpleName() : "null"));
+        }
+    }
+
     @Override
     public void onAttachedToActivity(ActivityPluginBinding activityPluginBinding) {
+        Log.d(TAG,"JPushPlugin onAttachedToActivity: " +activityPluginBinding);
         if(activityPluginBinding!=null){
             mActivity = activityPluginBinding.getActivity();
         }
@@ -73,31 +119,66 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     @Override
     public void onDetachedFromActivityForConfigChanges() {
 
+        Log.d(TAG,"JPushPlugin onDetachedFromActivityForConfigChanges: " );
     }
 
     @Override
     public void onReattachedToActivityForConfigChanges(ActivityPluginBinding activityPluginBinding) {
+
+        Log.d(TAG,"JPushPlugin onReattachedToActivityForConfigChanges: " +activityPluginBinding);
     }
 
     @Override
     public void onDetachedFromActivity() {
+        Log.d(TAG,"JPushPlugin onDetachedFromActivity: ");
 
     }
     @Override
     public void onDetachedFromEngine(FlutterPluginBinding binding) {
-        Log.d(TAG,"onDetachedFromEngine: " + binding);
-        MethodChannel  channel =JPushHelper.getInstance().getChannel();
-        if(channel!=null){
-            channel.setMethodCallHandler(null);
+        Log.d(TAG,"JPushPlugin onDetachedFromEngine: " + binding);
+        
+        // 生成传入binding的标识符
+        String incomingBindingId = generateBindingId(binding);
+        
+        // 获取当前使用的bindingId
+        String currentBindingId = JPushHelper.getInstance().getCurrentBindingId();
+        
+        // 先判断binding是不是当前的，只有匹配时才进行JPushHelper清理
+        if (currentBindingId != null && currentBindingId.equals(incomingBindingId)) {
+            Log.d(TAG, "JPushPlugin onDetachedFromEngine: binding matches current, proceeding with JPushHelper cleanup");
+            
+            // 获取当前使用的channel
+            MethodChannel channel = JPushHelper.getInstance().getChannel();
+            if(channel != null){
+                channel.setMethodCallHandler(null);
+            }
+            
+            // 清理JPushHelper
+            JPushHelper.getInstance().setMethodChannel(null, null);
+            JPushHelper.getInstance().setDartIsReady(false);
+        } else {
+            Log.d(TAG, "JPushPlugin onDetachedFromEngine: binding mismatch, current: " + currentBindingId + ", incoming: " + incomingBindingId + ", skipping JPushHelper cleanup");
         }
-        JPushHelper.getInstance().setMethodChannel(null);
-        JPushHelper.getInstance().setDartIsReady(false);
+        
+        // 从缓存中清理对应的关系（无论binding是否匹配都要执行）
+        if (incomingBindingId != null) {
+            MethodChannel cachedChannel = bindingChannelCache.remove(incomingBindingId);
+            if (cachedChannel != null) {
+                // 清理cachedChannel的MethodCallHandler
+                cachedChannel.setMethodCallHandler(null);
+                Log.d(TAG, "JPushPlugin removed cached binding-channel relationship: " + incomingBindingId + " -> " + cachedChannel);
+            } else {
+                Log.d(TAG, "JPushPlugin no cached binding-channel relationship found for: " + incomingBindingId);
+            }
+        }
     }
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         Log.i(TAG, call.method);
-        if (call.method.equals("getPlatformVersion")) {
+        if (call.method.equals("is_jpush_plugin")) {
+           setPluginChannel(call);
+        } else if (call.method.equals("getPlatformVersion")) {
             result.success("Android " + android.os.Build.VERSION.RELEASE);
         } else if (call.method.equals("setup")) {
             setup(call, result);
@@ -684,7 +765,15 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 //        }
 //    }
 
-
-
+    /**
+     * 生成唯一的绑定标识符
+     * 使用flutterPluginBinding的hashCode和identityHashCode组合作为唯一标识
+     */
+    private String generateBindingId(FlutterPluginBinding binding) {
+        if (binding == null) {
+            return "null_binding";
+        }
+        return "binding_" + binding.hashCode() + "_" + System.identityHashCode(binding);
+    }
 
 }

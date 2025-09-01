@@ -39,6 +39,7 @@ public class JPushHelper {
 
     private List<Result> getRidCache = new ArrayList<>();
     private MethodChannel channel;
+    private String currentBindingId; // 记录当前使用的bindingId
     private Map<Integer, Result> callbackMap = new HashMap<>();
     private WeakReference<Context> mContext;
 
@@ -56,6 +57,10 @@ public class JPushHelper {
 
     public MethodChannel getChannel() {
         return channel;
+    }
+    
+    public String getCurrentBindingId() {
+        return currentBindingId;
     }
 
     public Result getCallback(int sequence) {
@@ -82,8 +87,10 @@ public class JPushHelper {
         return mHandler;
     }
 
-    public void setMethodChannel(MethodChannel channel) {
+
+    public void setMethodChannel(MethodChannel channel, String bindingId) {
         this.channel = channel;
+        this.currentBindingId = bindingId;
     }
 
     public void setContext(Context context) {
@@ -434,24 +441,42 @@ public class JPushHelper {
     private void invokeMethod(String method, Map<String, Object> msg) {
         if (!dartIsReady) {
             Log.d(TAG, "dartIsReady false: " + method);
-            calBackMessageCache.add(new CachedMessage(method, msg));
+            if (method != null) {
+                calBackMessageCache.add(new CachedMessage(method, msg));
+            } else {
+                Log.d(TAG, "skip cache because method is null");
+            }
+            return;
         } else if (channel == null) {
             Log.d(TAG, "channel is null, cannot invoke " + method);
-            calBackMessageCache.add(new CachedMessage(method, msg));
-        } else {
-            if (!calBackMessageCache.isEmpty()) {
-                for (CachedMessage c : calBackMessageCache) {
-                    Log.d(TAG, "method:" + c.getMethod() + ",data:" + c.getData());
-                    channel.invokeMethod(c.getMethod(), c.getData());
-                }
-                calBackMessageCache.clear();
+            if (method != null) {
+                calBackMessageCache.add(new CachedMessage(method, msg));
+            } else {
+                Log.d(TAG, "skip cache because method is null");
             }
-            if (null == method) {
-                return;
-            }
-            Log.d(TAG, "method:" + method + ",msg:" + msg);
-            channel.invokeMethod(method, msg);
+            return;
         }
+
+        // 先回放缓存（跳过method为null的脏数据）
+        if (!calBackMessageCache.isEmpty()) {
+            for (CachedMessage c : calBackMessageCache) {
+                if (c.getMethod() == null) {
+                    Log.w(TAG, "skip invoking cached message because method is null, data=" + c.getData());
+                    continue;
+                }
+                Log.d(TAG, "method:" + c.getMethod() + ",data:" + c.getData());
+                channel.invokeMethod(c.getMethod(), c.getData());
+            }
+            calBackMessageCache.clear();
+        }
+
+        // 当前调用：若method为null直接返回
+        if (method == null) {
+            Log.d(TAG, "skip current invoke because method is null");
+            return;
+        }
+        Log.d(TAG, "method:" + method + ",msg:" + msg);
+        channel.invokeMethod(method, msg);
     }
 
     /**

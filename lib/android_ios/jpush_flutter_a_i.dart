@@ -206,6 +206,19 @@ class JPush_A_I extends JPushFlutterInterface {
     print(flutter_log + "_handleMethod:");
 
     switch (call.method) {
+      case "onPluginAttached":
+        // 处理插件附加事件，携带bindingId字符串
+        String bindingId = call.arguments as String;
+        print(flutter_log + "Received onPluginAttached with bindingId: " + bindingId);
+        
+        // 调用is_jpush_plugin方法，携带bindingId字符串回来
+        try {
+          await _channel.invokeMethod('is_jpush_plugin', bindingId);
+          print(flutter_log + "Successfully called is_jpush_plugin with bindingId: " + bindingId);
+        } catch (e) {
+          print(flutter_log + "Failed to call is_jpush_plugin: " + e.toString());
+        }
+        return null;
       case "onReceiveNotification":
         return _onReceiveNotification!(call.arguments.cast<String, dynamic>());
       case "onOpenNotification":
