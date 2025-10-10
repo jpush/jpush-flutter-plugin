@@ -1,5 +1,7 @@
+## 3.3.7
+HarmonyOS 新增 onArrivedMessage、onUnShowMessage 回调方法实现。
 ## 3.3.4
-iOS 新增 “onConnected” 事件回调。
+iOS 新增 "onConnected" 事件回调。
 ## 3.3.3
 iOS 新增 onReceiveDeviceToken 事件回调，用于获取设备DeviceToken
 ## 3.3.2

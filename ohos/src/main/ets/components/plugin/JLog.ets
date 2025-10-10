@@ -78,7 +78,7 @@ export class JLog {
   }
 
   private static getTag(tag: string): string {
-    return "[" + JLog.TAG + tag + "]";
+    return "[" + JLog.TAG +"-"+ tag + "]";
   }
 
   // private static getMsg(msg:string):string[]{

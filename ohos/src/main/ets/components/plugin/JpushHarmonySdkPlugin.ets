@@ -6,6 +6,7 @@ import {
   JMessage,
   JMessageExtra,
   JMessageVoIP,
+  JMobileNumberMessage,
   JPushInterface,
   JTagMessage
 } from '@jg/push';
@@ -531,6 +532,37 @@ class MyCallBackMsg extends CallBackMsg {
     JLog.info(this.TAG, 'onCommandResult cmdMessage:' + JSON.stringify(cmdMessage));
     JpushHarmonySdkPlugin.sendChannel("onCommandResult", cmdMessage);
   }
+
+  /**
+   * 消息到达回调
+   * @param jMessage
+   * export class JMessage {
+   * msgId?: string //通知id
+   * title?: string //通知标题
+   * content?: string//通知内容
+   * extras?: string//自定义数据
+   * }
+   */
+  onArrivedMessage(jMessage: JMessage) {
+    JLog.info(this.TAG, 'onArrivedMessage jMessage:' + JSON.stringify(jMessage));
+    JpushHarmonySdkPlugin.sendChannel("onArrivedMessage", jMessage);
+  }
+
+  /**
+   * 消息未显示回调
+   * @param jMessage
+   * export class JMessage {
+   * msgId?: string //通知id
+   * title?: string //通知标题
+   * content?: string//通知内容
+   * extras?: string//自定义数据
+   * }
+   */
+  onUnShowMessage(jMessage: JMessage) {
+    JLog.info(this.TAG, 'onUnShowMessage jMessage:' + JSON.stringify(jMessage));
+    JpushHarmonySdkPlugin.sendChannel("onUnShowMessage", jMessage);
+  }
+
 }
 
 class SendChannelData {

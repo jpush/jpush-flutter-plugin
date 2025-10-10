@@ -58,8 +58,10 @@ jpush.setCallBackHarmony((eventName, data) async {
     - "onClickMessage":通知点击事件回调，内容为string JMessage json
     - "onCustomMessage":自定义消息回调，内容为string JCustomMessage json
     - "onJMessageExtra":通知扩展消息回调，内容为string JMessageExtra json
-    - "onJMessageVoIP":通知扩展消息回调，内容为string JMessageVoIP json
+    - "onJMessageVoIP":VoIP呼叫消息回调，内容为string JMessageVoIP json
     - "onCommandResult":交互事件回调，内容为string JCmdMessage json
+    - "onArrivedMessage":消息到达回调，内容为string JMessage json
+    - "onUnShowMessage":消息未显示回调，内容为string JMessage json
 - data: 为对应内容
 ```
 /**
@@ -158,6 +160,30 @@ jpush.setCallBackHarmony((eventName, data) async {
    * errorCode?: number //0表示成功，其他为错误
    * msg?: string //内容信息
    * extra?: Record<string, Object>
+   * }
+   */
+```
+```
+  /**
+   * 消息到达回调
+   * @param jMessage
+   * export class JMessage {
+   * msgId?: string //通知id
+   * title?: string //通知标题
+   * content?: string//通知内容
+   * extras?: string//自定义数据
+   * }
+   */
+```
+```
+  /**
+   * 消息未显示回调
+   * @param jMessage
+   * export class JMessage {
+   * msgId?: string //通知id
+   * title?: string //通知标题
+   * content?: string//通知内容
+   * extras?: string//自定义数据
    * }
    */
 ```
