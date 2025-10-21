@@ -29,6 +29,7 @@ class JPush_A_I extends JPushFlutterInterface {
   EventHandler? _onConnected;
   EventHandler? _onInAppMessageClick;
   EventHandler? _onInAppMessageShow;
+  EventHandler? _onNotifyButtonClick;
   EventHandler? _onCommandResult;
   EventHandler? _onReceiveDeviceToken;
   void setup({
@@ -180,6 +181,7 @@ class JPush_A_I extends JPushFlutterInterface {
     EventHandler? onConnected,
     EventHandler? onInAppMessageClick,
     EventHandler? onInAppMessageShow,
+    EventHandler? onNotifyButtonClick,
     EventHandler? onCommandResult,
     EventHandler? onReceiveDeviceToken,
   }) {
@@ -193,6 +195,7 @@ class JPush_A_I extends JPushFlutterInterface {
     _onConnected = onConnected;
     _onInAppMessageClick = onInAppMessageClick;
     _onInAppMessageShow = onInAppMessageShow;
+    _onNotifyButtonClick = onNotifyButtonClick;
     _onCommandResult = onCommandResult;
     _onReceiveDeviceToken = onReceiveDeviceToken;
     _channel.setMethodCallHandler(_handleMethod);
@@ -209,14 +212,19 @@ class JPush_A_I extends JPushFlutterInterface {
       case "onPluginAttached":
         // 处理插件附加事件，携带bindingId字符串
         String bindingId = call.arguments as String;
-        print(flutter_log + "Received onPluginAttached with bindingId: " + bindingId);
-        
+        print(flutter_log +
+            "Received onPluginAttached with bindingId: " +
+            bindingId);
+
         // 调用is_jpush_plugin方法，携带bindingId字符串回来
         try {
           await _channel.invokeMethod('is_jpush_plugin', bindingId);
-          print(flutter_log + "Successfully called is_jpush_plugin with bindingId: " + bindingId);
+          print(flutter_log +
+              "Successfully called is_jpush_plugin with bindingId: " +
+              bindingId);
         } catch (e) {
-          print(flutter_log + "Failed to call is_jpush_plugin: " + e.toString());
+          print(
+              flutter_log + "Failed to call is_jpush_plugin: " + e.toString());
         }
         return null;
       case "onReceiveNotification":
@@ -236,6 +244,8 @@ class JPush_A_I extends JPushFlutterInterface {
         return _onInAppMessageClick!(call.arguments.cast<String, dynamic>());
       case "onInAppMessageShow":
         return _onInAppMessageShow!(call.arguments.cast<String, dynamic>());
+      case "onNotifyButtonClick":
+        return _onNotifyButtonClick!(call.arguments.cast<String, dynamic>());
       case "onCommandResult":
         return _onCommandResult!(call.arguments.cast<String, dynamic>());
       case "onReceiveDeviceToken":
@@ -521,5 +531,16 @@ class JPush_A_I extends JPushFlutterInterface {
       return;
     }
     _channel.invokeMethod('requestRequiredPermission');
+  }
+
+  /// iOS Only
+  /// 设置进入后台是否允许长连接。默认是NO,进入后台会关闭长连接，回到前台会重新接入。请在初始化函数之前调用。
+  /// @param enable 是否允许后台长连接
+  void setBackgroundEnable({bool enable = false}) {
+    if (Platform.isAndroid) {
+      return;
+    }
+    print(flutter_log + "setBackgroundEnable:");
+    _channel.invokeMethod('setBackgroundEnable', {'enable': enable});
   }
 }

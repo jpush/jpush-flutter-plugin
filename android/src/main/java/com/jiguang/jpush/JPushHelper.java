@@ -21,6 +21,7 @@ import java.util.Map;
 import cn.jpush.android.api.CmdMessage;
 import cn.jpush.android.api.CustomMessage;
 import cn.jpush.android.api.JPushInterface;
+import cn.jpush.android.api.NotificationCustomButton;
 import cn.jpush.android.api.NotificationMessage;
 import cn.jpush.android.local.JPushConstants;
 import io.flutter.plugin.common.MethodCall;
@@ -307,6 +308,18 @@ public class JPushHelper {
         notification.put("inAppClickAction", notificationMessage.inAppClickAction);
         notification.put("inAppExtras", stringToMap(notificationMessage.inAppExtras));
         invokeMethod("onInAppMessageClick", notification);
+    }
+
+    public void onNotifyButtonClick(NotificationCustomButton notificationCustomButton) {
+        Log.d(TAG, "[onNotifyButtonClick] :" + notificationCustomButton);
+        Map<String, Object> notification = new HashMap<>();
+        notification.put("msgId", notificationCustomButton.a);
+        notification.put("platform", notificationCustomButton.b);
+        notification.put("name", notificationCustomButton.c);
+        notification.put("actionType", notificationCustomButton.d);
+        notification.put("action", notificationCustomButton.e);
+        notification.put("data", stringToMap(notificationCustomButton.f));
+        invokeMethod("onNotifyButtonClick", notification);
     }
 
     private Map<String, Object> getExtras(CustomMessage customMessage) {

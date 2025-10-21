@@ -1,3 +1,8 @@
+## 3.3.8
+- 更新 iOS JPush SDK 到 5.9.0 版本，JCore SDK 到 5.2.0 版本
+- 更新 Android JPush SDK 到 5.9.0 版本
+- 新增 iOS setBackgroundEnable 方法，用于设置进入后台是否允许长连接
+
 ## 3.3.7
 HarmonyOS 新增 onArrivedMessage、onUnShowMessage 回调方法实现。
 ## 3.3.4

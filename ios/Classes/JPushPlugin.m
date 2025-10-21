@@ -187,6 +187,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [self setHeartBeatTimeInterval:call result:result];
     } else if ([@"addEventHandler" isEqualToString:call.method]) {
         [self addEventHandler:call result:result];
+    } else if ([@"setBackgroundEnable" isEqualToString:call.method]) {
+        [self setBackgroundEnable:call result:result];
     } else{
         result(FlutterMethodNotImplemented);
     }
@@ -234,6 +236,12 @@ static NSMutableArray<FlutterResult>* getRidResults;
 - (void)setHeartBeatTimeInterval:(FlutterMethodCall*)call result:(FlutterResult)result{
     double interval = [call.arguments[@"hb_interval"] doubleValue];
     [JPUSHService setHeartBeatTimeInterval:interval];
+}
+
+- (void)setBackgroundEnable:(FlutterMethodCall*)call result:(FlutterResult)result{
+    JPLog(@"setBackgroundEnable:%@",call.arguments);
+    BOOL enable = [call.arguments[@"enable"] boolValue];
+    [JPUSHService setBackgroundEnable:enable];
 }
 
 - (void)setup:(FlutterMethodCall*)call result:(FlutterResult)result {

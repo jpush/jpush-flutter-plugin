@@ -28,6 +28,7 @@
 - [getLaunchAppNotification](#getlaunchappnotification)
 - [pageEnterTo](#pageEnterTo)
 - [pageLeave](#pageLeave)
+- [setBackgroundEnable](#setbackgroundenable)
 
 
 [harmony Only]()
@@ -430,6 +431,18 @@ jpush.applyPushAuthority(new NotificationSettingsIOS(
 ```dart
 JPushFlutterInterface jpush = JPush.newJPush();
 jpush.setBadge(66).then((map) {});
+```
+
+#### setBackgroundEnable
+
+设置进入后台是否允许长连接（仅iOS）。默认是NO,进入后台会关闭长连接，回到前台会重新接入。请在初始化函数之前调用。
+
+```dart
+JPushFlutterInterface jpush = JPush.newJPush();
+// 允许后台长连接
+jpush.setBackgroundEnable(enable: true);
+// 禁止后台长连接（默认）
+jpush.setBackgroundEnable(enable: false);
 ```
 
 ### getLaunchAppNotification
