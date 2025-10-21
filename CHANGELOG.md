@@ -1,3 +1,6 @@
+## 3.3.9
+- 修复notificationCustomButton.data的数据类型
+
 ## 3.3.8
 - 更新 iOS JPush SDK 到 5.9.0 版本，JCore SDK 到 5.2.0 版本
 - 更新 Android JPush SDK 到 5.9.0 版本

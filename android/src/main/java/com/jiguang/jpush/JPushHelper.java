@@ -318,7 +318,7 @@ public class JPushHelper {
         notification.put("name", notificationCustomButton.c);
         notification.put("actionType", notificationCustomButton.d);
         notification.put("action", notificationCustomButton.e);
-        notification.put("data", stringToMap(notificationCustomButton.f));
+        notification.put("data", notificationCustomButton.f);
         invokeMethod("onNotifyButtonClick", notification);
     }
 
