@@ -154,7 +154,7 @@ public class JPushEventReceiver extends JPushMessageReceiver {
             public void run() {
                 if (jPushMessage.getErrorCode() == 0) { // success
                     Set<String> tags = jPushMessage.getTags();
-                    List<String> tagList = new ArrayList<>(tags);
+                    List<String> tagList = tags != null ? new ArrayList<>(tags) : new ArrayList<>();
                     Map<String, Object> res = new HashMap<>();
                     res.put("tags", tagList);
                     callback.success(res);
@@ -196,7 +196,7 @@ public class JPushEventReceiver extends JPushMessageReceiver {
             public void run() {
                 if (jPushMessage.getErrorCode() == 0) {
                     Set<String> tags = jPushMessage.getTags();
-                    List<String> tagList = new ArrayList<>(tags);
+                    List<String> tagList = tags != null ? new ArrayList<>(tags) : new ArrayList<>();
                     Map<String, Object> res = new HashMap<>();
                     res.put("tags", tagList);
                     callback.success(res);

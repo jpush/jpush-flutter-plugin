@@ -1,3 +1,6 @@
+## 3.4.0
+- 修复bug
+
 ## 3.3.9
 - 修复notificationCustomButton.data的数据类型
 
