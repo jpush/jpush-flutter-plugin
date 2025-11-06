@@ -1,0 +1,27 @@
+# 排除示例项目
+example/
+
+# 排除构建文件
+build/
+.dart_tool/
+*.lock
+
+# 排除 IDE 文件
+.idea/
+.vscode/
+*.iml
+
+# 排除系统文件
+.DS_Store
+Thumbs.db
+
+# 排除测试文件（如果需要）
+# test/
+
+# 排除文档构建文件
+doc/api/
+
+# 排除其他临时文件
+*.log
+*.tmp
+
