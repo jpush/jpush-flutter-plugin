@@ -1,3 +1,5 @@
+## 2.6.0
+更新android jpush 5.9.0
 ## 2.5.9
 修复重复调用callback 回调方法问题
 更新android JPush 560 +JCore 490 版本
