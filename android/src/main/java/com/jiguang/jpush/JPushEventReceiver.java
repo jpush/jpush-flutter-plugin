@@ -24,7 +24,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 
 public class JPushEventReceiver extends JPushMessageReceiver {
     @Override
-    public void onNotifyMessageArrived(Context context, NotificationMessage notificationMessage) {
+    public void onNotifyMessageArrived(Context context, final NotificationMessage notificationMessage) {
         JPushHelper.getInstance().getHandler().post(new Runnable() {
             @Override
             public void run() {
@@ -34,7 +34,7 @@ public class JPushEventReceiver extends JPushMessageReceiver {
     }
 
     @Override
-    public void onNotifyMessageOpened(Context context, NotificationMessage notificationMessage) {
+    public void onNotifyMessageOpened(Context context, final NotificationMessage notificationMessage) {
         JPushHelper.getInstance().getHandler().post(new Runnable() {
             @Override
             public void run() {
@@ -44,7 +44,7 @@ public class JPushEventReceiver extends JPushMessageReceiver {
     }
 
     @Override
-    public void onMessage(Context context, CustomMessage customMessage) {
+    public void onMessage(Context context, final CustomMessage customMessage) {
         JPushHelper.getInstance().getHandler().post(new Runnable() {
             @Override
             public void run() {
@@ -54,7 +54,7 @@ public class JPushEventReceiver extends JPushMessageReceiver {
     }
 
     @Override
-    public void onRegister(Context context, String s) {
+    public void onRegister(Context context, final String s) {
         JPushHelper.getInstance().getHandler().post(new Runnable() {
             @Override
             public void run() {
