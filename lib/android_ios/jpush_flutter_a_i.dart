@@ -459,8 +459,10 @@ class JPush_A_I extends JPushFlutterInterface {
     }
     print(flutter_log + "isPushStopped:");
 
-    final bool result = await _channel.invokeMethod('isPushStopped');
-    return result;
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('isPushStopped');
+    bool isStopped = result['isStopped'] ?? false;
+    return isStopped;
   }
 
   ///
