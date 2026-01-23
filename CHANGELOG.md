@@ -1,3 +1,7 @@
+## 3.4.1
+- 新增 Android isPushStoppedAndroid 方法，用于检查推送是否已停止
+- 新增 Android getPushStatus 方法，用于获取推送状态
+
 ## 3.4.0
 - 修复bug
 

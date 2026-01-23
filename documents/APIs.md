@@ -4,6 +4,8 @@
 - [getRegistrationID](#getregistrationid)
 - [stopPush](#stoppush)
 - [resumePush](#resumepush)
+- [isPushStoppedAndroid](#ispushstoppedandroid)
+- [getPushStatus](#getpushstatus)
 - [setAlias](#setalias)
 - [getAlias](#getAlias)
 - [deleteAlias](#deletealias)
@@ -296,6 +298,36 @@ jpush.setChannelAndSound();
 JPushFlutterInterface jpush = JPush.newJPush();
 jpush.resumePush();
 ```
+
+#### isPushStoppedAndroid
+
+检查推送是否已停止。
+
+**Android Only**
+
+```dart
+JPushFlutterInterface jpush = JPush.newJPush();
+bool isStopped = await jpush.isPushStoppedAndroid();
+```
+
+##### 返回值说明
+
+- `bool`: 返回 `true` 表示推送已停止，返回 `false` 表示推送未停止
+
+#### getPushStatus
+
+获取推送状态。
+
+**Android Only**
+
+```dart
+JPushFlutterInterface jpush = JPush.newJPush();
+await jpush.getPushStatus();
+```
+
+##### 说明
+
+调用该方法会触发获取推送状态的操作，结果会通过回调返回。
 
 #### setAlias
 
