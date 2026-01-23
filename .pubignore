@@ -25,3 +25,5 @@ doc/api/
 *.log
 *.tmp
 
+# 排除curor
+.cursor/
