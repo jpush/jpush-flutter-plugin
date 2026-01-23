@@ -272,6 +272,23 @@ abstract class JPushFlutterInterface {
   }
 
   ///
+  /// 检查推送是否已停止。
+  /// Android Only
+  ///
+  Future<bool> isPushStoppedAndroid() async {
+    print(flutter_log + "isPushStoppedAndroid:has not been implemented.");
+    return false;
+  }
+
+  ///
+  /// 获取推送状态。
+  /// Android Only
+  ///
+  Future getPushStatus() async {
+    print(flutter_log + "getPushStatus:has not been implemented.");
+  }
+
+  ///
   /// 清空通知栏上的所有通知。
   ///
   Future clearAllNotifications() async {

@@ -449,6 +449,35 @@ class JPush_A_I extends JPushFlutterInterface {
   }
 
   ///
+  /// 检查推送是否已停止。
+  /// Android Only
+  ///
+  Future<bool> isPushStoppedAndroid() async {
+    if (Platform.isIOS) {
+      print(flutter_log + "isPushStopped: iOS not supported");
+      return false;
+    }
+    print(flutter_log + "isPushStopped:");
+
+    final bool result = await _channel.invokeMethod('isPushStopped');
+    return result;
+  }
+
+  ///
+  /// 获取推送状态。
+  /// Android Only
+  ///
+  Future getPushStatus() async {
+    if (Platform.isIOS) {
+      print(flutter_log + "getPushStatus: iOS not supported");
+      return;
+    }
+    print(flutter_log + "getPushStatus:");
+
+    await _channel.invokeMethod('getPushStatus');
+  }
+
+  ///
   /// 清空通知栏上的所有通知。
   ///
   Future clearAllNotifications() async {
