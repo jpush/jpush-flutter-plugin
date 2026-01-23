@@ -282,10 +282,10 @@ abstract class JPushFlutterInterface {
 
   ///
   /// 获取推送状态。
-  /// Android Only
   ///
-  Future getPushStatus() async {
+  Future<Map<dynamic, dynamic>> getPushStatus() async {
     print(flutter_log + "getPushStatus:has not been implemented.");
+    return {};
   }
 
   ///

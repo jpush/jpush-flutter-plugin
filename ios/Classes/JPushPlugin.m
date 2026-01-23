@@ -189,6 +189,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [self addEventHandler:call result:result];
     } else if ([@"setBackgroundEnable" isEqualToString:call.method]) {
         [self setBackgroundEnable:call result:result];
+    } else if ([@"getPushStatus" isEqualToString:call.method]) {
+        [self getPushStatus:call result:result];
     } else{
         result(FlutterMethodNotImplemented);
     }
@@ -242,6 +244,19 @@ static NSMutableArray<FlutterResult>* getRidResults;
     JPLog(@"setBackgroundEnable:%@",call.arguments);
     BOOL enable = [call.arguments[@"enable"] boolValue];
     [JPUSHService setBackgroundEnable:enable];
+}
+
+- (void)getPushStatus:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"getPushStatus:");
+    [JPUSHService getPushStatus:^(NSInteger iResCode, BOOL isStopped) {
+        NSDictionary *dict = @{
+            @"code": @(iResCode),
+            @"isStopped": @(isStopped)
+        };
+        dispatch_async(dispatch_get_main_queue(), ^{
+            result(dict);
+        });
+    }];
 }
 
 - (void)setup:(FlutterMethodCall*)call result:(FlutterResult)result {

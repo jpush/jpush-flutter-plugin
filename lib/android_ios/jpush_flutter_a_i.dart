@@ -465,16 +465,13 @@ class JPush_A_I extends JPushFlutterInterface {
 
   ///
   /// 获取推送状态。
-  /// Android Only
   ///
-  Future getPushStatus() async {
-    if (Platform.isIOS) {
-      print(flutter_log + "getPushStatus: iOS not supported");
-      return;
-    }
+  Future<Map<dynamic, dynamic>> getPushStatus() async {
     print(flutter_log + "getPushStatus:");
 
-    await _channel.invokeMethod('getPushStatus');
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('getPushStatus');
+    return result;
   }
 
   ///

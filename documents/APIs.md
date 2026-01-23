@@ -307,7 +307,7 @@ jpush.resumePush();
 
 ```dart
 JPushFlutterInterface jpush = JPush.newJPush();
-bool isStopped = await jpush.isPushStoppedAndroid();
+Map<dynamic, dynamic> result = await jpush.isPushStoppedAndroid();
 ```
 
 ##### 返回值说明
@@ -318,16 +318,20 @@ bool isStopped = await jpush.isPushStoppedAndroid();
 
 获取推送状态。
 
-**Android Only**
-
 ```dart
 JPushFlutterInterface jpush = JPush.newJPush();
-await jpush.getPushStatus();
+Map<dynamic, dynamic> result = await jpush.getPushStatus();
 ```
 
 ##### 说明
 
-调用该方法会触发获取推送状态的操作，结果会通过回调返回。
+调用该方法可以查询当前推送功能的状态。
+
+##### 返回值说明
+
+返回一个 Map，包含以下字段：
+- `code` (int): 结果码，0 表示成功，其他返回码请参考错误码定义
+- `isStopped` (bool): 推送状态，`true` 表示推送已停止，`false` 表示推送功能开启（在 code 为 0 时有效）
 
 #### setAlias
 

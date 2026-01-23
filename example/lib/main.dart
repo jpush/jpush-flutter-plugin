@@ -353,6 +353,29 @@ class _MyAppState extends State<MyApp> {
             children: <Widget>[
               new Text(" "),
               new CustomButton(
+                  title: "getPushStatus",
+                  onPressed: () {
+                    jpush.getPushStatus().then((result) {
+                      int code = result['code'] ?? -1;
+                      bool isStopped = result['isStopped'] ?? false;
+                      String statusText = isStopped ? "已停止" : "未停止";
+                      setState(() {
+                        debugLable =
+                            "getPushStatus: code=$code, isStopped=$isStopped ($statusText)";
+                      });
+                    }).catchError((error) {
+                      setState(() {
+                        debugLable = "getPushStatus error: $error";
+                      });
+                    });
+                  }),
+            ],
+          ),
+          new Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              new Text(" "),
+              new CustomButton(
                   title: "clearAllNotifications",
                   onPressed: () {
                     jpush.clearAllNotifications();

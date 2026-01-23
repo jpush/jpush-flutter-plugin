@@ -1,3 +1,7 @@
+## 3.4.2
+- 更新 iOS JPush SDK 到 6.0.0 版本
+- 新增 iOS getPushStatus 方法，用于获取推送状态（Android 改为和 iOS保持一致的回调）
+
 ## 3.4.1
 - 新增 Android isPushStoppedAndroid 方法，用于检查推送是否已停止
 - 新增 Android getPushStatus 方法，用于获取推送状态

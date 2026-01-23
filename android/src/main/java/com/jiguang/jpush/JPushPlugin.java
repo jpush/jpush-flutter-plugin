@@ -581,14 +581,16 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 
     public void isPushStopped(MethodCall call, Result result) {
         Log.d(TAG, "isPushStopped:");
-
-        boolean isStopped = JPushInterface.isPushStopped(context);
-        result.success(isStopped);
+       JPushHelper.getInstance().setGetPushStatusResult(result);
+       JPushInterface.isPushStopped(context);
+       
     }
 
     public void getPushStatus(MethodCall call, Result result) {
         Log.d(TAG, "getPushStatus:");
 
+        // 保存 Result，等待 onCommandResult 回调
+        JPushHelper.getInstance().setGetPushStatusResult(result);
         JPushInterface.getPushStatus(context);
     }
 
