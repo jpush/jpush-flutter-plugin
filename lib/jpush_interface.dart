@@ -258,6 +258,15 @@ abstract class JPushFlutterInterface {
   }
 
   ///
+  /// 设置最多显示的通知条数
+  /// Android Only
+  /// @param maxNum 最多显示的条数
+  ///
+  Future setLatestNotificationNumber(int maxNum) async {
+    print(flutter_log + "setLatestNotificationNumber:has not been implemented.");
+  }
+
+  ///
   /// 停止接收推送，调用该方法后应用将不再受到推送，如果想要重新收到推送可以调用 resumePush。
   ///
   Future stopPush() async {

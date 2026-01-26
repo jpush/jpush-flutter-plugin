@@ -6,6 +6,7 @@
 - [resumePush](#resumepush)
 - [isPushStoppedAndroid](#ispushstoppedandroid)
 - [getPushStatus](#getpushstatus)
+- [setLatestNotificationNumber](#setlatestnotificationnumber)
 - [setAlias](#setalias)
 - [getAlias](#getAlias)
 - [deleteAlias](#deletealias)
@@ -313,6 +314,23 @@ Map<dynamic, dynamic> result = await jpush.isPushStoppedAndroid();
 ##### 返回值说明
 
 - `bool`: 返回 `true` 表示推送已停止，返回 `false` 表示推送未停止
+
+#### setLatestNotificationNumber
+
+设置最多显示的通知条数。
+
+**Android Only**
+
+本接口可以在 JPushInterface.init 之后任何地方调用。可以调用多次。
+
+```dart
+JPushFlutterInterface jpush = JPush.newJPush();
+await jpush.setLatestNotificationNumber(3);
+```
+
+##### 参数说明
+
+- `maxNum` (int): 最多显示的条数
 
 #### getPushStatus
 

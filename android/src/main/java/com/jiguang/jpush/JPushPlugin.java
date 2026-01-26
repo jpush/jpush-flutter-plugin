@@ -224,6 +224,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             setBadge(call, result);
         } else if (call.method.equals("setHBInterval")) {
             setHBInterval(call, result);
+        } else if (call.method.equals("setLatestNotificationNumber")) {
+            setLatestNotificationNumber(call, result);
         } else if (call.method.equals("isNotificationEnabled")) {
             isNotificationEnabled(call, result);
         } else if (call.method.equals("openSettingsForNotification")) {
@@ -275,6 +277,17 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         }
 
 
+    }
+    public void setLatestNotificationNumber(MethodCall call, Result result){
+        Log.d(TAG, "setLatestNotificationNumber: " + call.arguments);
+        HashMap<String, Object> map = call.arguments();
+        Object numObject = map.get("maxNum");
+        if (numObject != null) {
+            int maxNum = (int) numObject;
+            JPushInterface.setLatestNotificationNumber(context, maxNum);
+        } else {
+            Log.e(TAG, "setLatestNotificationNumber: maxNum is required" + call.arguments);
+        }
     }
     public void setThirdToken(MethodCall call, Result result) {
         HashMap<String, Object> readableMap = call.arguments();
