@@ -1,3 +1,6 @@
+## 3.4.3
+- 新增 Android setLatestNotificationNumber 方法，用于设置最多显示的通知条数
+
 ## 3.4.2
 - 更新 iOS JPush SDK 到 6.0.0 版本
 - 新增 iOS getPushStatus 方法，用于获取推送状态（Android 改为和 iOS保持一致的回调）
