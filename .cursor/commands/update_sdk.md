@@ -13,6 +13,8 @@
 
 **⚠️ 重要：必须仔细逐项检查更新日志，不要因为看到"更新各厂商SDK"等主要更新内容就忽略新增API的检查！**
 
+**⚠️ 重要：执行本步时按文末「文档内容获取方式」获取下方更新日志页面的内容，逐条阅读，不要仅依赖网页搜索。**
+
 #### Android SDK
 - 访问 [Android SDK Changelog](https://docs.jiguang.cn/jpush/jpush_changelog/updates_Android) 查找新版本的新增对外API
 - **检查方法**：
@@ -138,6 +140,10 @@ dependencies:
 - 更新 iOS JPush SDK 到 5.9.0 版本
 - 经检查，该版本无新增对外API
 ```
+
+## 文档内容获取方式
+
+文档中的链接（极光更新日志、API 文档、CocoaPods 等）需要获取内容时：用 **curl 拉取对应 URL**，在返回的 HTML 里用 **grep 或搜索** 定位所需段落（极光页面为服务端渲染，内容均在 HTML 中，无需执行 JS）。
 
 ## 注意事项
 
