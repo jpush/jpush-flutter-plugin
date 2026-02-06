@@ -124,4 +124,64 @@ class JpushHarmonySdk extends JPushFlutterInterface {
   Future<Map<dynamic, dynamic>> checkTagBindState(String tag) async {
     return await _jpushHarmonySdkPlugin.checkTagBindState(0, tag);
   }
+
+  @override
+  void setCustomMessageMaxCacheCount(int maxCacheCount) {
+    _jpushHarmonySdkPlugin.setCustomMessageMaxCacheCount(maxCacheCount);
+  }
+
+  @override
+  void setUserRequestNotificationPermission({bool enable = true}) {
+    _jpushHarmonySdkPlugin.setUserRequestNotificationPermission(enable);
+  }
+
+  @override
+  Future<void> clearNotificationByMsgId(String msgId) async {
+    await _jpushHarmonySdkPlugin.clearNotificationByMsgId(msgId);
+  }
+
+  @override
+  Future<void> clearNotificationAll() async {
+    await _jpushHarmonySdkPlugin.clearNotificationAll();
+  }
+
+  @override
+  void setListWifi({bool enable = true}) {
+    _jpushHarmonySdkPlugin.setListWifi(enable);
+  }
+
+  @override
+  void setSmartPushEnable({bool enable = true}) {
+    _jpushHarmonySdkPlugin.setSmartPushEnable(enable);
+  }
+
+  @override
+  void setDataInsightsEnable({bool enable = true}) {
+    _jpushHarmonySdkPlugin.setDataInsightsEnable(enable);
+  }
+
+  @override
+  Future<void> clearAllNotifications() async {
+    await _jpushHarmonySdkPlugin.clearNotificationAll();
+  }
+
+  @override
+  void reportCustomDisplay(String channel, String msgId) {
+    _jpushHarmonySdkPlugin.reportCustomDisplay(channel, msgId);
+  }
+
+  @override
+  void reportCustomClick(String channel, String msgId) {
+    _jpushHarmonySdkPlugin.reportCustomClick(channel, msgId);
+  }
+
+  @override
+  void reportNotificationDisplay(String channel, String msgId) {
+    _jpushHarmonySdkPlugin.reportNotificationDisplay(channel, msgId);
+  }
+
+  @override
+  void reportNotificationClick(String channel, String msgId) {
+    _jpushHarmonySdkPlugin.reportNotificationClick(channel, msgId);
+  }
 }

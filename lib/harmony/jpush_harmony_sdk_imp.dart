@@ -89,4 +89,48 @@ class JpushHarmonySdkImp {
   void setEnableAppTerminate(bool enable) {
     JpushHarmonySdkPlatform.instance.setEnableAppTerminate(enable);
   }
+
+  void setCustomMessageMaxCacheCount(int maxCacheCount) {
+    JpushHarmonySdkPlatform.instance.setCustomMessageMaxCacheCount(maxCacheCount);
+  }
+
+  void setUserRequestNotificationPermission(bool enable) {
+    JpushHarmonySdkPlatform.instance.setUserRequestNotificationPermission(enable);
+  }
+
+  Future<void> clearNotificationByMsgId(String msgId) {
+    return JpushHarmonySdkPlatform.instance.clearNotificationByMsgId(msgId);
+  }
+
+  Future<void> clearNotificationAll() {
+    return JpushHarmonySdkPlatform.instance.clearNotificationAll();
+  }
+
+  void setListWifi(bool enable) {
+    JpushHarmonySdkPlatform.instance.setListWifi(enable);
+  }
+
+  void setSmartPushEnable(bool enable) {
+    JpushHarmonySdkPlatform.instance.setSmartPushEnable(enable);
+  }
+
+  void setDataInsightsEnable(bool enable) {
+    JpushHarmonySdkPlatform.instance.setDataInsightsEnable(enable);
+  }
+
+  void reportCustomDisplay(String channel, String msgId) {
+    JpushHarmonySdkPlatform.instance.reportCustomDisplay(channel, msgId);
+  }
+
+  void reportCustomClick(String channel, String msgId) {
+    JpushHarmonySdkPlatform.instance.reportCustomClick(channel, msgId);
+  }
+
+  void reportNotificationDisplay(String channel, String msgId) {
+    JpushHarmonySdkPlatform.instance.reportNotificationDisplay(channel, msgId);
+  }
+
+  void reportNotificationClick(String channel, String msgId) {
+    JpushHarmonySdkPlatform.instance.reportNotificationClick(channel, msgId);
+  }
 }

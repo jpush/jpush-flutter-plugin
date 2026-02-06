@@ -110,4 +110,48 @@ abstract class JpushHarmonySdkPlatform extends PlatformInterface {
   void setEnableAppTerminate(bool enable) {
     throw UnimplementedError('setEnableAppTerminate() has not been implemented.');
   }
+
+  void setCustomMessageMaxCacheCount(int maxCacheCount) {
+    throw UnimplementedError('setCustomMessageMaxCacheCount() has not been implemented.');
+  }
+
+  void setUserRequestNotificationPermission(bool enable) {
+    throw UnimplementedError('setUserRequestNotificationPermission() has not been implemented.');
+  }
+
+  Future<void> clearNotificationByMsgId(String msgId) {
+    throw UnimplementedError('clearNotificationByMsgId() has not been implemented.');
+  }
+
+  Future<void> clearNotificationAll() {
+    throw UnimplementedError('clearNotificationAll() has not been implemented.');
+  }
+
+  void setListWifi(bool enable) {
+    throw UnimplementedError('setListWifi() has not been implemented.');
+  }
+
+  void setSmartPushEnable(bool enable) {
+    throw UnimplementedError('setSmartPushEnable() has not been implemented.');
+  }
+
+  void setDataInsightsEnable(bool enable) {
+    throw UnimplementedError('setDataInsightsEnable() has not been implemented.');
+  }
+
+  void reportCustomDisplay(String channel, String msgId) {
+    throw UnimplementedError('reportCustomDisplay() has not been implemented.');
+  }
+
+  void reportCustomClick(String channel, String msgId) {
+    throw UnimplementedError('reportCustomClick() has not been implemented.');
+  }
+
+  void reportNotificationDisplay(String channel, String msgId) {
+    throw UnimplementedError('reportNotificationDisplay() has not been implemented.');
+  }
+
+  void reportNotificationClick(String channel, String msgId) {
+    throw UnimplementedError('reportNotificationClick() has not been implemented.');
+  }
 }

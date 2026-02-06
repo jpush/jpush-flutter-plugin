@@ -23,6 +23,12 @@
 - [setMaxGeofenceNumber](#setmaxgeofencenumber)
 - [deleteGeofence](#deletegeofence)
 - [enableAppTerminate](#enableappterminate)
+- [setSmartPushEnable](#setsmartpushenable)
+- [setDataInsightsEnable](#setdatainsightsenable)
+- [reportCustomDisplay](#reportcustomdisplay)
+- [reportCustomClick](#reportcustomclick)
+- [reportNotificationDisplay](#reportnotificationdisplay)
+- [reportNotificationClick](#reportnotificationclick)
 
 [Android Only](#android-only)
 
@@ -54,9 +60,20 @@
 - [setBackgroundEnable](#setbackgroundenable)
 
 
-[harmony Only]()
+[Harmony Only](#harmony-only)
 
 - [setCallBackHarmony](#setCallBackHarmony)
+- [setCustomMessageMaxCacheCount](#setcustommessagemaxcachecount)
+- [setUserRequestNotificationPermission](#setuserrequestnotificationpermission)
+- [clearNotificationByMsgId](#clearnotificationbymsgid)
+- [clearNotificationAll](#clearnotificationall)
+- [setListWifi](#setlistwifi)
+- [setSmartPushEnable](#setsmartpushenable)
+- [setDataInsightsEnable](#setdatainsightsenable)
+- [reportCustomDisplay](#reportcustomdisplay)
+- [reportCustomClick](#reportcustomclick)
+- [reportNotificationDisplay](#reportnotificationdisplay)
+- [reportNotificationClick](#reportnotificationclick)
 
 **注意：setCallBackHarmony 方法建议放到 setup 之前，其他方法需要在 setup 方法之后调用，**
 **注意：addEventHandler 方法建议放到 setup 之前，其他方法需要在 setup 方法之后调用，**
@@ -612,4 +629,82 @@ jpush.enableAppTerminate(enable: true);
 - **getConnectionState**：获取当前推送连接状态（Future&lt;bool&gt;）。
 - **setPushTime**：设置允许推送时间（weekDays 0–6，startHour/endHour 24 小时制）。
 - **setSilenceTime**：设置通知静默时间（ startHour/startMinute/endHour/endMinute ）。
+
+---
+
+## Harmony 扩展 API
+
+以下 API 主要在鸿蒙平台支持，Android/iOS 调用时无效果或走等价能力。
+
+### setCustomMessageMaxCacheCount
+
+配置自定义消息缓存条数（鸿蒙）。Android/iOS 调用时跳过。
+
+```dart
+jpush.setCustomMessageMaxCacheCount(100);
+```
+
+### setUserRequestNotificationPermission
+
+控制通知权限申请方式（鸿蒙）。
+
+```dart
+jpush.setUserRequestNotificationPermission(enable: true);
+```
+
+### clearNotificationByMsgId
+
+通过消息 ID 清除指定通知（鸿蒙）。Android 可使用 clearNotification(notificationId) 按通知 ID 清除。
+
+```dart
+await jpush.clearNotificationByMsgId("msgId");
+```
+
+### clearNotificationAll
+
+清除所有通知。鸿蒙原生 API 名；与 clearAllNotifications 语义一致，鸿蒙上 clearAllNotifications 会调用此能力。
+
+```dart
+await jpush.clearNotificationAll();
+```
+
+### setListWifi
+
+wifi 列表采集开关（鸿蒙）。
+
+```dart
+jpush.setListWifi(enable: true);
+```
+
+### setSmartPushEnable
+
+用户分群推送开关。Android/iOS/鸿蒙 均支持。
+
+```dart
+jpush.setSmartPushEnable(enable: true);
+```
+
+### setDataInsightsEnable
+
+用户/应用数据洞察开关。Android/iOS/鸿蒙 均支持。
+
+```dart
+jpush.setDataInsightsEnable(enable: true);
+```
+
+### 消息状态上报（鸿蒙）
+
+以下 4 个 API 用于上报自定义消息/通知的展示与点击，仅鸿蒙支持；Android/iOS 调用时打 log 跳过。参数 `channel`、`msgId` 由推送回调或消息体提供。
+
+- **reportCustomDisplay**：上报自定义消息展示  
+- **reportCustomClick**：上报自定义消息点击  
+- **reportNotificationDisplay**：上报通知展示  
+- **reportNotificationClick**：上报通知点击  
+
+```dart
+jpush.reportCustomDisplay(channel, msgId);
+jpush.reportCustomClick(channel, msgId);
+jpush.reportNotificationDisplay(channel, msgId);
+jpush.reportNotificationClick(channel, msgId);
+```
 

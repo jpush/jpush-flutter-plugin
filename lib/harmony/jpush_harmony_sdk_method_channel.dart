@@ -122,6 +122,61 @@ class MethodChannelJpushHarmonySdk extends JpushHarmonySdkPlatform {
     methodChannel.invokeMethod("setEnableAppTerminate", enable);
   }
 
+  @override
+  void setCustomMessageMaxCacheCount(int maxCacheCount) {
+    methodChannel.invokeMethod("setCustomMessageMaxCacheCount", maxCacheCount);
+  }
+
+  @override
+  void setUserRequestNotificationPermission(bool enable) {
+    methodChannel.invokeMethod("setUserRequestNotificationPermission", enable);
+  }
+
+  @override
+  Future<void> clearNotificationByMsgId(String msgId) async {
+    await methodChannel.invokeMethod("clearNotificationByMsgId", msgId);
+  }
+
+  @override
+  Future<void> clearNotificationAll() async {
+    await methodChannel.invokeMethod("clearNotificationAll");
+  }
+
+  @override
+  void setListWifi(bool enable) {
+    methodChannel.invokeMethod("setListWifi", enable);
+  }
+
+  @override
+  void setSmartPushEnable(bool enable) {
+    methodChannel.invokeMethod("setSmartPushEnable", enable);
+  }
+
+  @override
+  void setDataInsightsEnable(bool enable) {
+    methodChannel.invokeMethod("setDataInsightsEnable", enable);
+  }
+
+  @override
+  void reportCustomDisplay(String channel, String msgId) {
+    methodChannel.invokeMethod("reportCustomDisplay", {"channel": channel, "msgId": msgId});
+  }
+
+  @override
+  void reportCustomClick(String channel, String msgId) {
+    methodChannel.invokeMethod("reportCustomClick", {"channel": channel, "msgId": msgId});
+  }
+
+  @override
+  void reportNotificationDisplay(String channel, String msgId) {
+    methodChannel.invokeMethod("reportNotificationDisplay", {"channel": channel, "msgId": msgId});
+  }
+
+  @override
+  void reportNotificationClick(String channel, String msgId) {
+    methodChannel.invokeMethod("reportNotificationClick", {"channel": channel, "msgId": msgId});
+  }
+
   void printMy(msg) {
     if (debug) {
       print(flutter_log + "::" + msg);

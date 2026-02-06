@@ -250,6 +250,28 @@ class JPushInterfaceImp {
       this.setMobileNumber(call, result)
     } else if (call.method == "setEnableAppTerminate") {
       this.setEnableAppTerminate(call, result)
+    } else if (call.method == "setCustomMessageMaxCacheCount") {
+      this.setCustomMessageMaxCacheCount(call)
+    } else if (call.method == "setUserRequestNotificationPermission") {
+      this.setUserRequestNotificationPermission(call)
+    } else if (call.method == "clearNotificationByMsgId") {
+      this.clearNotificationByMsgId(call, result)
+    } else if (call.method == "clearNotificationAll") {
+      this.clearNotificationAll(result)
+    } else if (call.method == "setListWifi") {
+      this.setListWifi(call)
+    } else if (call.method == "setSmartPushEnable") {
+      this.setSmartPushEnable(call)
+    } else if (call.method == "setDataInsightsEnable") {
+      this.setDataInsightsEnable(call)
+    } else if (call.method == "reportCustomDisplay") {
+      this.reportCustomDisplay(call)
+    } else if (call.method == "reportCustomClick") {
+      this.reportCustomClick(call)
+    } else if (call.method == "reportNotificationDisplay") {
+      this.reportNotificationDisplay(call)
+    } else if (call.method == "reportNotificationClick") {
+      this.reportNotificationClick(call)
     } else {
       result.notImplemented()
     }
@@ -401,6 +423,78 @@ class JPushInterfaceImp {
       JPushInterface.setEnableAppTerminate(ctx, enable)
     }
     result.success(true)
+  }
+
+  setCustomMessageMaxCacheCount(call: MethodCall) {
+    let maxCacheCount: number = call.args
+    JPushInterface.setCustomMessageMaxCacheCount(maxCacheCount)
+  }
+
+  setUserRequestNotificationPermission(call: MethodCall) {
+    let enable: boolean = call.args === true
+    let ctx = JPushInterfaceImp.applicationContext
+    if (ctx) {
+      JPushInterface.setUserRequestNotificationPermission(ctx, enable)
+    }
+  }
+
+  clearNotificationByMsgId(call: MethodCall, result: MethodResult) {
+    let msgId: string = call.args ?? ""
+    JPushInterface.clearNotificationByMsgId(msgId)
+    result.success(true)
+  }
+
+  clearNotificationAll(result: MethodResult) {
+    JPushInterface.clearNotificationAll()
+    result.success(true)
+  }
+
+  setListWifi(call: MethodCall) {
+    let enable: boolean = call.args === true
+    let ctx = FlutterManager.getInstance().getUIAbility()?.context ?? JPushInterfaceImp.applicationContext
+    if (ctx) {
+      JPushInterface.setListWifi(ctx, enable)
+    }
+  }
+
+  setSmartPushEnable(call: MethodCall) {
+    let enable: boolean = call.args === true
+    let ctx = FlutterManager.getInstance().getUIAbility()?.context ?? JPushInterfaceImp.applicationContext
+    if (ctx) {
+      JPushInterface.setSmartPushEnable(ctx, enable)
+    }
+  }
+
+  setDataInsightsEnable(call: MethodCall) {
+    let enable: boolean = call.args === true
+    let ctx = FlutterManager.getInstance().getUIAbility()?.context ?? JPushInterfaceImp.applicationContext
+    if (ctx) {
+      JPushInterface.setDataInsightsEnable(ctx, enable)
+    }
+  }
+
+  reportCustomDisplay(call: MethodCall) {
+    let channel: string = call.argument("channel") ?? ""
+    let msgId: string = call.argument("msgId") ?? ""
+    JPushInterface.reportCustomDisplay(channel, msgId)
+  }
+
+  reportCustomClick(call: MethodCall) {
+    let channel: string = call.argument("channel") ?? ""
+    let msgId: string = call.argument("msgId") ?? ""
+    JPushInterface.reportCustomClick(channel, msgId)
+  }
+
+  reportNotificationDisplay(call: MethodCall) {
+    let channel: string = call.argument("channel") ?? ""
+    let msgId: string = call.argument("msgId") ?? ""
+    JPushInterface.reportNotificationDisplay(channel, msgId)
+  }
+
+  reportNotificationClick(call: MethodCall) {
+    let channel: string = call.argument("channel") ?? ""
+    let msgId: string = call.argument("msgId") ?? ""
+    JPushInterface.reportNotificationClick(channel, msgId)
   }
 }
 

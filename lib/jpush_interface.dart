@@ -411,6 +411,51 @@ abstract class JPushFlutterInterface {
     return [];
   }
 
+  /// 鸿蒙：配置自定义消息缓存条数
+  void setCustomMessageMaxCacheCount(int maxCacheCount) {
+    print(flutter_log + "setCustomMessageMaxCacheCount:has not been implemented.");
+  }
+
+  /// 鸿蒙：控制通知权限申请方式
+  void setUserRequestNotificationPermission({bool enable = true}) {
+    print(flutter_log + "setUserRequestNotificationPermission:has not been implemented.");
+  }
+
+  /// 鸿蒙：通过消息 ID 清除通知。Android 可用 clearNotification(notificationId) 按通知 ID 清除
+  Future<void> clearNotificationByMsgId(String msgId) async {
+    print(flutter_log + "clearNotificationByMsgId:has not been implemented.");
+  }
+
+  /// 鸿蒙：清除所有通知（与 clearAllNotifications 语义一致，鸿蒙原生 API 名）
+  Future<void> clearNotificationAll() async {
+    print(flutter_log + "clearNotificationAll:has not been implemented.");
+  }
+
+  /// 鸿蒙：wifi 列表采集开关
+  void setListWifi({bool enable = true}) {
+    print(flutter_log + "setListWifi:has not been implemented.");
+  }
+
+  /// 鸿蒙：上报自定义消息展示（channel、msgId 由回调或推送数据提供）
+  void reportCustomDisplay(String channel, String msgId) {
+    print(flutter_log + "reportCustomDisplay:has not been implemented.");
+  }
+
+  /// 鸿蒙：上报自定义消息点击
+  void reportCustomClick(String channel, String msgId) {
+    print(flutter_log + "reportCustomClick:has not been implemented.");
+  }
+
+  /// 鸿蒙：上报通知展示
+  void reportNotificationDisplay(String channel, String msgId) {
+    print(flutter_log + "reportNotificationDisplay:has not been implemented.");
+  }
+
+  /// 鸿蒙：上报通知点击
+  void reportNotificationClick(String channel, String msgId) {
+    print(flutter_log + "reportNotificationClick:has not been implemented.");
+  }
+
   ///
   /// iOS Only
   /// 点击推送启动应用的时候原生会将该 notification 缓存起来，该方法用于获取缓存 notification

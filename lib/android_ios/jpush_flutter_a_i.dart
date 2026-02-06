@@ -680,6 +680,13 @@ class JPush_A_I extends JPushFlutterInterface {
     return [];
   }
 
+
+  @override
+  Future<void> clearNotificationAll() async {
+    print(flutter_log + "clearNotificationAll: use clearAllNotifications on Android/iOS.");
+    await clearAllNotifications();
+  }
+
   ///
   /// iOS Only
   /// 点击推送启动应用的时候原生会将该 notification 缓存起来，该方法用于获取缓存 notification
