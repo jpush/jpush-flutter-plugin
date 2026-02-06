@@ -109,4 +109,19 @@ class JpushHarmonySdk extends JPushFlutterInterface {
     print(flutter_log + "setHBInterval");
     await _jpushHarmonySdkPlugin.setHBInterval(hbinterval);
   }
+
+  @override
+  Future<Map<dynamic, dynamic>> setMobileNumber(String mobileNumber) async {
+    return await _jpushHarmonySdkPlugin.setMobileNumber(0, mobileNumber);
+  }
+
+  @override
+  void enableAppTerminate({bool enable = true}) {
+    _jpushHarmonySdkPlugin.setEnableAppTerminate(enable);
+  }
+
+  @override
+  Future<Map<dynamic, dynamic>> checkTagBindState(String tag) async {
+    return await _jpushHarmonySdkPlugin.checkTagBindState(0, tag);
+  }
 }

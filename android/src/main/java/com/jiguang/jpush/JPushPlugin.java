@@ -258,6 +258,42 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             enableSDKLocalLog(call, result);
         }else if (call.method.equals("readNewLogs")) {
             readNewLogs(call, result);
+        } else if (call.method.equals("setMobileNumber")) {
+            setMobileNumber(call, result);
+        } else if (call.method.equals("onFragmentResume")) {
+            onFragmentResume(call, result);
+        } else if (call.method.equals("onFragmentPause")) {
+            onFragmentPause(call, result);
+        } else if (call.method.equals("reportNotificationOpened")) {
+            reportNotificationOpened(call, result);
+        } else if (call.method.equals("enableAppTerminate")) {
+            enableAppTerminate(call, result);
+        } else if (call.method.equals("triggerNotificationStateCheck")) {
+            triggerNotificationStateCheck(call, result);
+        } else if (call.method.equals("setPowerSaveMode")) {
+            setPowerSaveMode(call, result);
+        } else if (call.method.equals("stopCrashHandler")) {
+            stopCrashHandler(call, result);
+        } else if (call.method.equals("initCrashHandler")) {
+            initCrashHandler(call, result);
+        } else if (call.method.equals("getConnectionState")) {
+            getConnectionState(call, result);
+        } else if (call.method.equals("removeLocalNotification")) {
+            removeLocalNotification(call, result);
+        } else if (call.method.equals("setGeofenceInterval")) {
+            setGeofenceInterval(call, result);
+        } else if (call.method.equals("setMaxGeofenceNumber")) {
+            setMaxGeofenceNumber(call, result);
+        } else if (call.method.equals("deleteGeofence")) {
+            deleteGeofence(call, result);
+        } else if (call.method.equals("setPushTime")) {
+            setPushTime(call, result);
+        } else if (call.method.equals("setSilenceTime")) {
+            setSilenceTime(call, result);
+        } else if (call.method.equals("checkTagBindState")) {
+            checkTagBindState(call, result);
+        } else if (call.method.equals("filterValidTags")) {
+            filterValidTags(call, result);
         } else {
             result.notImplemented();
         }
@@ -797,6 +833,178 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 //            }
 //        }
 //    }
+
+    private void setMobileNumber(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) return;
+        String mobileNumber = (String) map.get("mobileNumber");
+        if (mobileNumber == null) mobileNumber = "";
+        sequence += 1;
+        JPushHelper.getInstance().addCallback(sequence, result);
+        JPushInterface.setMobileNumber(context, sequence, mobileNumber);
+    }
+
+    private void onFragmentResume(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) return;
+        String fragmentName = (String) map.get("fragmentName");
+        if (fragmentName != null) {
+            JPushInterface.onFragmentResume(context, fragmentName);
+        }
+        result.success(null);
+    }
+
+    private void onFragmentPause(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) return;
+        String fragmentName = (String) map.get("fragmentName");
+        if (fragmentName != null) {
+            JPushInterface.onFragmentPause(context, fragmentName);
+        }
+        result.success(null);
+    }
+
+    private void reportNotificationOpened(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) return;
+        String msgId = (String) map.get("msgId");
+        if (msgId != null) {
+            JPushInterface.reportNotificationOpened(context, msgId);
+        }
+        result.success(null);
+    }
+
+    private void enableAppTerminate(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) return;
+        Boolean enable = (Boolean) map.get("enable");
+        if (enable == null) enable = true;
+        JCollectionAuth.enableAppTerminate(context, enable);
+        result.success(null);
+    }
+
+    private void triggerNotificationStateCheck(MethodCall call, Result result) {
+        JPushInterface.triggerNotificationStateCheck(context);
+        result.success(null);
+    }
+
+    private void setPowerSaveMode(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) return;
+        Boolean enable = (Boolean) map.get("enable");
+        if (enable == null) enable = false;
+        JPushInterface.setPowerSaveMode(context, enable);
+        result.success(null);
+    }
+
+    private void stopCrashHandler(MethodCall call, Result result) {
+        JPushInterface.stopCrashHandler(context);
+        result.success(null);
+    }
+
+    private void initCrashHandler(MethodCall call, Result result) {
+        JPushInterface.initCrashHandler(context);
+        result.success(null);
+    }
+
+    private void getConnectionState(MethodCall call, Result result) {
+        boolean connected = JPushInterface.getConnectionState(context);
+        result.success(connected);
+    }
+
+    private void removeLocalNotification(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) return;
+        Object idObj = map.get("notificationId");
+        if (idObj instanceof Number) {
+            long notificationId = ((Number) idObj).longValue();
+            JPushInterface.removeLocalNotification(context, notificationId);
+        }
+        result.success(null);
+    }
+
+    private void setGeofenceInterval(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) return;
+        Object intervalObj = map.get("interval");
+        if (intervalObj instanceof Number) {
+            long interval = ((Number) intervalObj).longValue();
+            JPushInterface.setGeofenceInterval(context, interval);
+        }
+        result.success(null);
+    }
+
+    private void setMaxGeofenceNumber(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) return;
+        Object maxObj = map.get("maxNumber");
+        if (maxObj instanceof Number) {
+            int maxNumber = ((Number) maxObj).intValue();
+            JPushInterface.setMaxGeofenceNumber(context, maxNumber);
+        }
+        result.success(null);
+    }
+
+    private void deleteGeofence(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) return;
+        String geofenceId = (String) map.get("geofenceId");
+        if (geofenceId != null) {
+            JPushInterface.deleteGeofence(context, geofenceId);
+        }
+        result.success(null);
+    }
+
+    private void setPushTime(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) return;
+        List<?> weekDaysList = (List<?>) map.get("weekDays");
+        Object startHourObj = map.get("startHour");
+        Object endHourObj = map.get("endHour");
+        if (weekDaysList != null && startHourObj instanceof Number && endHourObj instanceof Number) {
+            Set<Integer> weekDays = new HashSet<>();
+            for (Object o : weekDaysList) {
+                if (o instanceof Number) weekDays.add(((Number) o).intValue());
+            }
+            int startHour = ((Number) startHourObj).intValue();
+            int endHour = ((Number) endHourObj).intValue();
+            JPushInterface.setPushTime(context, weekDays, startHour, endHour);
+        }
+        result.success(null);
+    }
+
+    private void setSilenceTime(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) return;
+        Object sh = map.get("startHour"), sm = map.get("startMinute");
+        Object eh = map.get("endHour"), em = map.get("endMinute");
+        if (sh instanceof Number && sm instanceof Number && eh instanceof Number && em instanceof Number) {
+            JPushInterface.setSilenceTime(context,
+                ((Number) sh).intValue(), ((Number) sm).intValue(),
+                ((Number) eh).intValue(), ((Number) em).intValue());
+        }
+        result.success(null);
+    }
+
+    private void checkTagBindState(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) return;
+        String tag = (String) map.get("tag");
+        if (tag == null) tag = "";
+        sequence += 1;
+        JPushHelper.getInstance().addCallback(sequence, result);
+        JPushInterface.checkTagBindState(context, sequence, tag);
+    }
+
+    private void filterValidTags(MethodCall call, Result result) {
+        HashMap<String, Object> map = call.arguments();
+        if (map == null) { result.success(new ArrayList<String>()); return; }
+        List<String> tagsList = (List<String>) map.get("tags");
+        if (tagsList == null) { result.success(new ArrayList<String>()); return; }
+        Set<String> tags = new HashSet<>(tagsList);
+        Set<String> valid = JPushInterface.filterValidTags(tags);
+        result.success(valid != null ? new ArrayList<>(valid) : new ArrayList<String>());
+    }
 
     /**
      * 生成唯一的绑定标识符

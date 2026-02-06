@@ -102,4 +102,12 @@ abstract class JpushHarmonySdkPlatform extends PlatformInterface {
   setHeartbeatTime(int heartbeatTime) {
     throw UnimplementedError('setHeartbeatTime() has not been implemented.');
   }
+
+  Future<Map<dynamic, dynamic>> setMobileNumber(int sequence, String mobileNumber) {
+    throw UnimplementedError('setMobileNumber() has not been implemented.');
+  }
+
+  void setEnableAppTerminate(bool enable) {
+    throw UnimplementedError('setEnableAppTerminate() has not been implemented.');
+  }
 }

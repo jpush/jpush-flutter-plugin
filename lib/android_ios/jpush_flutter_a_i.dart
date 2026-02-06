@@ -516,6 +516,170 @@ class JPush_A_I extends JPushFlutterInterface {
     _channel.invokeListMethod("clearNotification", notificationId);
   }
 
+  @override
+  Future<Map<dynamic, dynamic>> setMobileNumber(String mobileNumber) async {
+    print(flutter_log + "setMobileNumber:");
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('setMobileNumber', {'mobileNumber': mobileNumber});
+    return Map<dynamic, dynamic>.from(result ?? {});
+  }
+
+  @override
+  void onFragmentResume(String fragmentName) {
+    if (!Platform.isAndroid) {
+      print(flutter_log + "onFragmentResume: not Android, skip.");
+      return;
+    }
+    _channel.invokeMethod('onFragmentResume', {'fragmentName': fragmentName});
+  }
+
+  @override
+  void onFragmentPause(String fragmentName) {
+    if (!Platform.isAndroid) {
+      print(flutter_log + "onFragmentPause: not Android, skip.");
+      return;
+    }
+    _channel.invokeMethod('onFragmentPause', {'fragmentName': fragmentName});
+  }
+
+  @override
+  void reportNotificationOpened(String msgId) {
+    if (!Platform.isAndroid) {
+      print(flutter_log + "reportNotificationOpened: not Android, skip.");
+      return;
+    }
+    _channel.invokeMethod('reportNotificationOpened', {'msgId': msgId});
+  }
+
+  @override
+  void enableAppTerminate({bool enable = true}) {
+    if (Platform.isIOS) {
+      print(flutter_log + "enableAppTerminate: iOS not supported, skip.");
+      return;
+    }
+    _channel.invokeMethod('enableAppTerminate', {'enable': enable});
+  }
+
+  @override
+  void triggerNotificationStateCheck() {
+    if (!Platform.isAndroid) {
+      print(flutter_log + "triggerNotificationStateCheck: not Android, skip.");
+      return;
+    }
+    _channel.invokeMethod('triggerNotificationStateCheck');
+  }
+
+  @override
+  void setPowerSaveMode({bool enable = false}) {
+    if (!Platform.isAndroid) {
+      print(flutter_log + "setPowerSaveMode: not Android, skip.");
+      return;
+    }
+    _channel.invokeMethod('setPowerSaveMode', {'enable': enable});
+  }
+
+  @override
+  void stopCrashHandler() {
+    if (!Platform.isAndroid) {
+      print(flutter_log + "stopCrashHandler: not Android, skip.");
+      return;
+    }
+    _channel.invokeMethod('stopCrashHandler');
+  }
+
+  @override
+  void initCrashHandler() {
+    if (!Platform.isAndroid) {
+      print(flutter_log + "initCrashHandler: not Android, skip.");
+      return;
+    }
+    _channel.invokeMethod('initCrashHandler');
+  }
+
+  @override
+  Future<bool> getConnectionState() async {
+    if (!Platform.isAndroid) {
+      print(flutter_log + "getConnectionState: not Android, return false.");
+      return false;
+    }
+    final bool? connected =
+        await _channel.invokeMethod('getConnectionState');
+    return connected ?? false;
+  }
+
+  @override
+  Future<void> removeLocalNotification(int notificationId) async {
+    await _channel.invokeMethod(
+        'removeLocalNotification', {'notificationId': notificationId});
+  }
+
+  @override
+  void setGeofenceInterval(int intervalMs) {
+    if (Platform.isAndroid) {
+      _channel.invokeMethod('setGeofenceInterval', {'interval': intervalMs});
+    } else if (Platform.isIOS) {
+      // iOS 为秒
+      _channel.invokeMethod(
+          'setGeofenceInterval', {'intervalSeconds': intervalMs ~/ 1000});
+    }
+  }
+
+  @override
+  void setMaxGeofenceNumber(int maxNumber) {
+    _channel.invokeMethod('setMaxGeofenceNumber', {'maxNumber': maxNumber});
+  }
+
+  @override
+  void deleteGeofence(String geofenceId) {
+    _channel.invokeMethod('deleteGeofence', {'geofenceId': geofenceId});
+  }
+
+  @override
+  void setPushTime(Set<int> weekDays, int startHour, int endHour) {
+    if (!Platform.isAndroid) {
+      print(flutter_log + "setPushTime: not Android, skip.");
+      return;
+    }
+    _channel.invokeMethod('setPushTime', {
+      'weekDays': weekDays.toList(),
+      'startHour': startHour,
+      'endHour': endHour,
+    });
+  }
+
+  @override
+  void setSilenceTime(
+      int startHour, int startMinute, int endHour, int endMinute) {
+    if (!Platform.isAndroid) {
+      print(flutter_log + "setSilenceTime: not Android, skip.");
+      return;
+    }
+    _channel.invokeMethod('setSilenceTime', {
+      'startHour': startHour,
+      'startMinute': startMinute,
+      'endHour': endHour,
+      'endMinute': endMinute,
+    });
+  }
+
+  @override
+  Future<Map<dynamic, dynamic>> checkTagBindState(String tag) async {
+    print(flutter_log + "checkTagBindState:");
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('checkTagBindState', {'tag': tag});
+    return Map<dynamic, dynamic>.from(result ?? {});
+  }
+
+  @override
+  Future<List<String>> filterValidTags(List<String> tags) async {
+    final dynamic result =
+        await _channel.invokeMethod('filterValidTags', {'tags': tags});
+    if (result is List) {
+      return List<String>.from(result.map((e) => e.toString()));
+    }
+    return [];
+  }
+
   ///
   /// iOS Only
   /// 点击推送启动应用的时候原生会将该 notification 缓存起来，该方法用于获取缓存 notification

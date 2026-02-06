@@ -82,5 +82,11 @@ class JpushHarmonySdkImp {
     JpushHarmonySdkPlatform.instance.setHeartbeatTime(hbinterval);
   }
 
+  Future<Map<dynamic, dynamic>> setMobileNumber(int sequence, String mobileNumber) {
+    return JpushHarmonySdkPlatform.instance.setMobileNumber(sequence, mobileNumber);
+  }
 
+  void setEnableAppTerminate(bool enable) {
+    JpushHarmonySdkPlatform.instance.setEnableAppTerminate(enable);
+  }
 }

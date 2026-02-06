@@ -1,7 +1,7 @@
 import ArrayList from '@ohos.util.ArrayList';
 import { HashMap } from '@kit.ArkTS';
 import { MethodResult } from '@ohos/flutter_ohos';
-import { JAliasMessage, JTagMessage } from '@jg/push';
+import { JAliasMessage, JTagMessage, JMobileNumberMessage } from '@jg/push';
 import JpushHarmonySdkPlugin from './JpushHarmonySdkPlugin';
 
 
@@ -130,5 +130,27 @@ export class JPushHelperTag {
       map.set('validated', jTagMessage.validated);
     }
     return map;
+  }
+}
+
+export class JPushHelperMobileNumber {
+  private static mobileNumberCache: HashMap<number, MethodResult> = new HashMap();
+
+  static setMobileNumber(sequence: number, result: MethodResult): void {
+    JPushHelperMobileNumber.mobileNumberCache.set(sequence, result);
+  }
+
+  static callBackMobileNumber(jMsg: JMobileNumberMessage) {
+    let result = JPushHelperMobileNumber.mobileNumberCache.remove(jMsg.sequence);
+    if (undefined !== result) {
+      if (jMsg.code === 0) {
+        let map = new HashMap<string, Object>();
+        map.set('code', jMsg.code);
+        if (jMsg.mobileNumber !== undefined) map.set('mobileNumber', jMsg.mobileNumber);
+        result.success(map);
+      } else {
+        result.error(jMsg.code + "", "", "");
+      }
+    }
   }
 }

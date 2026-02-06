@@ -15,7 +15,27 @@
 - [setTags](#settags)
 - [cleanTags](#cleantags)
 - [getTags](gettags)
+- [setMobileNumber](#setmobilenumber)
+- [checkTagBindState](#checktagbindstate)
+- [filterValidTags](#filtervalidtags)
+- [removeLocalNotification](#removelocalnotification)
+- [setGeofenceInterval](#setgeofenceinterval)
+- [setMaxGeofenceNumber](#setmaxgeofencenumber)
+- [deleteGeofence](#deletegeofence)
+- [enableAppTerminate](#enableappterminate)
 
+[Android Only](#android-only)
+
+- [onFragmentResume](#onfragmentresume)
+- [onFragmentPause](#onfragmentpause)
+- [reportNotificationOpened](#reportnotificationopened)
+- [triggerNotificationStateCheck](#triggernotificationstatecheck)
+- [setPowerSaveMode](#setpowersavemode)
+- [stopCrashHandler](#stopcrashhandler)
+- [initCrashHandler](#initcrashhandler)
+- [getConnectionState](#getconnectionstate)
+- [setPushTime](#setpushtime)
+- [setSilenceTime](#setsilencetime)
 
 [android ios]()
 
@@ -525,4 +545,71 @@ jpush.pageEnterTo("页面名");
 JPushFlutterInterface jpush = JPush.newJPush();
 jpush.pageLeave("页面名");
 ```
+
+---
+
+## 新增 API（多平台）
+
+以下 API 已按官方文档在 Android / iOS / 鸿蒙 端对齐实现，平台无对应能力时自动忽略或返回不支持。
+
+### setMobileNumber
+
+设置手机号码（用于推送统计与精准推送）。Android/iOS/鸿蒙 均支持。
+
+```dart
+jpush.setMobileNumber("13800138000").then((map) {});
+```
+
+### checkTagBindState
+
+查询指定标签的绑定状态。Android/iOS/鸿蒙 均支持。
+
+```dart
+jpush.checkTagBindState("tag1").then((map) {});
+```
+
+### filterValidTags
+
+筛选有效标签。Android/iOS 支持。
+
+```dart
+jpush.filterValidTags(["a", "b", "c"]).then((list) {});
+```
+
+### removeLocalNotification
+
+移除指定本地通知（按 notificationId）。Android/iOS 支持。
+
+```dart
+jpush.removeLocalNotification(12345);
+```
+
+### setGeofenceInterval / setMaxGeofenceNumber / deleteGeofence
+
+地理围栏：设置监控周期（毫秒）、最大个数、删除指定围栏。Android/iOS 支持。
+
+```dart
+jpush.setGeofenceInterval(900000);  // 15 分钟
+jpush.setMaxGeofenceNumber(20);
+jpush.deleteGeofence("geofence_id");
+```
+
+### enableAppTerminate
+
+应用活跃时长统计开关。Android/鸿蒙 支持。
+
+```dart
+jpush.enableAppTerminate(enable: true);
+```
+
+### Android Only
+
+- **onFragmentResume / onFragmentPause**：应用内消息 Fragment 生命周期，传入 Fragment 完整类名。
+- **reportNotificationOpened**：上报通知打开事件，传入 msgId。
+- **triggerNotificationStateCheck**：触发通知状态检查。
+- **setPowerSaveMode**：设置省电模式。
+- **stopCrashHandler / initCrashHandler**：关闭/开启 CrashLog 上报。
+- **getConnectionState**：获取当前推送连接状态（Future&lt;bool&gt;）。
+- **setPushTime**：设置允许推送时间（weekDays 0–6，startHour/endHour 24 小时制）。
+- **setSilenceTime**：设置通知静默时间（ startHour/startMinute/endHour/endMinute ）。
 

@@ -27,7 +27,7 @@ import { pushService } from '@kit.PushKit';
 import { notificationManager } from '@kit.NotificationKit';
 import { BusinessError } from '@ohos.base'
 import { FlutterConfig } from './config/FlutterConfig';
-import { JPushHelperAlias, JPushHelperConnected, JPushHelperRid, JPushHelperTag } from './JpushHelper';
+import { JPushHelperAlias, JPushHelperConnected, JPushHelperRid, JPushHelperTag, JPushHelperMobileNumber } from './JpushHelper';
 
 /** JpushHarmonySdkPlugin **/
 export default class JpushHarmonySdkPlugin implements FlutterPlugin, MethodCallHandler {
@@ -246,6 +246,10 @@ class JPushInterfaceImp {
       this.setBadgeNumber(call, result)
     } else if (call.method == "setHeartbeatTime") {
       this.setHeartbeatTime(call, result)
+    } else if (call.method == "setMobileNumber") {
+      this.setMobileNumber(call, result)
+    } else if (call.method == "setEnableAppTerminate") {
+      this.setEnableAppTerminate(call, result)
     } else {
       result.notImplemented()
     }
@@ -382,6 +386,22 @@ class JPushInterfaceImp {
     JPushInterface.setHeartbeatTime(heartbeatTime)
     result.success(true)
   }
+
+  setMobileNumber(call: MethodCall, result: MethodResult) {
+    let sequence: number = JPushInterfaceImp.tagSequence++
+    let mobileNumber: string = call.argument("mobileNumber") ?? ""
+    JPushHelperMobileNumber.setMobileNumber(sequence, result)
+    JPushInterface.setMobileNumber(sequence, mobileNumber)
+  }
+
+  setEnableAppTerminate(call: MethodCall, result: MethodResult) {
+    let enable: boolean = call.args === true
+    let ctx = FlutterManager.getInstance().getUIAbility()?.context ?? JPushInterfaceImp.applicationContext
+    if (ctx) {
+      JPushInterface.setEnableAppTerminate(ctx, enable)
+    }
+    result.success(true)
+  }
 }
 
 class MyCallBackMsg extends CallBackMsg {
@@ -446,6 +466,11 @@ class MyCallBackMsg extends CallBackMsg {
     JLog.info(this.TAG, 'onAliasOperatorResult jAliasMessage:' + JSON.stringify(jAliasMessage));
     // JpushHarmonySdkPlugin.sendChannel("onAliasOperatorResult", jAliasMessage);
     JPushHelperAlias.callBackAlias(jAliasMessage);
+  }
+
+  onMobileNumberOperatorResult(jMobileNumberMessage: JMobileNumberMessage): void {
+    JLog.info(this.TAG, 'onMobileNumberOperatorResult:' + JSON.stringify(jMobileNumberMessage));
+    JPushHelperMobileNumber.callBackMobileNumber(jMobileNumberMessage);
   }
 
   /**

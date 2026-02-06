@@ -242,6 +242,30 @@ public class JPushEventReceiver extends JPushMessageReceiver {
     }
 
     @Override
+    public void onMobileNumberOperatorResult(Context context, final JPushMessage jPushMessage) {
+        super.onMobileNumberOperatorResult(context, jPushMessage);
+        final int sequence = jPushMessage.getSequence();
+        final Result callback = JPushHelper.getInstance().getCallback(sequence);
+        if (callback == null) {
+            Log.i("JPushPlugin", "onMobileNumberOperatorResult: callback is null!");
+            return;
+        }
+        JPushHelper.getInstance().getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                if (jPushMessage.getErrorCode() == 0) {
+                    Map<String, Object> res = new HashMap<>();
+                    res.put("code", 0);
+                    callback.success(res);
+                } else {
+                    callback.error(Integer.toString(jPushMessage.getErrorCode()), "", "");
+                }
+                JPushHelper.getInstance().removeCallback(sequence);
+            }
+        });
+    }
+
+    @Override
     public void onNotificationSettingsCheck(Context context, boolean isOn, int source) {
         super.onNotificationSettingsCheck(context, isOn, source);
 

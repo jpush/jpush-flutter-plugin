@@ -110,6 +110,18 @@ class MethodChannelJpushHarmonySdk extends JpushHarmonySdkPlatform {
     methodChannel.invokeMethod("setHeartbeatTime", heartbeatTime);
   }
 
+  @override
+  Future<Map<dynamic, dynamic>> setMobileNumber(int sequence, String mobileNumber) async {
+    final dynamic res = await methodChannel.invokeMethod(
+        "setMobileNumber", {"sequence": sequence, "mobileNumber": mobileNumber});
+    return Map<dynamic, dynamic>.from(res is Map ? res : {});
+  }
+
+  @override
+  void setEnableAppTerminate(bool enable) {
+    methodChannel.invokeMethod("setEnableAppTerminate", enable);
+  }
+
   void printMy(msg) {
     if (debug) {
       print(flutter_log + "::" + msg);

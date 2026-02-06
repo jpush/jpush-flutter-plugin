@@ -191,6 +191,20 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [self setBackgroundEnable:call result:result];
     } else if ([@"getPushStatus" isEqualToString:call.method]) {
         [self getPushStatus:call result:result];
+    } else if ([@"setMobileNumber" isEqualToString:call.method]) {
+        [self setMobileNumber:call result:result];
+    } else if ([@"filterValidTags" isEqualToString:call.method]) {
+        [self filterValidTags:call result:result];
+    } else if ([@"removeLocalNotification" isEqualToString:call.method]) {
+        [self removeLocalNotification:call result:result];
+    } else if ([@"setGeofenceInterval" isEqualToString:call.method]) {
+        [self setGeofenceInterval:call result:result];
+    } else if ([@"setMaxGeofenceNumber" isEqualToString:call.method]) {
+        [self setMaxGeofenceNumber:call result:result];
+    } else if ([@"deleteGeofence" isEqualToString:call.method]) {
+        [self deleteGeofence:call result:result];
+    } else if ([@"checkTagBindState" isEqualToString:call.method]) {
+        [self checkTagBindState:call result:result];
     } else{
         result(FlutterMethodNotImplemented);
     }
@@ -616,6 +630,77 @@ static NSMutableArray<FlutterResult>* getRidResults;
     [JPUSHService pageLeave:pageName];
 }
 
+- (void)setMobileNumber:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"setMobileNumber:%@", call.arguments);
+    NSString *mobileNumber = call.arguments[@"mobileNumber"];
+    if (!mobileNumber) mobileNumber = @"";
+    [JPUSHService setMobileNumber:mobileNumber completion:^(NSError *error) {
+        if (error) {
+            result([error flutterError]);
+        } else {
+            result(@{@"code": @0});
+        }
+    }];
+}
+
+- (void)filterValidTags:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"filterValidTags:%@", call.arguments);
+    NSArray *tagsArr = call.arguments[@"tags"];
+    NSSet *tags = [NSSet setWithArray:tagsArr ?: @[]];
+    NSSet *valid = [JPUSHService filterValidTags:tags];
+    result(valid ? [valid allObjects] : @[]);
+}
+
+- (void)removeLocalNotification:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"removeLocalNotification:%@", call.arguments);
+    NSNumber *notificationId = call.arguments[@"notificationId"];
+    if (!notificationId) {
+        result(nil);
+        return;
+    }
+    JPushNotificationIdentifier *identifier = [[JPushNotificationIdentifier alloc] init];
+    identifier.identifiers = @[[notificationId stringValue]];
+    identifier.delivered = NO;  // 待推送的本地通知
+    [JPUSHService removeNotification:identifier];
+    result(nil);
+}
+
+- (void)setGeofenceInterval:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSNumber *sec = call.arguments[@"intervalSeconds"];
+    if (sec) {
+        [JPUSHService setGeofenecePeriodForInside:[sec doubleValue]];
+    }
+    result(nil);
+}
+
+- (void)setMaxGeofenceNumber:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSNumber *max = call.arguments[@"maxNumber"];
+    if (max) {
+        [JPUSHService setGeofeneceMaxCount:[max intValue]];
+    }
+    result(nil);
+}
+
+- (void)deleteGeofence:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSString *geofenceId = call.arguments[@"geofenceId"];
+    if (geofenceId.length) {
+        [JPUSHService removeGeofenceWithIdentifier:geofenceId];
+    }
+    result(nil);
+}
+
+- (void)checkTagBindState:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSString *tag = call.arguments[@"tag"];
+    if (!tag) tag = @"";
+    [JPUSHService validTag:tag completion:^(NSInteger iResCode, NSSet *iTags, NSInteger seq) {
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        dict[@"code"] = @(iResCode);
+        if (iResCode == 0 && iTags.count) {
+            dict[@"tags"] = [iTags allObjects];
+        }
+        result(dict);
+    } seq:0];
+}
 
 - (void)dealloc {
     _isJPushDidLogin = NO;

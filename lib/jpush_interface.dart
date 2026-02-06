@@ -316,6 +316,101 @@ abstract class JPushFlutterInterface {
     print(flutter_log + "clearNotification:has not been implemented.");
   }
 
+  /// 设置手机号码（用于推送统计与精准推送）
+  Future<Map<dynamic, dynamic>> setMobileNumber(String mobileNumber) async {
+    print(flutter_log + "setMobileNumber:has not been implemented.");
+    return {};
+  }
+
+  /// Android: Fragment 进入页面（应用内消息展示依赖页面生命周期）
+  void onFragmentResume(String fragmentName) {
+    print(flutter_log + "onFragmentResume:has not been implemented.");
+  }
+
+  /// Android: Fragment 退出页面
+  void onFragmentPause(String fragmentName) {
+    print(flutter_log + "onFragmentPause:has not been implemented.");
+  }
+
+  /// Android: 上报通知打开事件
+  void reportNotificationOpened(String msgId) {
+    print(flutter_log + "reportNotificationOpened:has not been implemented.");
+  }
+
+  /// 应用活跃时长统计开关（Android/鸿蒙）
+  void enableAppTerminate({bool enable = true}) {
+    print(flutter_log + "enableAppTerminate:has not been implemented.");
+  }
+
+  /// Android: 触发通知状态检查
+  void triggerNotificationStateCheck() {
+    print(flutter_log + "triggerNotificationStateCheck:has not been implemented.");
+  }
+
+  /// Android: 设置省电模式
+  void setPowerSaveMode({bool enable = false}) {
+    print(flutter_log + "setPowerSaveMode:has not been implemented.");
+  }
+
+  /// Android: 关闭 CrashLog 上报
+  void stopCrashHandler() {
+    print(flutter_log + "stopCrashHandler:has not been implemented.");
+  }
+
+  /// Android: 开启 CrashLog 上报
+  void initCrashHandler() {
+    print(flutter_log + "initCrashHandler:has not been implemented.");
+  }
+
+  /// Android: 获取当前推送连接状态
+  Future<bool> getConnectionState() async {
+    print(flutter_log + "getConnectionState:has not been implemented.");
+    return false;
+  }
+
+  /// 移除指定本地通知（按 notificationId）
+  Future<void> removeLocalNotification(int notificationId) async {
+    print(flutter_log + "removeLocalNotification:has not been implemented.");
+  }
+
+  /// 设置地理围栏监控周期（Android: 毫秒；iOS: 秒，由平台层转换）
+  void setGeofenceInterval(int intervalMs) {
+    print(flutter_log + "setGeofenceInterval:has not been implemented.");
+  }
+
+  /// 设置最大地理围栏个数
+  void setMaxGeofenceNumber(int maxNumber) {
+    print(flutter_log + "setMaxGeofenceNumber:has not been implemented.");
+  }
+
+  /// 删除指定地理围栏
+  void deleteGeofence(String geofenceId) {
+    print(flutter_log + "deleteGeofence:has not been implemented.");
+  }
+
+  /// Android: 设置允许推送时间（weekDays 0=周日..6=周六，24 小时制）
+  void setPushTime(Set<int> weekDays, int startHour, int endHour) {
+    print(flutter_log + "setPushTime:has not been implemented.");
+  }
+
+  /// Android: 设置通知静默时间（24 小时制）
+  void setSilenceTime(
+      int startHour, int startMinute, int endHour, int endMinute) {
+    print(flutter_log + "setSilenceTime:has not been implemented.");
+  }
+
+  /// 查询指定标签的绑定状态
+  Future<Map<dynamic, dynamic>> checkTagBindState(String tag) async {
+    print(flutter_log + "checkTagBindState:has not been implemented.");
+    return {};
+  }
+
+  /// 筛选有效标签
+  Future<List<String>> filterValidTags(List<String> tags) async {
+    print(flutter_log + "filterValidTags:has not been implemented.");
+    return [];
+  }
+
   ///
   /// iOS Only
   /// 点击推送启动应用的时候原生会将该 notification 缓存起来，该方法用于获取缓存 notification
