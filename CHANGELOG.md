@@ -1,3 +1,6 @@
+## 3.4.4
+- 解决iOS冷启动点击通知进入app没有通知点击回调的问题
+
 ## 3.4.3
 - 新增 Android setLatestNotificationNumber 方法，用于设置最多显示的通知条数
 

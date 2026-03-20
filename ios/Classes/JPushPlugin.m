@@ -824,9 +824,19 @@ static NSMutableArray<FlutterResult>* getRidResults;
         // iOS 10 以上点击本地通知
         JPLog(@"iOS10 点击本地通知");
         NSDictionary *dic = [self jpushFromLocalPushDic:response.notification.request];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.channel invokeMethod:@"onOpenNotification" arguments:dic];
-        });
+        if (_hasAddEventHandle) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.channel invokeMethod:@"onOpenNotification" arguments:dic result:^(id  _Nullable result) {
+                    JPLog(@"iOS10 点击本地通知 %@",result);
+                }];
+            });
+        }else {
+            JPLog(@"iOS10 点击本地通知, 没有_hasAddEventHandle,缓存起来");
+            [self.storedCallBackMessage addObject:@{
+                @"name": @"onOpenNotification",
+                @"msg": [dic copy] ?: @{}
+            }];
+        }
     }
     completionHandler();
 }
