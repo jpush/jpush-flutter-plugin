@@ -1,0 +1,56 @@
+{
+  "plugin_name": "jpush_flutter",
+  "sdk_type": "jpush",
+  "platform": "flutter",
+  "changelog_urls": {
+    "android": "https://docs.jiguang.cn/jpush/jpush_changelog/updates_Android",
+    "ios": "https://docs.jiguang.cn/jpush/jpush_changelog/updates_iOS"
+  },
+  "version_refs": {
+    "android_sdk": {
+      "integration": "maven",
+      "files": [
+        {
+          "path": "android/build.gradle",
+          "pattern": "cn.jiguang.sdk:jpush:{VERSION}"
+        }
+      ]
+    },
+    "ios_sdk": {
+      "integration": "cocoapods",
+      "files": [
+        {
+          "path": "ios/jpush_flutter.podspec",
+          "pattern": "s.dependency 'JPush','{VERSION}'"
+        }
+      ]
+    },
+    "plugin": {
+      "files": [
+        {
+          "path": "pubspec.yaml",
+          "key": "version"
+        }
+      ]
+    }
+  },
+  "native_files": {
+    "android": [
+      "android/src/main/java/com/jiguang/jpush/JPushPlugin.java"
+    ],
+    "ios": [
+      "ios/Classes/JPushPlugin.h",
+      "ios/Classes/JPushPlugin.m"
+    ]
+  },
+  "bridge_files": {
+    "dart": [
+      "lib/android_ios/jpush_flutter.dart",
+      "lib/android_ios/jpush_interface.dart"
+    ]
+  },
+  "changelog_file": "CHANGELOG.md",
+  "publish": {
+    "type": "dart"
+  }
+}

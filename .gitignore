@@ -144,3 +144,6 @@ example/.flutter-plugins-dependencies
 example/pubspec.lock
 example/ios/Flutter/flutter_export_environment.sh
 .dart_tool/
+# Claude update-sdk skill temp files
+.claude/skills/update-sdk/scripts/.sdk_download_result.json
+.claude/skills/update-sdk/scripts/.changelog_cache.json

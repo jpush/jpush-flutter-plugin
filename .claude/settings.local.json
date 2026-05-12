@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(update-sdk)",
+      "Bash(pip3 install *)",
+      "Bash(python3 *)",
+      "WebFetch(domain:docs.jiguang.cn)",
+      "Bash(xargs ls *)",
+      "Bash(curl -s \"https://search.maven.org/solrsearch/select?q=g:cn.jiguang.sdk+a:jpush&rows=10&wt=json\")",
+      "Bash(curl -s \"https://mvnrepository.com/artifact/cn.jiguang.sdk/jpush\")",
+      "Bash(curl -s \"https://repo1.maven.org/maven2/cn/jiguang/sdk/jpush/maven-metadata.xml\")",
+      "Bash(curl -s \"https://trunk.cocoapods.org/api/v1/pods/JPush/specs/6.1.0\")",
+      "Bash(curl -s \"https://docs.jiguang.cn/jpush/client/Android/android_sdk\" -A \"Mozilla/5.0\")",
+      "Bash(curl -s \"https://img.jiguang.cn/docs/2026/static/1778142452/jpush/client/Android/android_sdk/payload.js\" -A \"Mozilla/5.0\")",
+      "Bash(curl -s \"https://img.jiguang.cn/docs/2026/static/1778142452/jpush/jpush_changelog/updates_Android/payload.js\" -A \"Mozilla/5.0\")",
+      "Bash(curl -s \"https://docs.jiguang.cn/jpush/jpush_changelog/updates_iOS\" -A \"Mozilla/5.0\")",
+      "Bash(curl -s \"https://img.jiguang.cn/docs/2026/static/1778142452/jpush/jpush_changelog/updates_iOS/payload.js\" -A \"Mozilla/5.0\")",
+      "Bash(curl -s \"https://docs.jiguang.cn/jpush/client/Android/android_api\" -A \"Mozilla/5.0\")",
+      "Bash(curl -s \"https://docs.jiguang.cn/jpush/client/iOS/ios_api\" -A \"Mozilla/5.0\")",
+      "Bash(curl -s \"https://img.jiguang.cn/docs/2026/static/1778142452/jpush/client/Android/android_api/payload.js\" -A \"Mozilla/5.0\")",
+      "Bash(curl -s \"https://img.jiguang.cn/docs/2026/static/1778142452/jpush/client/Android/android_api/payload.js\" -A \"Mozilla/5.0\" -o /tmp/android_api_payload.js)",
+      "Bash(curl -s \"https://img.jiguang.cn/docs/2026/static/1778142452/jpush/client/iOS/ios_api/payload.js\" -A \"Mozilla/5.0\" -o /tmp/ios_api_payload.js)",
+      "Bash(curl -s \"https://docs.jiguang.cn/jpush/jpush_changelog/updates_Android.md\" -A \"Mozilla/5.0\")"
+    ]
+  }
+}

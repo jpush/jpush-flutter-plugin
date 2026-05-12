@@ -27,3 +27,4 @@ doc/api/
 
 # 排除curor
 .cursor/
+.claude/
