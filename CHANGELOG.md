@@ -1,3 +1,7 @@
+## 3.4.5 (2026-05-12)
+
+更新 Android & iOS JPush SDK 到 6.1.0，新增 Android setKeepLongConnInBackground 和 onVoipMessage 回调
+
 ## 3.4.4
 - 解决iOS冷启动点击通知进入app没有通知点击回调的问题
 

@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=/Users/weiruiyang/tool/flutter_hongmeng"
-export "FLUTTER_APPLICATION_PATH=/Users/weiruiyang/工作/code/github/jpush-flutter-plugin/example"
+export "FLUTTER_ROOT=/Users/shunihuang/flutter"
+export "FLUTTER_APPLICATION_PATH=/Users/shunihuang/Desktop/JGPlugins/JPushPlugins/Flutter/jpush-flutter-plugin/example"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_TARGET=lib/main.dart"
 export "FLUTTER_BUILD_DIR=build"

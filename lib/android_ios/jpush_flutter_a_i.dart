@@ -32,6 +32,7 @@ class JPush_A_I extends JPushFlutterInterface {
   EventHandler? _onNotifyButtonClick;
   EventHandler? _onCommandResult;
   EventHandler? _onReceiveDeviceToken;
+  EventHandler? _onVoipMessage;
   void setup({
     String appKey = '',
     bool production = false,
@@ -184,6 +185,7 @@ class JPush_A_I extends JPushFlutterInterface {
     EventHandler? onNotifyButtonClick,
     EventHandler? onCommandResult,
     EventHandler? onReceiveDeviceToken,
+    EventHandler? onVoipMessage,
   }) {
     print(flutter_log + "addEventHandler:");
 
@@ -198,6 +200,7 @@ class JPush_A_I extends JPushFlutterInterface {
     _onNotifyButtonClick = onNotifyButtonClick;
     _onCommandResult = onCommandResult;
     _onReceiveDeviceToken = onReceiveDeviceToken;
+    _onVoipMessage = onVoipMessage;
     _channel.setMethodCallHandler(_handleMethod);
 
     if (Platform.isIOS) {
@@ -250,6 +253,8 @@ class JPush_A_I extends JPushFlutterInterface {
         return _onCommandResult!(call.arguments.cast<String, dynamic>());
       case "onReceiveDeviceToken":
         return _onReceiveDeviceToken!(call.arguments.cast<String, dynamic>());
+      case "onVoipMessage":
+        return _onVoipMessage!(call.arguments.cast<String, dynamic>());
       default:
         throw new UnsupportedError("Unrecognized Event");
     }
@@ -575,14 +580,14 @@ class JPush_A_I extends JPushFlutterInterface {
     _channel.invokeMethod('requestRequiredPermission');
   }
 
-  /// iOS Only
-  /// 设置进入后台是否允许长连接。默认是NO,进入后台会关闭长连接，回到前台会重新接入。请在初始化函数之前调用。
-  /// @param enable 是否允许后台长连接
+  /// 设置退后台时是否维持极光长连接。
+  /// iOS 默认 false（不维持），Android 默认 true（维持）。
   void setBackgroundEnable({bool enable = false}) {
-    if (Platform.isAndroid) {
-      return;
-    }
     print(flutter_log + "setBackgroundEnable:");
-    _channel.invokeMethod('setBackgroundEnable', {'enable': enable});
+    if (Platform.isAndroid) {
+      _channel.invokeMethod('setKeepLongConnInBackground', {'keep': enable});
+    } else {
+      _channel.invokeMethod('setBackgroundEnable', {'enable': enable});
+    }
   }
 }

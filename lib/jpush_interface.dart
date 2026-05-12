@@ -110,6 +110,7 @@ abstract class JPushFlutterInterface {
     EventHandler? onNotifyButtonClick,
     EventHandler? onCommandResult,
     EventHandler? onReceiveDeviceToken,
+    EventHandler? onVoipMessage,
   }) {
     print(flutter_log + "addEventHandler:has not been implemented.");
   }
@@ -363,9 +364,8 @@ abstract class JPushFlutterInterface {
     print(flutter_log + "requestRequiredPermission:has not been implemented.");
   }
 
-  /// iOS Only
-  /// 设置进入后台是否允许长连接。默认是NO,进入后台会关闭长连接，回到前台会重新接入。请在初始化函数之前调用。
-  /// @param enable 是否允许后台长连接
+  /// 设置退后台时是否维持极光长连接。
+  /// iOS 默认 false（不维持），Android 默认 true（维持）。
   void setBackgroundEnable({bool enable = false}) {
     print(flutter_log + "setBackgroundEnable:has not been implemented.");
   }

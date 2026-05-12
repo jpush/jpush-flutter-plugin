@@ -258,6 +258,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             enableSDKLocalLog(call, result);
         }else if (call.method.equals("readNewLogs")) {
             readNewLogs(call, result);
+        }else if (call.method.equals("setKeepLongConnInBackground")) {
+            setKeepLongConnInBackground(call, result);
         } else {
             result.notImplemented();
         }
@@ -331,6 +333,16 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         Log.d(TAG, "readNewLogs ");
          String logs = JCoreInterface.readNewLogs(context);
          result.success(logs);
+    }
+    public void setKeepLongConnInBackground(MethodCall call, Result result) {
+        Boolean keep = call.argument("keep");
+        if (keep == null) {
+            result.error("INVALID_ARGUMENT", "keep is required", null);
+            return;
+        }
+        Log.d(TAG, "setKeepLongConnInBackground: " + keep);
+        JPushInterface.setKeepLongConnInBackground(context, keep);
+        result.success(true);
     }
     public void setChannelAndSound(MethodCall call, Result result) {
         HashMap<String, Object> readableMap = call.arguments();

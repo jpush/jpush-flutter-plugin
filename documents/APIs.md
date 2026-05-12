@@ -220,8 +220,22 @@ jpush.addEventHandler(
         print("flutter onReceiveDeviceToken: $message");
         // message 包含 {"deviceToken": "实际的设备deviceToken"}
       },
+      // Android Only: VoIP 呼叫消息回调方法。
+      onVoipMessage: (Map<String, dynamic> message) async {
+        print("flutter onVoipMessage: $message");
+      },
   );
 ```
+
+##### 参数说明（onVoipMessage）
+
+**Android Only**
+
+| 字段 | 类型 | 说明 |
+|:----:|:----:|:----:|
+| messageId | String | VoIP 消息 ID |
+| extraData | String | VoIP 自定义数据 |
+| platform | int | 平台标识 |
 
 
 #### setup

@@ -23,6 +23,7 @@ import cn.jpush.android.api.CustomMessage;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.NotificationCustomButton;
 import cn.jpush.android.api.NotificationMessage;
+import cn.jpush.android.api.VoipDataMessage;
 import cn.jpush.android.local.JPushConstants;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -181,6 +182,15 @@ public class JPushHelper {
             resultList.removeAll(tempList);
             tempList.clear();
         }
+    }
+
+    public void transmitVoipMessage(VoipDataMessage voipDataMessage) {
+        Log.d(TAG, "transmitVoipMessage " + "voipDataMessage=" + voipDataMessage);
+        Map<String, Object> msg = new HashMap<>();
+        msg.put("messageId", voipDataMessage.getMessageId());
+        msg.put("extraData", voipDataMessage.getExtraData());
+        msg.put("platform", (int) voipDataMessage.getPlatform());
+        invokeMethod("onVoipMessage", msg);
     }
 
     public void transmitMessageReceive(CustomMessage customMessage) {
