@@ -8,6 +8,7 @@ import {
   JMessageVoIP,
   JMobileNumberMessage,
   JPushInterface,
+  JPushLocalNotification,
   JTagMessage
 } from '@jg/push';
 import {
@@ -27,7 +28,7 @@ import { pushService } from '@kit.PushKit';
 import { notificationManager } from '@kit.NotificationKit';
 import { BusinessError } from '@ohos.base'
 import { FlutterConfig } from './config/FlutterConfig';
-import { JPushHelperAlias, JPushHelperConnected, JPushHelperRid, JPushHelperTag } from './JpushHelper';
+import { JPushHelperAlias, JPushHelperConnected, JPushHelperPushStatus, JPushHelperRid, JPushHelperTag } from './JpushHelper';
 
 /** JpushHarmonySdkPlugin **/
 export default class JpushHarmonySdkPlugin implements FlutterPlugin, MethodCallHandler {
@@ -47,6 +48,7 @@ export default class JpushHarmonySdkPlugin implements FlutterPlugin, MethodCallH
   onAttachedToEngine(binding: FlutterPluginBinding): void {
     this.applicationContext = binding.getApplicationContext()
     JPushInterfaceImp.setApplicationContext(this.applicationContext)
+    JPushInterface.setContext(this.applicationContext.getApplicationContext())
     this.channel = new MethodChannel(binding.getBinaryMessenger(), "jpush");
     this.channel.setMethodCallHandler(this)
     JpushHarmonySdkPlugin.plugin = this;
@@ -119,7 +121,7 @@ export default class JpushHarmonySdkPlugin implements FlutterPlugin, MethodCallH
         JPushInterface.setAppKey(appkey)
       }
     }
-    JPushInterface.setClickWant(want)
+    JPushInterface.setClickWant(want, context.getApplicationContext())
   }
 
   // static sendClockWantCache() {
@@ -242,6 +244,14 @@ class JPushInterfaceImp {
       this.resumePush()
     } else if (call.method == "isPushStopped") {
       this.isPushStopped(result)
+    } else if (call.method == "getPushStatus") {
+      this.getPushStatus(call, result)
+    } else if (call.method == "sendLocalNotification") {
+      this.sendLocalNotification(call, result)
+    } else if (call.method == "clearNotification") {
+      this.clearNotification(call, result)
+    } else if (call.method == "clearLocalNotifications") {
+      this.clearLocalNotifications(call, result)
     } else if (call.method == "setBadgeNumber") {
       this.setBadgeNumber(call, result)
     } else if (call.method == "setHeartbeatTime") {
@@ -287,8 +297,9 @@ class JPushInterfaceImp {
     JPushInterface.init(uIAbilityContext)
   }
 
-  getRegistrationId(result: MethodResult) {
-    let rid: String = JPushInterface.getRegistrationId();
+  async getRegistrationId(result: MethodResult) {
+    // 1.4.0 起 getRegistrationId 为异步接口
+    let rid: string = await JPushInterface.getRegistrationId();
     if (undefined === rid || null === rid || rid === "") {
       JPushHelperRid.addRid(result);
       return
@@ -367,8 +378,52 @@ class JPushInterfaceImp {
     JPushInterface.resumePush()
   }
 
-  isPushStopped(result: MethodResult) {
-    result.success(JPushInterface.isPushStopped())
+  async isPushStopped(result: MethodResult) {
+    // 1.4.0 起 isPushStopped 为异步接口（返回本地缓存状态，已废弃，后台实际状态请用 getPushStatus）
+    result.success(await JPushInterface.isPushStopped())
+  }
+
+  getPushStatus(call: MethodCall, result: MethodResult) {
+    // 结果在 onCommandResult 回调中返回，挂起 result 等待
+    JPushHelperPushStatus.addPushStatus(result)
+    JPushInterface.getPushStatus()
+  }
+
+  sendLocalNotification(call: MethodCall, result: MethodResult) {
+    let ln = new JPushLocalNotification()
+    let id: number = call.argument("id")
+    if (undefined !== id && null !== id) {
+      ln.notificationId = id
+    }
+    let title: string = call.argument("title")
+    if (undefined !== title && null !== title) {
+      ln.title = title
+    }
+    let content: string = call.argument("content")
+    if (undefined !== content && null !== content) {
+      ln.content = content
+    }
+    let extra: Record<string, Object> = call.argument("extra")
+    if (undefined !== extra && null !== extra) {
+      ln.extras = JSON.stringify(extra)
+    }
+    let fireTime: number = call.argument("fireTime")
+    if (undefined !== fireTime && null !== fireTime) {
+      ln.setBroadcastTimeByMs(fireTime)
+    }
+    JPushInterface.addLocalNotification(ln)
+    result.success(true)
+  }
+
+  clearNotification(call: MethodCall, result: MethodResult) {
+    let notificationId: number = call.args
+    JPushInterface.removeLocalNotification(notificationId)
+    result.success(true)
+  }
+
+  clearLocalNotifications(call: MethodCall, result: MethodResult) {
+    JPushInterface.clearLocalNotifications()
+    result.success(true)
   }
 
   setBadgeNumber(call: MethodCall, result: MethodResult) {
@@ -530,6 +585,10 @@ class MyCallBackMsg extends CallBackMsg {
    */
   onCommandResult(cmdMessage: JCmdMessage) {
     JLog.info(this.TAG, 'onCommandResult cmdMessage:' + JSON.stringify(cmdMessage));
+    // getPushStatus 的查询结果也经此回调，若有挂起的查询则优先消费，不再透传
+    if (JPushHelperPushStatus.callBackPushStatus(cmdMessage)) {
+      return
+    }
     JpushHarmonySdkPlugin.sendChannel("onCommandResult", cmdMessage);
   }
 

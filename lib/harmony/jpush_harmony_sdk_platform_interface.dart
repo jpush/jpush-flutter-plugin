@@ -95,6 +95,22 @@ abstract class JpushHarmonySdkPlatform extends PlatformInterface {
     throw UnimplementedError('isPushStopped() has not been implemented.');
   }
 
+  Future<Map<dynamic, dynamic>> getPushStatus() {
+    throw UnimplementedError('getPushStatus() has not been implemented.');
+  }
+
+  Future<void> sendLocalNotification(Map<String, dynamic> notification) {
+    throw UnimplementedError('sendLocalNotification() has not been implemented.');
+  }
+
+  clearNotification(int notificationId) {
+    throw UnimplementedError('clearNotification() has not been implemented.');
+  }
+
+  clearLocalNotifications() {
+    throw UnimplementedError('clearLocalNotifications() has not been implemented.');
+  }
+
   setBadgeNumber(int badgeNumber) {
     throw UnimplementedError('setBadgeNumber() has not been implemented.');
   }

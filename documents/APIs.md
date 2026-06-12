@@ -373,6 +373,8 @@ Map<dynamic, dynamic> result = await jpush.getPushStatus();
 
 调用该方法可以查询当前推送功能的状态。
 
+鸿蒙自插件 3.4.6（@jg/push 1.4.0）起支持，查询的是后台实际推送开关状态，回包格式与 Android/iOS 一致（code、isStopped）。
+
 ##### 返回值说明
 
 返回一个 Map，包含以下字段：
@@ -463,6 +465,8 @@ jpush.getTags(1).then((map) {});
 #### sendLocalNotification
 
 指定触发时间，添加本地推送通知。
+
+鸿蒙自插件 3.4.6（@jg/push 1.4.0）起支持：fireTime 为过去或当前时间时立即触发；延时通知仅 App 前台存活时触发；通知经 onArrivedMessage / onClickMessage 回调，可通过 notificationType == 1 与推送通知区分。鸿蒙仅 id、title、content、extra、fireTime 字段生效。
 
 ```dart
 // 延时 3 秒后触发本地通知。

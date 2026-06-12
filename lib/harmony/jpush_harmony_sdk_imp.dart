@@ -74,6 +74,22 @@ class JpushHarmonySdkImp {
     return JpushHarmonySdkPlatform.instance.isPushStopped();
   }
 
+  Future<Map<dynamic, dynamic>> getPushStatus() {
+    return JpushHarmonySdkPlatform.instance.getPushStatus();
+  }
+
+  Future<void> sendLocalNotification(Map<String, dynamic> notification) {
+    return JpushHarmonySdkPlatform.instance.sendLocalNotification(notification);
+  }
+
+  clearNotification(int notificationId) {
+    JpushHarmonySdkPlatform.instance.clearNotification(notificationId);
+  }
+
+  clearLocalNotifications() {
+    JpushHarmonySdkPlatform.instance.clearLocalNotifications();
+  }
+
   setBadgeNumber(int badgeNumber) {
     JpushHarmonySdkPlatform.instance.setBadgeNumber(badgeNumber);
   }

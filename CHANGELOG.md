@@ -1,3 +1,10 @@
+## 3.4.6 (2026-06-12)
+
+更新鸿蒙 JPush SDK（@jg/push）到 1.4.0
+- 鸿蒙新增本地通知支持：sendLocalNotification / clearNotification / clearLocalNotifications（本地通知经 onArrivedMessage / onClickMessage 回调，notificationType == 1 可与推送通知区分）
+- 鸿蒙新增 getPushStatus 方法，查询后台实际推送开关状态（回包格式与 Android/iOS 一致）
+- 鸿蒙适配 getRegistrationId / isPushStopped 异步化，setClickWant 传入 ApplicationContext 修复冷启动点击通知异常
+
 ## 3.4.5 (2026-05-12)
 
 更新 Android & iOS JPush SDK 到 6.1.0，新增 Android setKeepLongConnInBackground 和 onVoipMessage 回调

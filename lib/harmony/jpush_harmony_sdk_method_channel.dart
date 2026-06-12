@@ -102,6 +102,22 @@ class MethodChannelJpushHarmonySdk extends JpushHarmonySdkPlatform {
     return await methodChannel.invokeMethod<bool>('isPushStopped');
   }
 
+  Future<Map<dynamic, dynamic>> getPushStatus() async {
+    return await methodChannel.invokeMethod("getPushStatus");
+  }
+
+  Future<void> sendLocalNotification(Map<String, dynamic> notification) async {
+    await methodChannel.invokeMethod("sendLocalNotification", notification);
+  }
+
+  clearNotification(int notificationId) {
+    methodChannel.invokeMethod("clearNotification", notificationId);
+  }
+
+  clearLocalNotifications() {
+    methodChannel.invokeMethod("clearLocalNotifications");
+  }
+
   setBadgeNumber(int badgeNumber) {
     methodChannel.invokeMethod("setBadgeNumber", badgeNumber);
   }

@@ -1,7 +1,7 @@
 import ArrayList from '@ohos.util.ArrayList';
 import { HashMap } from '@kit.ArkTS';
 import { MethodResult } from '@ohos/flutter_ohos';
-import { JAliasMessage, JTagMessage } from '@jg/push';
+import { JAliasMessage, JCmdMessage, JTagMessage } from '@jg/push';
 import JpushHarmonySdkPlugin from './JpushHarmonySdkPlugin';
 
 
@@ -33,6 +33,44 @@ export class JPushHelperRid {
         result.success(rid)
       }
     }
+  }
+}
+
+export class JPushHelperPushStatus {
+  private static TAG: string = "JPushHelperPushStatus"
+  private static pushStatusList: ArrayList<MethodResult> = new ArrayList();
+
+  static addPushStatus(result: MethodResult) {
+    JPushHelperPushStatus.pushStatusList.add(result);
+  }
+
+  /**
+   * getPushStatus 的结果经 onCommandResult 回调（cmd 2006 恢复 / 2007 停止）。
+   * 有挂起查询且 cmd 匹配时消费并返回 true，否则返回 false 由调用方继续透传。
+   * 回包格式与 Android/iOS 保持一致：{code, isStopped}
+   */
+  static callBackPushStatus(cmdMessage: JCmdMessage): boolean {
+    if (JPushHelperPushStatus.pushStatusList.isEmpty()) {
+      return false;
+    }
+    if (cmdMessage.cmd !== JCmdMessage.CMD_PUSH_STOP && cmdMessage.cmd !== JCmdMessage.CMD_PUSH_RESUME) {
+      return false;
+    }
+    let code = 0;
+    if (cmdMessage.errorCode !== undefined && cmdMessage.errorCode !== 0) {
+      code = cmdMessage.errorCode;
+    }
+    let isStopped = cmdMessage.cmd === JCmdMessage.CMD_PUSH_STOP;
+    while (!JPushHelperPushStatus.pushStatusList.isEmpty()) {
+      let result = JPushHelperPushStatus.pushStatusList.removeByIndex(0);
+      if (undefined !== result) {
+        let map = new HashMap<string, Object>();
+        map.set('code', code);
+        map.set('isStopped', isStopped);
+        result.success(map);
+      }
+    }
+    return true;
   }
 }
 

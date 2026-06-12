@@ -100,6 +100,27 @@ class JpushHarmonySdk extends JPushFlutterInterface {
     return _jpushHarmonySdkPlugin.isPushStopped();
   }
 
+  Future<Map<dynamic, dynamic>> getPushStatus() async {
+    print(flutter_log + "getPushStatus");
+    return await _jpushHarmonySdkPlugin.getPushStatus();
+  }
+
+  Future<String> sendLocalNotification(LocalNotification notification) async {
+    print(flutter_log + "sendLocalNotification");
+    await _jpushHarmonySdkPlugin.sendLocalNotification(notification.toMap());
+    return notification.toMap().toString();
+  }
+
+  void clearNotification({int notificationId = 0}) {
+    print(flutter_log + "clearNotification");
+    _jpushHarmonySdkPlugin.clearNotification(notificationId);
+  }
+
+  Future clearLocalNotifications() async {
+    print(flutter_log + "clearLocalNotifications");
+    _jpushHarmonySdkPlugin.clearLocalNotifications();
+  }
+
   Future setBadge(int badge) async {
     print(flutter_log + "setBadge");
     await _jpushHarmonySdkPlugin.setBadgeNumber(badge);
