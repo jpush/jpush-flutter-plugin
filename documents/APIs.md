@@ -7,6 +7,7 @@
 - [isPushStoppedAndroid](#ispushstoppedandroid)
 - [getPushStatus](#getpushstatus)
 - [setLatestNotificationNumber](#setlatestnotificationnumber)
+- [requestRequiredPermission](#requestrequiredpermission)
 - [setAlias](#setalias)
 - [getAlias](#getAlias)
 - [deleteAlias](#deletealias)
@@ -345,6 +346,19 @@ await jpush.setLatestNotificationNumber(3);
 ##### 参数说明
 
 - `maxNum` (int): 最多显示的条数
+
+#### requestRequiredPermission
+
+申请必须权限，即 Android 13 及以上的通知权限（`POST_NOTIFICATIONS`），调用后会向用户弹出系统授权框。
+
+**Android Only**（iOS 申请推送权限请使用 [applyPushAuthority](#applypushauthority)）
+
+该方法无返回值，授权结果可通过 `addEventHandler` 的 `onReceiveNotificationAuthorization` 回调监听，或调用 `isNotificationEnabled` 主动检查。
+
+```dart
+JPushFlutterInterface jpush = JPush.newJPush();
+jpush.requestRequiredPermission();
+```
 
 #### getPushStatus
 
