@@ -213,6 +213,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
         }
         
     });
+
+    result(nil);
 }
 
 
@@ -228,22 +230,30 @@ static NSMutableArray<FlutterResult>* getRidResults;
     control.ssid = ssid;
     control.cell = cell;
     [JPUSHService setCollectControl:control];
+
+    result(@(YES));
 }
 
 - (void)setSmartPushEnable:(FlutterMethodCall*)call result:(FlutterResult)result{
     BOOL enable = [call.arguments[@"enable"] boolValue];
     [JPUSHService setSmartPushEnable:enable];
+
+    result(@(YES));
 }
 
 - (void)setHeartBeatTimeInterval:(FlutterMethodCall*)call result:(FlutterResult)result{
     double interval = [call.arguments[@"hb_interval"] doubleValue];
     [JPUSHService setHeartBeatTimeInterval:interval];
+
+    result(@(YES));
 }
 
 - (void)setBackgroundEnable:(FlutterMethodCall*)call result:(FlutterResult)result{
     JPLog(@"setBackgroundEnable:%@",call.arguments);
     BOOL enable = [call.arguments[@"enable"] boolValue];
     [JPUSHService setBackgroundEnable:enable];
+
+    result(@(YES));
 }
 
 - (void)getPushStatus:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -275,6 +285,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
                            appKey:arguments[@"appKey"]
                           channel:arguments[@"channel"]
                  apsForProduction:[arguments[@"production"] boolValue]];
+
+    result(@(YES));
 }
 
 //设置APP在前台时是否展示通知
@@ -283,6 +295,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
     NSDictionary *arguments = call.arguments;
     NSNumber *unShow = arguments[@"UnShow"];
     if(unShow && [unShow isKindOfClass:[NSNumber class]]) self.unShow = [unShow boolValue];
+
+    result(@(YES));
 }
 
 - (void)applyPushAuthority:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -303,6 +317,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
     [JPUSHService registerForRemoteNotificationConfig:entity delegate:self];
     
     JPLog(@"applyPushAuthority : delegate%@",[UNUserNotificationCenter currentNotificationCenter].delegate);
+
+    result(@(YES));
 }
 
 - (void)setTags:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -428,16 +444,22 @@ static NSMutableArray<FlutterResult>* getRidResults;
     }
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber: badge];
     [JPUSHService setBadge: badge];
+
+    result(@(YES));
 }
 
 - (void)stopPush:(FlutterMethodCall*)call result:(FlutterResult)result {
     JPLog(@"stopPush:");
     [[UIApplication sharedApplication] unregisterForRemoteNotifications];
+
+    result(@(YES));
 }
 
 - (void)resumePush:(FlutterMethodCall*)call result:(FlutterResult)result {
     JPLog(@"resumePush:");
     [[UIApplication sharedApplication] registerForRemoteNotifications];
+
+    result(@(YES));
 }
 
 - (void)clearAllNotifications:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -453,13 +475,16 @@ static NSMutableArray<FlutterResult>* getRidResults;
         // iOS 10 以下移除所有推送；iOS 10 以上移除所有在通知中心显示推送和待推送请求
         [JPUSHService removeNotification:nil];
     }
+
+    result(@(YES));
 }
 - (void)clearNotification:(FlutterMethodCall*)call result:(FlutterResult)result {
     JPLog(@"clearNotification:");
     
     NSNumber *notificationId = call.arguments;
     if (!notificationId) {
-        return ;
+        result(@(NO));
+        return;
     }
     JPushNotificationIdentifier *identifier = [[JPushNotificationIdentifier alloc] init];
     identifier.identifiers = @[notificationId.stringValue];
@@ -471,6 +496,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
         // Fallback on earlier versions
     }
     [JPUSHService removeNotification:identifier];
+
+    result(@(YES));
 }
 
 - (void)getLaunchAppNotification:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -601,7 +628,8 @@ static NSMutableArray<FlutterResult>* getRidResults;
     [JGInforCollectionAuth JCollectionAuth:^(JGInforCollectionAuthItems * _Nonnull authInfo) {
         authInfo.isAuth = enable;
     }];
-    
+
+    result(@(YES));
 }
 
 - (void)pageEnterTo:(FlutterMethodCall*)call {

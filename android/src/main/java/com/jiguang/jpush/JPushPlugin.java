@@ -266,6 +266,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
     public void requestRequiredPermission(MethodCall call, Result result){
         JPushInterface.requestRequiredPermission(mActivity);
+
+        result.success(true);
     }
     public void setHBInterval(MethodCall call, Result result){
         HashMap<String, Object> map = call.arguments();
@@ -278,7 +280,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             JCoreManager.setSDKConfigs(context, bundle);
         }
 
-
+        result.success(true);
     }
     public void setLatestNotificationNumber(MethodCall call, Result result){
         Log.d(TAG, "setLatestNotificationNumber: " + call.arguments);
@@ -290,19 +292,25 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         } else {
             Log.e(TAG, "setLatestNotificationNumber: maxNum is required" + call.arguments);
         }
+
+        result.success(true);
     }
     public void setThirdToken(MethodCall call, Result result) {
         HashMap<String, Object> readableMap = call.arguments();
         if (readableMap == null) {
+            result.success(false);
             return;
         }
         String token = (String)readableMap.get("third_token");
         JPushInterface.setThirdToken(context,token);
+
+        result.success(true);
     }
 
     private void setDataInsightsEnable(MethodCall call, Result result) {
         HashMap<String, Object> map = call.arguments();
         if (map == null) {
+            result.success(false);
             return;
         }
         Boolean enable = (Boolean) map.get("enable");
@@ -310,12 +318,15 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             enable = true;
         }
         JPushInterface.setDataInsightsEnable(context,enable);
+
+        result.success(true);
     }
 
     public void enableSDKLocalLog(MethodCall call, Result result) {
         Log.d(TAG, "enableSDKLocalLog: ");
         HashMap<String, Object> map = call.arguments();
         if (map == null) {
+            result.success(false);
             return;
         }
         Boolean enable = (Boolean) map.get("enable");
@@ -327,6 +338,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             uploadJgToServer = false;
         }
         JCoreInterface.enableSDKLocalLog(context, enable, uploadJgToServer);
+
+        result.success(true);
     }
 
     public void readNewLogs(MethodCall call, Result result) {
@@ -347,6 +360,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     public void setChannelAndSound(MethodCall call, Result result) {
         HashMap<String, Object> readableMap = call.arguments();
         if (readableMap == null) {
+            result.success(false);
             return;
         }
         String channel = (String)readableMap.get("channel");
@@ -355,9 +369,11 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         try {
             NotificationManager manager= (NotificationManager) context.getSystemService("notification");
             if(Build.VERSION.SDK_INT<26){
+                result.success(false);
                 return;
             }
             if(TextUtils.isEmpty(channel)||TextUtils.isEmpty(channelId)){
+                result.success(false);
                 return;
             }
             NotificationChannel channel1=new NotificationChannel(channelId,channel, NotificationManager.IMPORTANCE_HIGH);
@@ -370,10 +386,13 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 
         }catch (Throwable throwable){
         }
+
+        result.success(true);
     }
     private void setLinkMergeEnable(MethodCall call, Result result) {
         HashMap<String, Object> map = call.arguments();
         if (map == null) {
+            result.success(false);
             return;
         }
         Boolean enable = (Boolean) map.get("enable");
@@ -381,10 +400,13 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             enable = true;
         }
         JPushInterface.setLinkMergeEnable(context,enable);
+
+        result.success(true);
     }
     private void setGeofenceEnable(MethodCall call, Result result) {
         HashMap<String, Object> map = call.arguments();
         if (map == null) {
+            result.success(false);
             return;
         }
         Boolean enable = (Boolean) map.get("enable");
@@ -392,10 +414,13 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             enable = true;
         }
         JPushInterface.setGeofenceEnable(context,enable);
+
+        result.success(true);
     }
     private void setSmartPushEnable(MethodCall call, Result result) {
         HashMap<String, Object> map = call.arguments();
         if (map == null) {
+            result.success(false);
             return;
         }
         Boolean enable = (Boolean) map.get("enable");
@@ -403,10 +428,13 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             enable = true;
         }
         JPushInterface.setSmartPushEnable(context,enable);
+
+        result.success(true);
     }
     private void setCollectControl(MethodCall call, Result result) {
         HashMap<String, Object> map = call.arguments();
         if (map == null) {
+            result.success(false);
             return;
         }
         JPushCollectControl.Builder builder=new JPushCollectControl.Builder();
@@ -449,11 +477,14 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         if(hadValue){
             JPushInterface.setCollectControl(context,builder.build());
         }
+
+        result.success(true);
     }
 
     private void setAuth(MethodCall call, Result result){
         HashMap<String, Object> map = call.arguments();
         if (map == null) {
+            result.success(false);
             return;
         }
         Boolean enable = (Boolean) map.get("enable");
@@ -461,15 +492,20 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             enable = false;
         }
         JCollectionAuth.setAuth(context,enable);
+
+        result.success(true);
     }
     private void testCountryCode(MethodCall call, Result result){
         String code = call.arguments();
         Log.d(TAG,"testCountryCode code="+code);
         JCoreInterface.testCountryCode(context,code);
+
+        result.success(true);
     }
     private void setWakeEnable(MethodCall call, Result result) {
         HashMap<String, Object> map = call.arguments();
         if (map == null) {
+            result.success(false);
             return;
         }
         Boolean enable = (Boolean) map.get("enable");
@@ -477,10 +513,13 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             enable = false;
         }
         JCoreInterface.setWakeEnable(context,enable);
+
+        result.success(true);
     }
     private void enableAutoWakeup(MethodCall call, Result result) {
         HashMap<String, Object> map = call.arguments();
         if (map == null) {
+            result.success(false);
             return;
         }
         Boolean enable = (Boolean) map.get("enable");
@@ -488,6 +527,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             enable = false;
         }
         JCollectionAuth.enableAutoWakeup(context,enable);
+
+        result.success(true);
     }
 
 
@@ -513,6 +554,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 
         // try to clean getRid cache
         scheduleCache();
+
+        result.success(true);
     }
 
     public void scheduleCache() {
@@ -596,12 +639,16 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         Log.d(TAG, "stopPush:");
 
         JPushInterface.stopPush(context);
+
+        result.success(true);
     }
 
     public void resumePush(MethodCall call, Result result) {
         Log.d(TAG, "resumePush:");
 
         JPushInterface.resumePush(context);
+
+        result.success(true);
     }
 
     public void isPushStopped(MethodCall call, Result result) {
@@ -623,10 +670,14 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         Log.d(TAG, "clearAllNotifications: ");
 
         JPushInterface.clearAllNotifications(context);
+
+        result.success(true);
     }
     public void clearLocalNotifications(MethodCall call, Result result) {
         Log.d(TAG, "clearLocalNotifications: ");
         JPushInterface.clearLocalNotifications(context);
+
+        result.success(true);
     }
     public void clearNotification(MethodCall call, Result result) {
         Log.d(TAG, "clearNotification: ");
@@ -634,12 +685,14 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         if (id != null) {
             JPushInterface.clearNotificationById(context, (int) id);
         }
+
+        result.success(true);
     }
 
     public void getLaunchAppNotification(MethodCall call, Result result) {
         Log.d(TAG, "");
 
-
+        result.success(new HashMap<>());
     }
 
     public void getRegistrationID(MethodCall call, Result result) {
@@ -647,6 +700,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 
         if (context == null) {
             Log.d(TAG, "register context is nil.");
+            result.success("");
             return;
         }
 
@@ -681,8 +735,10 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             ln.setBroadcastTime(date);
 
             JPushInterface.addLocalNotification(context, ln);
+            result.success(true);
         } catch (Exception e) {
             e.printStackTrace();
+            result.error("SEND_LOCAL_NOTIFICATION_ERROR", e.getMessage(), null);
         }
     }
 
@@ -695,6 +751,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             int num = (int) numObject;
             JPushInterface.setBadgeNumber(context, num);
             result.success(true);
+        } else {
+            result.success(false);
         }
     }
 
@@ -714,6 +772,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 
         JPushInterface.goToAppNotificationSettings(context);
 
+        result.success(true);
     }
 
     /**

@@ -211,13 +211,17 @@ class JPushInterfaceImp {
     JLog.info(this.TAG, "onMethodCall args:" + call.args)
     if (call.method == "setDebug") {
       this.setDebug(call.args)
+      result.success(true)
     } else if (call.method == "setAppKey") {
       this.setAppKey(call.args)
+      result.success(true)
     } else if (call.method == "setChannel") {
       this.setChannel(call.args)
+      result.success(true)
     } else if (call.method == "init") {
       this.requestEnableNotification()
       this.init(JPushInterfaceImp.applicationContext)
+      result.success(true)
     } else if (call.method == "getRegistrationId") {
       this.getRegistrationId(result)
     } else if (call.method == "setTags") {
@@ -240,8 +244,10 @@ class JPushInterfaceImp {
       this.getAlias(call, result)
     } else if (call.method == "stopPush") {
       this.stopPush()
+      result.success(true)
     } else if (call.method == "resumePush") {
       this.resumePush()
+      result.success(true)
     } else if (call.method == "isPushStopped") {
       this.isPushStopped(result)
     } else if (call.method == "getPushStatus") {
