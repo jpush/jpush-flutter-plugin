@@ -17,15 +17,11 @@ class MethodChannelJpushHarmonySdk extends JpushHarmonySdkPlatform {
   void setCallBack(Function(String eventName, dynamic data) callBack) {
     this.callBack = callBack;
     methodChannel.setMethodCallHandler((call) async {
-      if (null != call) {
-        if (null != this.callBack) {
-          printMy("callBack, call:" + call.toString());
-          this.callBack?.call(call.method, call.arguments);
-        } else {
-          printMy("no has callBack, method:" + call.method);
-        }
+      if (null != this.callBack) {
+        printMy("callBack, call:" + call.toString());
+        this.callBack?.call(call.method, call.arguments);
       } else {
-        printMy("call null");
+        printMy("no has callBack, method:" + call.method);
       }
     });
   }
