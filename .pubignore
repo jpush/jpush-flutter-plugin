@@ -1,6 +1,14 @@
 # 排除示例项目
 example/
 
+# 排除本地分析和调试文档
+docs/
+
+# 排除已跟踪但不应发布的本地/生成文件
+.claude/skills/update-sdk/scripts/.changelog_cache.json
+example/ios/Flutter/flutter_export_environment.sh
+example/ios/Runner/GeneratedPluginRegistrant.m
+
 # 排除构建文件
 build/
 .dart_tool/
