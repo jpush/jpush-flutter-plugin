@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 
 typedef Future<dynamic> EventHandler(Map<String, dynamic> event);
 

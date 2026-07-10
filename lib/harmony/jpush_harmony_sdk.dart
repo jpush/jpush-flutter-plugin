@@ -46,13 +46,11 @@ class JpushHarmonySdk extends JPushFlutterInterface {
   Future<Map<dynamic, dynamic>> addTags(List<String> tags) async {
     print(flutter_log + "addTags");
     return await _jpushHarmonySdkPlugin.addTags(0, tags);
-    ;
   }
 
   Future<Map<dynamic, dynamic>> deleteTags(List<String> tags) async {
     print(flutter_log + "deleteTags");
     return await _jpushHarmonySdkPlugin.deleteTags(0, tags);
-    ;
   }
 
   Future<Map<dynamic, dynamic>> cleanTags() async {

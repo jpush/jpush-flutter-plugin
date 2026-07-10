@@ -459,9 +459,13 @@ class CustomButton extends StatelessWidget {
       onPressed: onPressed,
       child: new Text("$title"),
       style: new ButtonStyle(
+        // ignore: deprecated_member_use
         foregroundColor: MaterialStateProperty.all(Colors.white),
+        // ignore: deprecated_member_use
         overlayColor: MaterialStateProperty.all(Color(0xff888888)),
+        // ignore: deprecated_member_use
         backgroundColor: MaterialStateProperty.all(Color(0xff585858)),
+        // ignore: deprecated_member_use
         padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(10, 5, 10, 5)),
       ),
     );
