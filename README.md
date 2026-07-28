@@ -16,7 +16,7 @@ dependencies:
       
 // pub 集成
 dependencies:
-  jpush_flutter: 3.4.6
+  jpush_flutter: 3.4.8
 ```
 
 ### 配置
@@ -61,4 +61,3 @@ final JPushFlutterInterface jpush = JPush.newJPush();
 **注意** : 需要先调用 JPush.setup 来初始化插件，才能保证其他功能正常工作。
 
  [参考](./documents/APIs.md)
-

@@ -196,6 +196,18 @@ class _MyAppState extends State<MyApp> {
               children: <Widget>[
                 new Text(" "),
                 new CustomButton(
+                    title: "requestSubscribeChannel",
+                    onPressed: () {
+                      if (Platform.isAndroid) {
+                        jpush.requestSubscribeChannel(["your_channel_id"]);
+                      }
+                    }),
+              ]),
+          new Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                new Text(" "),
+                new CustomButton(
                     title: "setTags",
                     onPressed: () {
                       jpush.setTags(["lala", "haha"]).then((map) {

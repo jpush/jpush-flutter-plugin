@@ -1,3 +1,8 @@
+## 3.4.8 (2026-07-27)
+
+- Android 与 iOS JPush SDK 升级至 6.2.0，JCore SDK 升级至 5.5.0。
+- 新增 Android 小米订阅消息接口 `requestSubscribeChannel`，订阅结果通过 `onCommandResult` 回调。
+
 ## 3.4.7 (2026-07-09)
 
 适配 Flutter 3.35 / Dart 3，放宽 Dart SDK 约束到 `>=2.19.6 <4.0.0`。

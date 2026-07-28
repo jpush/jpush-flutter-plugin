@@ -8,6 +8,7 @@
 - [getPushStatus](#getpushstatus)
 - [setLatestNotificationNumber](#setlatestnotificationnumber)
 - [requestRequiredPermission](#requestrequiredpermission)
+- [requestSubscribeChannel](#requestsubscribechannel)
 - [setAlias](#setalias)
 - [getAlias](#getAlias)
 - [deleteAlias](#deletealias)
@@ -360,6 +361,34 @@ JPushFlutterInterface jpush = JPush.newJPush();
 jpush.requestRequiredPermission();
 ```
 
+#### requestSubscribeChannel
+
+请求订阅小米消息渠道，并拉起小米订阅授权弹窗。
+
+**Android Only**
+
+开始支持的版本：JPush Android SDK 6.2.0。仅在已集成并注册小米通道的小米设备上会拉起弹窗并产生回调；其它厂商或设备调用后不会触发回调。
+
+```dart
+JPushFlutterInterface jpush = JPush.newJPush();
+jpush.requestSubscribeChannel(['your_channel_id']);
+```
+
+##### 参数说明
+
+- `channelIds` (`List<String>`)：小米后台申请的订阅类 channelId，每次必须传入 1～3 个非空值。
+
+##### 回调说明
+
+结果通过 `addEventHandler` 的 `onCommandResult` 回调：
+
+- `cmd`：固定为 `2012`
+- `errorCode`：小米整体结果码，`0` 表示用户操作结果正常返回
+- `extras.open_channel_result`：各 channel 操作结果 JSON 字符串
+- `extras.jg_platform`：厂商标识，小米为 `1`
+
+小米侧限制订阅弹窗 30 秒内最多调用一次，单 channel 一个月内最多调用两次；频控时 `errorCode` 为 `-500`。
+
 #### getPushStatus
 
 获取推送状态。
@@ -557,4 +586,3 @@ jpush.pageEnterTo("页面名");
 JPushFlutterInterface jpush = JPush.newJPush();
 jpush.pageLeave("页面名");
 ```
-
