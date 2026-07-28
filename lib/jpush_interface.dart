@@ -363,6 +363,12 @@ abstract class JPushFlutterInterface {
     print(flutter_log + "requestRequiredPermission:has not been implemented.");
   }
 
+  /// Android Only
+  /// 请求订阅小米消息渠道。结果通过 addEventHandler 的 onCommandResult 回调。
+  void requestSubscribeChannel(List<String> channelIds) {
+    print(flutter_log + "requestSubscribeChannel:has not been implemented.");
+  }
+
   /// 设置退后台时是否维持极光长连接。
   /// iOS 默认 false（不维持），Android 默认 true（维持）。
   void setBackgroundEnable({bool enable = false}) {
