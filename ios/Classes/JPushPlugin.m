@@ -448,16 +448,18 @@ static NSMutableArray<FlutterResult>* getRidResults;
     result(@(YES));
 }
 
+// 走 JPush 的推送开关，与 getPushStatus 查询的是同一个状态；
+// 这里不等 completion 直接返回，避免 SDK 内部请求进行中丢弃回调导致 Dart 端 await 卡住
 - (void)stopPush:(FlutterMethodCall*)call result:(FlutterResult)result {
     JPLog(@"stopPush:");
-    [[UIApplication sharedApplication] unregisterForRemoteNotifications];
+    [JPUSHService setPushEnable:NO completion:nil];
 
     result(@(YES));
 }
 
 - (void)resumePush:(FlutterMethodCall*)call result:(FlutterResult)result {
     JPLog(@"resumePush:");
-    [[UIApplication sharedApplication] registerForRemoteNotifications];
+    [JPUSHService setPushEnable:YES completion:nil];
 
     result(@(YES));
 }
