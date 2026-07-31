@@ -1,3 +1,7 @@
+## 3.4.9 (2026-07-31)
+
+- 修复 iOS 调用 `stopPush` / `resumePush` 后，`getPushStatus` 返回的 `isStopped` 状态不变的问题。
+
 ## 3.4.8 (2026-07-27)
 
 - Android 与 iOS JPush SDK 升级至 6.2.0，JCore SDK 升级至 5.5.0。
