@@ -160,6 +160,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             setChannelAndSound(call, result);
         }else if (call.method.equals("requestRequiredPermission")) {
             requestRequiredPermission(call, result);
+        }else if (call.method.equals("setKeepLongConnInBackground")) {
+            setKeepLongConnInBackground(call, result);
         }else if (call.method.equals("setThirdToken")) {
             setThirdToken(call, result);
         } else {
@@ -168,6 +170,16 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
     public void requestRequiredPermission(MethodCall call, Result result){
         JPushInterface.requestRequiredPermission(mActivity);
+    }
+    public void setKeepLongConnInBackground(MethodCall call, Result result) {
+        Boolean keep = call.argument("keep");
+        if (keep == null) {
+            result.error("INVALID_ARGUMENT", "keep is required", null);
+            return;
+        }
+        Log.d(TAG, "setKeepLongConnInBackground: " + keep);
+        JPushInterface.setKeepLongConnInBackground(context, keep);
+        result.success(true);
     }
     public void setHBInterval(MethodCall call, Result result){
         HashMap<String, Object> map = call.arguments();

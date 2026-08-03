@@ -178,11 +178,21 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [self setSmartPushEnable:call result:result];
     } else if ([@"setHBInterval" isEqualToString:call.method]) {
         [self setHeartBeatTimeInterval:call result:result];
+    } else if ([@"setBackgroundEnable" isEqualToString:call.method]) {
+        [self setBackgroundEnable:call result:result];
     } else if ([@"getPushStatus" isEqualToString:call.method]) {
         [self getPushStatus:call result:result];
     } else{
         result(FlutterMethodNotImplemented);
     }
+}
+
+- (void)setBackgroundEnable:(FlutterMethodCall*)call result:(FlutterResult)result{
+    JPLog(@"setBackgroundEnable:%@",call.arguments);
+    BOOL enable = [call.arguments[@"enable"] boolValue];
+    [JPUSHService setBackgroundEnable:enable];
+
+    result(@(YES));
 }
 
 - (void)getPushStatus:(FlutterMethodCall*)call result:(FlutterResult)result {

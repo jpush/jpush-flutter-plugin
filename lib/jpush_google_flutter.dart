@@ -486,6 +486,17 @@ class JPush {
     }
     _channel.invokeMethod('requestRequiredPermission');
   }
+
+  /// 设置退后台时是否维持极光长连接。
+  /// iOS 默认 false（不维持），Android 默认 true（维持）。
+  void setBackgroundEnable({bool enable = false}) {
+    print(flutter_log + "setBackgroundEnable:");
+    if (Platform.isAndroid) {
+      _channel.invokeMethod('setKeepLongConnInBackground', {'keep': enable});
+    } else {
+      _channel.invokeMethod('setBackgroundEnable', {'enable': enable});
+    }
+  }
 }
 
 class NotificationSettingsIOS {
