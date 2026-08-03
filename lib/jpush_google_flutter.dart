@@ -29,6 +29,7 @@ class JPush {
   EventHandler? _onInAppMessageShow;
   EventHandler? _onNotifyButtonClick;
   EventHandler? _onCommandResult;
+  EventHandler? _onReceiveDeviceToken;
   EventHandler? _onVoipMessage;
   void setup({
     String appKey = '',
@@ -155,6 +156,7 @@ class JPush {
     EventHandler? onInAppMessageShow,
     EventHandler? onNotifyButtonClick,
     EventHandler? onCommandResult,
+    EventHandler? onReceiveDeviceToken,
     EventHandler? onVoipMessage,
   }) {
     print(flutter_log + "addEventHandler:");
@@ -169,6 +171,7 @@ class JPush {
     _onInAppMessageShow = onInAppMessageShow;
     _onNotifyButtonClick = onNotifyButtonClick;
     _onCommandResult = onCommandResult;
+    _onReceiveDeviceToken = onReceiveDeviceToken;
     _onVoipMessage = onVoipMessage;
     _channel.setMethodCallHandler(_handleMethod);
   }
@@ -198,6 +201,8 @@ class JPush {
         return _onNotifyButtonClick!(call.arguments.cast<String, dynamic>());
       case "onCommandResult":
         return _onCommandResult!(call.arguments.cast<String, dynamic>());
+      case "onReceiveDeviceToken":
+        return _onReceiveDeviceToken!(call.arguments.cast<String, dynamic>());
       case "onVoipMessage":
         return _onVoipMessage!(call.arguments.cast<String, dynamic>());
       default:
