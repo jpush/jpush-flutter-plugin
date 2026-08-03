@@ -392,6 +392,17 @@ class JPush {
   }
 
   ///
+  /// 获取推送状态。
+  ///
+  Future<Map<dynamic, dynamic>> getPushStatus() async {
+    print(flutter_log + "getPushStatus:");
+
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('getPushStatus');
+    return result;
+  }
+
+  ///
   /// 清空通知栏上的所有通知。
   ///
   Future clearAllNotifications() async {

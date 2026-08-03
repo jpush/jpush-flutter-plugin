@@ -40,6 +40,7 @@ public class JPushHelper {
     private MethodChannel channel;
     private Map<Integer, Result> callbackMap = new HashMap<>();
     private WeakReference<Context> mContext;
+    private Result getPushStatusResult; // 保存 getPushStatus 的 Result
 
     private JPushHelper() {
     }
@@ -71,6 +72,18 @@ public class JPushHelper {
 
     public void addRid(Result result) {
         getRidCache.add(result);
+    }
+
+    public void setGetPushStatusResult(Result result) {
+        this.getPushStatusResult = result;
+    }
+
+    public Result getGetPushStatusResult() {
+        return getPushStatusResult;
+    }
+
+    public void clearGetPushStatusResult() {
+        this.getPushStatusResult = null;
     }
 
 
@@ -212,6 +225,45 @@ public class JPushHelper {
 
     public void onCommandResult(CmdMessage cmdMessage) {
         Log.e(TAG, "[onCommandResult] message:" + cmdMessage);
+
+        // 处理 getPushStatus 的回调 (cmd == 2003)
+        if (cmdMessage != null && cmdMessage.cmd == 2003) {
+            Result result = getGetPushStatusResult();
+            if (result != null) {
+                // 统一返回格式，与 iOS 保持一致
+                // errorCode: 0 表示未停止，1 表示已停止，其他表示错误
+                int code = 0;
+                boolean isStopped = false;
+
+                if (cmdMessage.errorCode == 0) {
+                    // 未停止
+                    code = 0;
+                    isStopped = false;
+                } else if (cmdMessage.errorCode == 1) {
+                    // 已停止
+                    code = 0;
+                    isStopped = true;
+                } else {
+                    // 其他错误
+                    code = cmdMessage.errorCode;
+                    isStopped = false;
+                }
+
+                Map<String, Object> resultMap = new HashMap<>();
+                resultMap.put("code", code);
+                resultMap.put("isStopped", isStopped);
+
+                getHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        result.success(resultMap);
+                        clearGetPushStatusResult();
+                    }
+                });
+                return;
+            }
+        }
+
         if (channel == null) {
             Log.d(TAG, "the channel is null");
             return;

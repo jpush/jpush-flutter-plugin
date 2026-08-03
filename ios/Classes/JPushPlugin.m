@@ -178,9 +178,24 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [self setSmartPushEnable:call result:result];
     } else if ([@"setHBInterval" isEqualToString:call.method]) {
         [self setHeartBeatTimeInterval:call result:result];
+    } else if ([@"getPushStatus" isEqualToString:call.method]) {
+        [self getPushStatus:call result:result];
     } else{
         result(FlutterMethodNotImplemented);
     }
+}
+
+- (void)getPushStatus:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"getPushStatus:");
+    [JPUSHService getPushStatus:^(NSInteger iResCode, BOOL isStopped) {
+        NSDictionary *dict = @{
+            @"code": @(iResCode),
+            @"isStopped": @(isStopped)
+        };
+        dispatch_async(dispatch_get_main_queue(), ^{
+            result(dict);
+        });
+    }];
 }
 
 
@@ -379,14 +394,20 @@ static NSMutableArray<FlutterResult>* getRidResults;
     [JPUSHService setBadge: badge];
 }
 
+// 走 JPush 的推送开关，与 getPushStatus 查询的是同一个状态；
+// 这里不等 completion 直接返回，避免 SDK 内部请求进行中丢弃回调导致 Dart 端 await 卡住
 - (void)stopPush:(FlutterMethodCall*)call result:(FlutterResult)result {
     JPLog(@"stopPush:");
-    [[UIApplication sharedApplication] unregisterForRemoteNotifications];
+    [JPUSHService setPushEnable:NO completion:nil];
+
+    result(@(YES));
 }
 
 - (void)resumePush:(FlutterMethodCall*)call result:(FlutterResult)result {
     JPLog(@"resumePush:");
-    [[UIApplication sharedApplication] registerForRemoteNotifications];
+    [JPUSHService setPushEnable:YES completion:nil];
+
+    result(@(YES));
 }
 
 - (void)clearAllNotifications:(FlutterMethodCall*)call result:(FlutterResult)result {

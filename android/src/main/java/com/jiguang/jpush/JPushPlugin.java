@@ -118,6 +118,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             stopPush(call, result);
         } else if (call.method.equals("resumePush")) {
             resumePush(call, result);
+        } else if (call.method.equals("getPushStatus")) {
+            getPushStatus(call, result);
         } else if (call.method.equals("clearAllNotifications")) {
             clearAllNotifications(call, result);
         }else if (call.method.equals("clearLocalNotifications")) {
@@ -446,6 +448,14 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         Log.d(TAG, "resumePush:");
 
         JPushInterface.resumePush(context);
+    }
+
+    public void getPushStatus(MethodCall call, Result result) {
+        Log.d(TAG, "getPushStatus:");
+
+        // 保存 Result，等待 onCommandResult 回调
+        JPushHelper.getInstance().setGetPushStatusResult(result);
+        JPushInterface.getPushStatus(context);
     }
 
     public void clearAllNotifications(MethodCall call, Result result) {
