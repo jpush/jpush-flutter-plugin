@@ -160,6 +160,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             setChannelAndSound(call, result);
         }else if (call.method.equals("requestRequiredPermission")) {
             requestRequiredPermission(call, result);
+        }else if (call.method.equals("requestSubscribeChannel")) {
+            requestSubscribeChannel(call, result);
         }else if (call.method.equals("setKeepLongConnInBackground")) {
             setKeepLongConnInBackground(call, result);
         }else if (call.method.equals("setThirdToken")) {
@@ -170,6 +172,33 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
     public void requestRequiredPermission(MethodCall call, Result result){
         JPushInterface.requestRequiredPermission(mActivity);
+    }
+    public void requestSubscribeChannel(MethodCall call, Result result) {
+        HashMap<String, Object> arguments = call.arguments();
+        Object channelIdsObject = arguments == null ? null : arguments.get("channelIds");
+        if (!(channelIdsObject instanceof List)) {
+            result.error("INVALID_ARGUMENT", "channelIds must be a list", null);
+            return;
+        }
+
+        List<?> rawChannelIds = (List<?>) channelIdsObject;
+        if (rawChannelIds.isEmpty() || rawChannelIds.size() > 3) {
+            result.error("INVALID_ARGUMENT", "channelIds must contain between 1 and 3 items", null);
+            return;
+        }
+
+        ArrayList<String> channelIds = new ArrayList<>();
+        for (Object channelIdObject : rawChannelIds) {
+            if (!(channelIdObject instanceof String)
+                    || TextUtils.isEmpty(((String) channelIdObject).trim())) {
+                result.error("INVALID_ARGUMENT", "channelIds items must be non-empty strings", null);
+                return;
+            }
+            channelIds.add((String) channelIdObject);
+        }
+
+        JPushInterface.requestSubscribeChannel(context, channelIds);
+        result.success(true);
     }
     public void setKeepLongConnInBackground(MethodCall call, Result result) {
         Boolean keep = call.argument("keep");

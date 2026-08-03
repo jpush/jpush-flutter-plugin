@@ -487,6 +487,24 @@ class JPush {
     _channel.invokeMethod('requestRequiredPermission');
   }
 
+  /// Android Only
+  /// 请求订阅小米消息渠道。结果通过 addEventHandler 的 onCommandResult 回调。
+  void requestSubscribeChannel(List<String> channelIds) {
+    if (!Platform.isAndroid) {
+      return;
+    }
+    if (channelIds.isEmpty || channelIds.length > 3) {
+      throw ArgumentError.value(
+          channelIds, 'channelIds', 'must contain between 1 and 3 items');
+    }
+    if (channelIds.any((channelId) => channelId.trim().isEmpty)) {
+      throw ArgumentError.value(
+          channelIds, 'channelIds', 'items must not be empty');
+    }
+    _channel.invokeMethod(
+        'requestSubscribeChannel', {'channelIds': channelIds});
+  }
+
   /// 设置退后台时是否维持极光长连接。
   /// iOS 默认 false（不维持），Android 默认 true（维持）。
   void setBackgroundEnable({bool enable = false}) {
