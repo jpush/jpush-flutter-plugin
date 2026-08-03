@@ -18,6 +18,7 @@ import cn.jpush.android.api.CmdMessage;
 import cn.jpush.android.api.CustomMessage;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.JPushMessage;
+import cn.jpush.android.api.NotificationCustomButton;
 import cn.jpush.android.api.NotificationMessage;
 import cn.jpush.android.service.JPushMessageReceiver;
 import io.flutter.plugin.common.MethodChannel.Result;
@@ -114,6 +115,18 @@ public class JPushEventReceiver extends JPushMessageReceiver {
             }
         });
     }
+    @Override
+    public void onNotifyButtonClick(Context context, NotificationCustomButton notificationCustomButton) {
+        super.onNotifyButtonClick(context, notificationCustomButton);
+        Log.i("JPushPlugin", "[onNotifyButtonClick], " + notificationCustomButton.toString());
+        JPushHelper.getInstance().getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                JPushHelper.getInstance().onNotifyButtonClick(notificationCustomButton);
+            }
+        });
+    }
+
     @Override
     public void onTagOperatorResult(Context context, final JPushMessage jPushMessage) {
         super.onTagOperatorResult(context, jPushMessage);
