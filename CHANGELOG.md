@@ -1,3 +1,13 @@
+## 3.0.5
+android升级到jpush 6.2.0
+ios升级到jpush 6.2.0 jcore 5.5.0
+新增getPushStatus获取推送状态
+新增setBackgroundEnable设置退后台是否维持长连接
+新增requestSubscribeChannel小米订阅消息（Android Only）
+新增onNotifyButtonClick通知按钮点击回调（Android Only）
+新增onVoipMessage回调（Android Only）
+新增onReceiveDeviceToken回调（iOS Only）
+iOS的stopPush/resumePush改为走推送开关setPushEnable，与getPushStatus状态一致
 ## 3.0.4
 android升级到jpush 5.8.0
 ios升级到jpush 5.7.0
