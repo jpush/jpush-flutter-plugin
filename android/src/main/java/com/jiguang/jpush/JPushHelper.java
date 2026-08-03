@@ -23,6 +23,7 @@ import cn.jpush.android.api.CustomMessage;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.NotificationCustomButton;
 import cn.jpush.android.api.NotificationMessage;
+import cn.jpush.android.api.VoipDataMessage;
 import cn.jpush.android.local.JPushConstants;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -222,6 +223,19 @@ public class JPushHelper {
         notification.put("extras", getExtras(notificationMessage));
         Log.d(TAG, "transmitNotificationReceive notification=" + notification);
         channel.invokeMethod("onReceiveNotification", notification);
+    }
+
+    public void transmitVoipMessage(VoipDataMessage voipDataMessage) {
+        Log.d(TAG, "transmitVoipMessage " + "voipDataMessage=" + voipDataMessage);
+        if (channel == null) {
+            Log.d(TAG, "the channel is null");
+            return;
+        }
+        Map<String, Object> msg = new HashMap<>();
+        msg.put("messageId", voipDataMessage.getMessageId());
+        msg.put("extraData", voipDataMessage.getExtraData());
+        msg.put("platform", (int) voipDataMessage.getPlatform());
+        channel.invokeMethod("onVoipMessage", msg);
     }
 
     public void onCommandResult(CmdMessage cmdMessage) {

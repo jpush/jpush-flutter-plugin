@@ -20,6 +20,7 @@ import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.JPushMessage;
 import cn.jpush.android.api.NotificationCustomButton;
 import cn.jpush.android.api.NotificationMessage;
+import cn.jpush.android.api.VoipDataMessage;
 import cn.jpush.android.service.JPushMessageReceiver;
 import io.flutter.plugin.common.MethodChannel.Result;
 
@@ -115,6 +116,16 @@ public class JPushEventReceiver extends JPushMessageReceiver {
             }
         });
     }
+    @Override
+    public void onVoipMessage(Context context, VoipDataMessage voipDataMessage) {
+        JPushHelper.getInstance().getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                JPushHelper.getInstance().transmitVoipMessage(voipDataMessage);
+            }
+        });
+    }
+
     @Override
     public void onNotifyButtonClick(Context context, NotificationCustomButton notificationCustomButton) {
         super.onNotifyButtonClick(context, notificationCustomButton);

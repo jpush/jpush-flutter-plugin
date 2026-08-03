@@ -29,6 +29,7 @@ class JPush {
   EventHandler? _onInAppMessageShow;
   EventHandler? _onNotifyButtonClick;
   EventHandler? _onCommandResult;
+  EventHandler? _onVoipMessage;
   void setup({
     String appKey = '',
     bool production = false,
@@ -154,6 +155,7 @@ class JPush {
     EventHandler? onInAppMessageShow,
     EventHandler? onNotifyButtonClick,
     EventHandler? onCommandResult,
+    EventHandler? onVoipMessage,
   }) {
     print(flutter_log + "addEventHandler:");
 
@@ -167,6 +169,7 @@ class JPush {
     _onInAppMessageShow = onInAppMessageShow;
     _onNotifyButtonClick = onNotifyButtonClick;
     _onCommandResult = onCommandResult;
+    _onVoipMessage = onVoipMessage;
     _channel.setMethodCallHandler(_handleMethod);
   }
 
@@ -195,6 +198,8 @@ class JPush {
         return _onNotifyButtonClick!(call.arguments.cast<String, dynamic>());
       case "onCommandResult":
         return _onCommandResult!(call.arguments.cast<String, dynamic>());
+      case "onVoipMessage":
+        return _onVoipMessage!(call.arguments.cast<String, dynamic>());
       default:
         throw new UnsupportedError("Unrecognized Event");
     }
