@@ -33,6 +33,10 @@
 - 配置签署
   > [文档查看配置签署部分](https://docs.jiguang.cn/jpush/client/HarmonyOS/hmos_guide)
 
+> 运行本仓库的 example 时，`example/ohos/build-profile.json5` 中的 `signingConfigs` 为空（不内置任何证书），
+> 需先用 DevEco Studio 打开 `example/ohos` 并在 File -> Project Structure -> Signing Configs 中配置自己的签名，
+> 否则 `flutter build hap` 只能产出未签名包、无法安装到真机。
+
 #### 配置通知跳转页
 
 发送通知，请选打开应用方式发通知。不然还需要写原生代码

@@ -9,7 +9,7 @@
   
 //github  集成
 dependencies:
-  jpush_flutter:
+  jpush_google_flutter:
     git:
       url: git://github.com/jpush/jpush-flutter-plugin.git
       ref: dev-3.x-google
