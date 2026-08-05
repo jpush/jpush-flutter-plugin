@@ -1,0 +1,13 @@
+{
+  "name": "entry",
+  "version": "1.0.0",
+  "description": "Please describe the basic information.",
+  "main": "",
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "jpush_google_flutter": "file:../har/jpush_google_flutter.har",
+    "@ohos/flutter_ohos": "har/flutter.har",
+    "integration_test": "file:../har/integration_test.har"
+  }
+}

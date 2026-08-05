@@ -49,10 +49,20 @@ android: {
 
 - 在 xcode8 之后需要点开推送选项： TARGETS -> Capabilities -> Push Notification 设为 on 状态
 
+##### Harmony:
+
+- [Harmony](./README_Harmony.md)
+
 ### 使用
 
 ```dart
 import 'package:jpush_google_flutter/jpush_google_flutter.dart';
+import 'package:jpush_google_flutter/jpush_interface.dart';
+```
+
+```dart
+// 3.0.6 起入口改为 newJPush()，按运行平台自动返回 Android/iOS 或鸿蒙实现
+final JPushFlutterInterface jpush = JPush.newJPush();
 ```
 
 ### APIs

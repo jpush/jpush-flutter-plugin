@@ -1,8 +1,11 @@
-import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:jpush_google_flutter/jpush_google_flutter.dart';
+import 'package:jpush_google_flutter/jpush_interface.dart';
 
 void main() => runApp(new MyApp());
 
@@ -13,7 +16,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String? debugLable = 'Unknown';
-  final JPush jpush = new JPush();
+  final JPushFlutterInterface jpush = JPush.newJPush();
 
   @override
   void initState() {
@@ -26,6 +29,15 @@ class _MyAppState extends State<MyApp> {
     String? platformVersion;
 
     try {
+      jpush.setCallBackHarmony((eventName, data) async {
+        print("flutter_log_MyApp:eventName:$eventName");
+        print("flutter_log_MyApp:data:$data");
+        setState(() {
+          print("flutter_log_MyApp:setState");
+          debugLable = "flutter CallBackHarmony: $eventName:$data";
+        });
+      });
+
       jpush.addEventHandler(
           onReceiveNotification: (Map<String, dynamic> message) async {
         print("flutter onReceiveNotification: $message");
@@ -68,10 +80,20 @@ class _MyAppState extends State<MyApp> {
         setState(() {
           debugLable = "flutter onInAppMessageClick: $message";
         });
+      }, onNotifyButtonClick: (Map<String, dynamic> message) async {
+        print("flutter onNotifyButtonClick: $message");
+        setState(() {
+          debugLable = "flutter onNotifyButtonClick: $message";
+        });
       }, onConnected: (Map<String, dynamic> message) async {
         print("flutter onConnected: $message");
         setState(() {
           debugLable = "flutter onConnected: $message";
+        });
+      }, onReceiveDeviceToken: (Map<String, dynamic> message) async {
+        print("flutter onReceiveDeviceToken: $message");
+        setState(() {
+          debugLable = "flutter onReceiveDeviceToken: $message";
         });
       });
     } on PlatformException {
@@ -80,7 +102,7 @@ class _MyAppState extends State<MyApp> {
 
     jpush.setAuth(enable: true);
     jpush.setup(
-      appKey: "xxxxx", //你自己应用的 AppKey
+      appKey: "b266cd5c8544ba09b23733e3", //你自己应用的 AppKey
       channel: "theChannel",
       production: false,
       debug: true,
@@ -174,6 +196,18 @@ class _MyAppState extends State<MyApp> {
               children: <Widget>[
                 new Text(" "),
                 new CustomButton(
+                    title: "requestSubscribeChannel",
+                    onPressed: () {
+                      if (Platform.isAndroid) {
+                        jpush.requestSubscribeChannel(["your_channel_id"]);
+                      }
+                    }),
+              ]),
+          new Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                new Text(" "),
+                new CustomButton(
                     title: "setTags",
                     onPressed: () {
                       jpush.setTags(["lala", "haha"]).then((map) {
@@ -225,15 +259,27 @@ class _MyAppState extends State<MyApp> {
                 new CustomButton(
                     title: "getAllTags",
                     onPressed: () {
-                      jpush.getAllTags().then((map) {
-                        setState(() {
-                          debugLable = "getAllTags success: $map";
+                      if (Platform.isIOS || Platform.isAndroid) {
+                        jpush.getAllTags().then((map) {
+                          setState(() {
+                            debugLable = "getAllTags success: $map";
+                          });
+                        }).catchError((error) {
+                          setState(() {
+                            debugLable = "getAllTags error: $error";
+                          });
                         });
-                      }).catchError((error) {
-                        setState(() {
-                          debugLable = "getAllTags error: $error";
+                      } else {
+                        jpush.getTags(1).then((map) {
+                          setState(() {
+                            debugLable = "getTags success: $map";
+                          });
+                        }).catchError((error) {
+                          setState(() {
+                            debugLable = "getTags error: $error";
+                          });
                         });
-                      });
+                      }
                     }),
                 new Text(" "),
                 new CustomButton(
@@ -319,6 +365,29 @@ class _MyAppState extends State<MyApp> {
             children: <Widget>[
               new Text(" "),
               new CustomButton(
+                  title: "getPushStatus",
+                  onPressed: () {
+                    jpush.getPushStatus().then((result) {
+                      int code = result['code'] ?? -1;
+                      bool isStopped = result['isStopped'] ?? false;
+                      String statusText = isStopped ? "已停止" : "未停止";
+                      setState(() {
+                        debugLable =
+                            "getPushStatus: code=$code, isStopped=$isStopped ($statusText)";
+                      });
+                    }).catchError((error) {
+                      setState(() {
+                        debugLable = "getPushStatus error: $error";
+                      });
+                    });
+                  }),
+            ],
+          ),
+          new Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              new Text(" "),
+              new CustomButton(
                   title: "clearAllNotifications",
                   onPressed: () {
                     jpush.clearAllNotifications();
@@ -364,6 +433,25 @@ class _MyAppState extends State<MyApp> {
                   }),
             ],
           ),
+          new Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              new Text(" "),
+              new CustomButton(
+                  title: "getRegistrationID",
+                  onPressed: () {
+                    jpush.getRegistrationID().then((rid) {
+                      setState(() {
+                        debugLable = "getRegistrationID: $rid";
+                      });
+                    }).catchError((onError) {
+                      setState(() {
+                        debugLable = "getRegistrationID: ${onError.toString()}";
+                      });
+                    });
+                  }),
+            ],
+          ),
         ])),
       ),
     );
@@ -383,9 +471,13 @@ class CustomButton extends StatelessWidget {
       onPressed: onPressed,
       child: new Text("$title"),
       style: new ButtonStyle(
+        // ignore: deprecated_member_use
         foregroundColor: MaterialStateProperty.all(Colors.white),
+        // ignore: deprecated_member_use
         overlayColor: MaterialStateProperty.all(Color(0xff888888)),
+        // ignore: deprecated_member_use
         backgroundColor: MaterialStateProperty.all(Color(0xff585858)),
+        // ignore: deprecated_member_use
         padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(10, 5, 10, 5)),
       ),
     );

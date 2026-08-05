@@ -1,0 +1,536 @@
+import 'dart:async';
+import 'dart:io' show Platform;
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+
+import '../jpush_interface.dart';
+
+typedef Future<dynamic> EventHandler(Map<String, dynamic> event);
+
+class JPush_A_I extends JPushFlutterInterface {
+  static const String flutter_log = "| JPUSH | Flutter | ";
+
+  factory JPush_A_I() => _instance;
+
+  final MethodChannel _channel;
+
+  @visibleForTesting
+  JPush_A_I.private(MethodChannel channel) : _channel = channel;
+
+  static final JPush_A_I _instance =
+      new JPush_A_I.private(const MethodChannel('jpush'));
+
+  EventHandler? _onReceiveNotification;
+  EventHandler? _onOpenNotification;
+  EventHandler? _onReceiveMessage;
+  EventHandler? _onReceiveNotificationAuthorization;
+  EventHandler? _onNotifyMessageUnShow;
+  EventHandler? _onConnected;
+  EventHandler? _onInAppMessageClick;
+  EventHandler? _onInAppMessageShow;
+  EventHandler? _onNotifyButtonClick;
+  EventHandler? _onCommandResult;
+  EventHandler? _onReceiveDeviceToken;
+  EventHandler? _onVoipMessage;
+  void setup({
+    String appKey = '',
+    bool production = false,
+    String channel = '',
+    bool debug = false,
+  }) {
+    print(flutter_log + "setup:");
+
+    _channel.invokeMethod('setup', {
+      'appKey': appKey,
+      'channel': channel,
+      'production': production,
+      'debug': debug
+    });
+  }
+
+  void setChannelAndSound({
+    String channel = '',
+    String channelID = '',
+    String sound = '',
+  }) {
+    if (Platform.isIOS) {
+      return;
+    }
+    print(flutter_log + "setChannelAndSound:");
+
+    _channel.invokeMethod('setChannelAndSound',
+        {'channel': channel, 'channel_id': channelID, 'sound': sound});
+  }
+
+  void setThirdToken({String token = ''}) {
+    if (Platform.isIOS) {
+      return;
+    }
+    print(flutter_log + "setThirdToken:");
+    _channel.invokeMethod('setThirdToken', {'third_token': token});
+  }
+
+  //APP活跃在前台时是否展示通知
+  void setUnShowAtTheForeground({bool unShow = false}) {
+    if (Platform.isAndroid) {
+      return;
+    }
+    print(flutter_log + "setUnShowAtTheForeground:");
+    _channel.invokeMethod('setUnShowAtTheForeground', {'UnShow': unShow});
+  }
+
+  void setWakeEnable({bool enable = false}) {
+    _channel.invokeMethod('setWakeEnable', {'enable': enable});
+  }
+
+  void enableAutoWakeup({bool enable = false}) {
+    if (Platform.isIOS) {
+      return;
+    }
+    _channel.invokeMethod('enableAutoWakeup', {'enable': enable});
+  }
+
+  void setAuth({bool enable = true}) {
+    print(flutter_log + "setAuth:");
+    _channel.invokeMethod('setAuth', {'enable': enable});
+  }
+
+  void setLinkMergeEnable({bool enable = true}) {
+    if (Platform.isIOS) {
+      return;
+    }
+    print(flutter_log + "setLinkMergeEnable:");
+    _channel.invokeMethod('setLinkMergeEnable', {'enable': enable});
+  }
+
+  void setGeofenceEnable({bool enable = true}) {
+    if (Platform.isIOS) {
+      return;
+    }
+    print(flutter_log + "setGeofenceEnable:");
+    _channel.invokeMethod('setGeofenceEnable', {'enable': enable});
+  }
+
+  void setSmartPushEnable({bool enable = true}) {
+    if (Platform.isIOS) {
+      return;
+    }
+    print(flutter_log + "setSmartPushEnable:");
+    _channel.invokeMethod('setSmartPushEnable', {'enable': enable});
+  }
+
+  void setCollectControl({
+    bool imsi = true, // only android
+    bool mac = true, // only android
+    bool wifi = true, // only android
+    bool bssid = true, // only android
+    bool ssid = true, // only android
+    bool imei = true, // only android
+    bool cell = true, // only android
+    bool gps = true, // only ios
+  }) {
+    print(flutter_log + "setCollectControl:");
+
+    _channel.invokeMethod('setCollectControl', {
+      'imsi': imsi,
+      'mac': mac,
+      'wifi': wifi,
+      'bssid': bssid,
+      'ssid': ssid,
+      'imei': imei,
+      'cell': cell,
+      'gps': gps
+    });
+  }
+
+  ///
+  /// 初始化 JPush 必须先初始化才能执行其他操作(比如接收事件传递)
+  ///
+  void addEventHandler({
+    EventHandler? onReceiveNotification,
+    EventHandler? onOpenNotification,
+    EventHandler? onReceiveMessage,
+    EventHandler? onReceiveNotificationAuthorization,
+    EventHandler? onNotifyMessageUnShow,
+    EventHandler? onConnected,
+    EventHandler? onInAppMessageClick,
+    EventHandler? onInAppMessageShow,
+    EventHandler? onNotifyButtonClick,
+    EventHandler? onCommandResult,
+    EventHandler? onReceiveDeviceToken,
+    EventHandler? onVoipMessage,
+  }) {
+    print(flutter_log + "addEventHandler:");
+
+    _onReceiveNotification = onReceiveNotification;
+    _onOpenNotification = onOpenNotification;
+    _onReceiveMessage = onReceiveMessage;
+    _onReceiveNotificationAuthorization = onReceiveNotificationAuthorization;
+    _onNotifyMessageUnShow = onNotifyMessageUnShow;
+    _onConnected = onConnected;
+    _onInAppMessageClick = onInAppMessageClick;
+    _onInAppMessageShow = onInAppMessageShow;
+    _onNotifyButtonClick = onNotifyButtonClick;
+    _onCommandResult = onCommandResult;
+    _onReceiveDeviceToken = onReceiveDeviceToken;
+    _onVoipMessage = onVoipMessage;
+    _channel.setMethodCallHandler(_handleMethod);
+  }
+
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    print(flutter_log + "_handleMethod:");
+
+    switch (call.method) {
+      case "onReceiveNotification":
+        return _onReceiveNotification!(call.arguments.cast<String, dynamic>());
+      case "onOpenNotification":
+        return _onOpenNotification!(call.arguments.cast<String, dynamic>());
+      case "onReceiveMessage":
+        return _onReceiveMessage!(call.arguments.cast<String, dynamic>());
+      case "onReceiveNotificationAuthorization":
+        return _onReceiveNotificationAuthorization!(
+            call.arguments.cast<String, dynamic>());
+      case "onNotifyMessageUnShow":
+        return _onNotifyMessageUnShow!(call.arguments.cast<String, dynamic>());
+      case "onConnected":
+        return _onConnected!(call.arguments.cast<String, dynamic>());
+      case "onInAppMessageClick":
+        return _onInAppMessageClick!(call.arguments.cast<String, dynamic>());
+      case "onInAppMessageShow":
+        return _onInAppMessageShow!(call.arguments.cast<String, dynamic>());
+      case "onNotifyButtonClick":
+        return _onNotifyButtonClick!(call.arguments.cast<String, dynamic>());
+      case "onCommandResult":
+        return _onCommandResult!(call.arguments.cast<String, dynamic>());
+      case "onReceiveDeviceToken":
+        return _onReceiveDeviceToken!(call.arguments.cast<String, dynamic>());
+      case "onVoipMessage":
+        return _onVoipMessage!(call.arguments.cast<String, dynamic>());
+      default:
+        throw new UnsupportedError("Unrecognized Event");
+    }
+  }
+
+  ///
+  /// iOS Only
+  /// 申请推送权限，注意这个方法只会向用户弹出一次推送权限请求（如果用户不同意，之后只能用户到设置页面里面勾选相应权限），需要开发者选择合适的时机调用。
+  ///
+  void applyPushAuthority(
+      [NotificationSettingsIOS iosSettings = const NotificationSettingsIOS()]) {
+    print(flutter_log + "applyPushAuthority:");
+
+    if (!Platform.isIOS) {
+      return;
+    }
+
+    _channel.invokeMethod('applyPushAuthority', iosSettings.toMap());
+  }
+
+  // iOS Only
+  // 进入页面， pageName：页面名  请与pageLeave配套使用
+  void pageEnterTo(String pageName) {
+    print(flutter_log + "pageEnterTo:" + pageName);
+    if (!Platform.isIOS) {
+      return;
+    }
+    _channel.invokeMethod('pageEnterTo', pageName);
+  }
+
+  // iOS Only
+  // 离开页面，pageName：页面名， 请与pageEnterTo配套使用
+  void pageLeave(String pageName) {
+    print(flutter_log + "pageLeave:" + pageName);
+    if (!Platform.isIOS) {
+      return;
+    }
+    _channel.invokeMethod('pageLeave', pageName);
+  }
+
+  ///
+  /// 设置 Tag （会覆盖之前设置的 tags）
+  ///
+  /// @param {Array} params = [String]
+  /// @param {Function} success = ({"tags":[String]}) => {  }
+  /// @param {Function} fail = ({"errorCode":int}) => {  }
+  ///
+  Future<Map<dynamic, dynamic>> setTags(List<String> tags) async {
+    print(flutter_log + "setTags:");
+
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('setTags', tags);
+    return result;
+  }
+
+  ///
+  /// 清空所有 tags。
+  ///
+  /// @param {Function} success = ({"tags":[String]}) => {  }
+  /// @param {Function} fail = ({"errorCode":int}) => {  }
+  ///
+  Future<Map<dynamic, dynamic>> cleanTags() async {
+    print(flutter_log + "cleanTags:");
+
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('cleanTags');
+    return result;
+  }
+
+  ///
+  /// 在原有 tags 的基础上添加 tags
+  ///
+  /// @param {Array} tags = [String]
+  /// @param {Function} success = ({"tags":[String]}) => {  }
+  /// @param {Function} fail = ({"errorCode":int}) => {  }
+  ///
+
+  Future<Map<dynamic, dynamic>> addTags(List<String> tags) async {
+    print(flutter_log + "addTags:");
+
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('addTags', tags);
+    return result;
+  }
+
+  ///
+  /// 删除指定的 tags
+  ///
+  /// @param {Array} tags = [String]
+  /// @param {Function} success = ({"tags":[String]}) => {  }
+  /// @param {Function} fail = ({"errorCode":int}) => {  }
+  ///
+  Future<Map<dynamic, dynamic>> deleteTags(List<String> tags) async {
+    print(flutter_log + "deleteTags:");
+
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('deleteTags', tags);
+    return result;
+  }
+
+  ///
+  /// 获取所有当前绑定的 tags
+  ///
+  /// @param {Function} success = ({"tags":[String]}) => {  }
+  /// @param {Function} fail = ({"errorCode":int}) => {  }
+  ///
+  Future<Map<dynamic, dynamic>> getAllTags() async {
+    print(flutter_log + "getAllTags:");
+
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('getAllTags');
+    return result;
+  }
+
+  ///
+  /// 获取所有当前绑定的 alias
+  ///
+  /// @param {Function} success = ({"alias":String}) => {  }
+  /// @param {Function} fail = ({"errorCode":int}) => {  }
+  ///
+  Future<Map<dynamic, dynamic>> getAlias() async {
+    print(flutter_log + "getAlias:");
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('getAlias');
+    return result;
+  }
+
+  ///
+  /// 重置 alias.
+  ///
+  /// @param {String} alias
+  ///
+  /// @param {Function} success = ({"alias":String}) => {  }
+  /// @param {Function} fail = ({"errorCode":int}) => {  }
+  ///
+  Future<Map<dynamic, dynamic>> setAlias(String alias) async {
+    print(flutter_log + "setAlias:");
+
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('setAlias', alias);
+    return result;
+  }
+
+  void testCountryCode(String code) {
+    print(flutter_log + "testCountryCode:" + code);
+    _channel.invokeMethod('testCountryCode', code);
+  }
+
+  ///
+  /// 删除原有 alias
+  ///
+  /// @param {Function} success = ({"alias":String}) => {  }
+  /// @param {Function} fail = ({"errorCode":int}) => {  }
+  ///
+  Future<Map<dynamic, dynamic>> deleteAlias() async {
+    print(flutter_log + "deleteAlias:");
+
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('deleteAlias');
+    return result;
+  }
+
+  ///
+  /// 设置应用 Badge（小红点）
+  ///
+  /// @param {Int} badge
+  ///
+  /// 注意：如果是 Android 手机，目前仅支持华为手机
+  ///
+  Future setBadge(int badge) async {
+    print(flutter_log + "setBadge:");
+
+    await _channel.invokeMethod('setBadge', {"badge": badge});
+  }
+
+  Future setHBInterval(int hbinterval) async {
+    if (Platform.isIOS) {
+      return;
+    }
+    print(flutter_log + "setHBInterval");
+    await _channel.invokeMethod('setHBInterval', {"hb_interval": hbinterval});
+  }
+
+  ///
+  /// 停止接收推送，调用该方法后应用将不再受到推送，如果想要重新收到推送可以调用 resumePush。
+  ///
+  Future stopPush() async {
+    print(flutter_log + "stopPush:");
+
+    await _channel.invokeMethod('stopPush');
+  }
+
+  ///
+  /// 恢复推送功能。
+  ///
+  Future resumePush() async {
+    print(flutter_log + "resumePush:");
+
+    await _channel.invokeMethod('resumePush');
+  }
+
+  ///
+  /// 获取推送状态。
+  ///
+  Future<Map<dynamic, dynamic>> getPushStatus() async {
+    print(flutter_log + "getPushStatus:");
+
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('getPushStatus');
+    return result;
+  }
+
+  ///
+  /// 清空通知栏上的所有通知。
+  ///
+  Future clearAllNotifications() async {
+    print(flutter_log + "clearAllNotifications:");
+
+    await _channel.invokeMethod('clearAllNotifications');
+  }
+
+  Future clearLocalNotifications() async {
+    if (Platform.isIOS) {
+      return;
+    }
+    print(flutter_log + "clearLocalNotifications:");
+    await _channel.invokeMethod('clearLocalNotifications');
+  }
+
+  ///
+  /// 清空通知栏上某个通知
+  /// @param notificationId 通知 id，即：LocalNotification id
+  ///
+  void clearNotification({int notificationId = 0}) {
+    print(flutter_log + "clearNotification:");
+    _channel.invokeListMethod("clearNotification", notificationId);
+  }
+
+  ///
+  /// iOS Only
+  /// 点击推送启动应用的时候原生会将该 notification 缓存起来，该方法用于获取缓存 notification
+  /// 注意：notification 可能是 remoteNotification 和 localNotification，两种推送字段不一样。
+  /// 如果不是通过点击推送启动应用，比如点击应用 icon 直接启动应用，notification 会返回 @{}。
+  /// @param {Function} callback = (Object) => {}
+  ///
+  Future<Map<dynamic, dynamic>> getLaunchAppNotification() async {
+    print(flutter_log + "getLaunchAppNotification:");
+
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('getLaunchAppNotification');
+    return result;
+  }
+
+  ///
+  /// 获取 RegistrationId, JPush 可以通过制定 RegistrationId 来进行推送。
+  ///
+  /// @param {Function} callback = (String) => {}
+  ///
+  Future<String> getRegistrationID() async {
+    print(flutter_log + "getRegistrationID:");
+
+    final String rid = await _channel.invokeMethod('getRegistrationID');
+    return rid;
+  }
+
+  ///
+  /// 发送本地通知到调度器，指定时间出发该通知。
+  /// @param {Notification} notification
+  ///
+  Future<String> sendLocalNotification(LocalNotification notification) async {
+    print(flutter_log + "sendLocalNotification:");
+
+    await _channel.invokeMethod('sendLocalNotification', notification.toMap());
+
+    return notification.toMap().toString();
+  }
+
+  /// 调用此 API 检测通知授权状态是否打开
+  Future<bool> isNotificationEnabled() async {
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('isNotificationEnabled');
+    bool isEnabled = result["isEnabled"];
+    return isEnabled;
+  }
+
+  /// 调用此 API 跳转至系统设置中应用设置界面
+  void openSettingsForNotification() {
+    _channel.invokeMethod('openSettingsForNotification');
+  }
+
+  void requestRequiredPermission() {
+    if (Platform.isIOS) {
+      return;
+    }
+    _channel.invokeMethod('requestRequiredPermission');
+  }
+
+  /// Android Only
+  /// 请求订阅小米消息渠道。结果通过 addEventHandler 的 onCommandResult 回调。
+  void requestSubscribeChannel(List<String> channelIds) {
+    if (!Platform.isAndroid) {
+      return;
+    }
+    if (channelIds.isEmpty || channelIds.length > 3) {
+      throw ArgumentError.value(
+          channelIds, 'channelIds', 'must contain between 1 and 3 items');
+    }
+    if (channelIds.any((channelId) => channelId.trim().isEmpty)) {
+      throw ArgumentError.value(
+          channelIds, 'channelIds', 'items must not be empty');
+    }
+    _channel.invokeMethod(
+        'requestSubscribeChannel', {'channelIds': channelIds});
+  }
+
+  /// 设置退后台时是否维持极光长连接。
+  /// iOS 默认 false（不维持），Android 默认 true（维持）。
+  void setBackgroundEnable({bool enable = false}) {
+    print(flutter_log + "setBackgroundEnable:");
+    if (Platform.isAndroid) {
+      _channel.invokeMethod('setKeepLongConnInBackground', {'keep': enable});
+    } else {
+      _channel.invokeMethod('setBackgroundEnable', {'enable': enable});
+    }
+  }
+}
+
