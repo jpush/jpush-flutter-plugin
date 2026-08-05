@@ -147,7 +147,7 @@ def replace_from_local(user_path: str, dest_dir: Path, patterns: list) -> dict:
 
 
 def handle_platform(platform: str, sdk_type: str, target_version: str,
-                    direct_cfg: dict, user_sdk_path: str | None) -> dict:
+                    direct_cfg: dict, user_sdk_path=None) -> dict:
     print(f"\n=== {platform.upper()} SDK (target: v{target_version}) ===")
     dest_dir = Path(direct_cfg["dest_dir"])
     patterns = direct_cfg.get("file_patterns", ["*.aar", "*.jar", "*.a", "*.framework", "*.xcframework"])

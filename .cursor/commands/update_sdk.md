@@ -6,7 +6,7 @@
 
 ### 1. 更新SDK版本依赖
 
-- **iOS**: 在 `ios/jpush_flutter.podspec` 中更新 iOS JPush SDK 的版本依赖
+- **iOS**: 在 `ios/jpush_flutter.podspec` 中更新 iOS JPush SDK 的版本依赖，并同步 `ios/jpush_flutter/Package.swift` 中 jpush-sdk（`exact:`）/ jcore-sdk（`from:`）的版本（SPM 与 CocoaPods 两处必须一致）
 - **Android**: 在 `android/build.gradle` 中更新 Android JPush SDK 的版本依赖
 
 ### 2. 查找SDK新增API
@@ -70,7 +70,7 @@
 如果SDK有新增API，需要在插件中进行封装：
 - 在 `lib/android_ios/jpush_flutter_a_i.dart` 中添加Dart方法
 - 在 `android/src/main/java/com/jiguang/jpush/JPushPlugin.java` 中实现Android端逻辑
-- 在 `ios/Classes/JPushPlugin.m` 中实现iOS端逻辑
+- 在 `ios/jpush_flutter/Sources/jpush_flutter/JPushPlugin.m` 中实现iOS端逻辑
 
 **封装原则**：
 - 如果Android和iOS新增的API是同一个功能，封装成一个插件方法

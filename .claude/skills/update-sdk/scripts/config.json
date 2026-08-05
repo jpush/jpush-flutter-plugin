@@ -17,11 +17,15 @@
       ]
     },
     "ios_sdk": {
-      "integration": "cocoapods",
+      "integration": "cocoapods+spm",
       "files": [
         {
           "path": "ios/jpush_flutter.podspec",
           "pattern": "s.dependency 'JPush','{VERSION}'"
+        },
+        {
+          "path": "ios/jpush_flutter/Package.swift",
+          "pattern": "exact: \"{VERSION}\""
         }
       ]
     },
@@ -39,8 +43,8 @@
       "android/src/main/java/com/jiguang/jpush/JPushPlugin.java"
     ],
     "ios": [
-      "ios/Classes/JPushPlugin.h",
-      "ios/Classes/JPushPlugin.m"
+      "ios/jpush_flutter/Sources/jpush_flutter/include/jpush_flutter/JPushPlugin.h",
+      "ios/jpush_flutter/Sources/jpush_flutter/JPushPlugin.m"
     ]
   },
   "bridge_files": {

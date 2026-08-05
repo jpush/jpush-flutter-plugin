@@ -30,7 +30,7 @@ def bump_patch(version: str) -> str:
     return f"{major}.{minor}.{patch}"
 
 
-def get_current_version_from_ref(ref: dict) -> str | None:
+def get_current_version_from_ref(ref: dict):
     """Read the current version string from a file ref."""
     path = Path(ref["path"])
     if not path.exists():

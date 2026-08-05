@@ -36,7 +36,7 @@ final JPushFlutterInterface jpush = JPush.newJPush();
 | 平台 | 入口 | SDK 版本引用位置 |
 |------|------|------------------|
 | Android | `android/src/main/java/com/jiguang/jpush/JPushPlugin.java` | `android/build.gradle`（`cn.jiguang.sdk:jpush`） |
-| iOS | `ios/Classes/JPushPlugin.m` | `ios/jpush_flutter.podspec`（`JPush`、`JCore`） |
+| iOS | `ios/jpush_flutter/Sources/jpush_flutter/JPushPlugin.m` | `ios/jpush_flutter.podspec`（CocoaPods）与 `ios/jpush_flutter/Package.swift`（SPM），两处必须同步 |
 | 鸿蒙 | `ohos/src/main/ets/components/plugin/JpushHarmonySdkPlugin.ets` | `ohos/oh-package.json5`（`@jg/push`） |
 
 Android 端事件回调经 `JPushHelper`（单例，持有 MethodChannel）转发到 Dart；插件支持多 engine 场景，attach/detach 时通过 bindingId 匹配判断是否清理。
@@ -55,7 +55,7 @@ Android 端事件回调经 `JPushHelper`（单例，持有 MethodChannel）转�
 
 优先使用 `/update-sdk` skill（`.claude/skills/update-sdk/`），它自动化以下手动流程（也记录在 `cursor.md`）：
 
-1. 更新 `ios/jpush_flutter.podspec` 中 JPush / JCore 版本
+1. 更新 `ios/jpush_flutter.podspec` 中 JPush / JCore 版本，并同步 `ios/jpush_flutter/Package.swift` 中 jpush-sdk（`exact:`）/ jcore-sdk（`from:`）版本
 2. 更新 `android/build.gradle` 中 JPush 版本
 3. 封装原生新增方法（见上面的链路）
 4. `pubspec.yaml` 插件版本号 +0.0.1

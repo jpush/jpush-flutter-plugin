@@ -56,7 +56,7 @@ python3 .claude/skills/update-sdk/scripts/changelog_fetcher.py --android <ANDROI
 3. **行为变更**：影响现有封装逻辑的改动
 4. **新插件版本号**：始终升 patch（如 3.4.9 → 3.5.0，3.9.9 → 4.0.0）
 
-> **跨平台等价检查**：当 Changelog 只在某一端出现新增 API 时，**不要直接标为单端 Only**。先读取另一端的 Native 文件（`android/src/main/java/com/jiguang/jpush/JPushPlugin.java` 或 `ios/Classes/JPushPlugin.m`）和 Dart Bridge 层（`lib/android_ios/`），搜索功能相同或名称相近的方法。如果另一端已有对应实现，则合并为统一 Dart API；只有确认另一端完全没有等价功能时，才标注 Android Only / iOS Only。
+> **跨平台等价检查**：当 Changelog 只在某一端出现新增 API 时，**不要直接标为单端 Only**。先读取另一端的 Native 文件（`android/src/main/java/com/jiguang/jpush/JPushPlugin.java` 或 `ios/jpush_flutter/Sources/jpush_flutter/JPushPlugin.m`）和 Dart Bridge 层（`lib/android_ios/`），搜索功能相同或名称相近的方法。如果另一端已有对应实现，则合并为统一 Dart API；只有确认另一端完全没有等价功能时，才标注 Android Only / iOS Only。
 
 输出结构化变更计划后再执行后续步骤。
 
@@ -72,6 +72,8 @@ python3 .claude/skills/update-sdk/scripts/plugin_updater.py \
   --changelog-summary "<ONE_LINE_SUMMARY>"
 ```
 
+> iOS 版本引用有**两处**（config.json 已配置，脚本会同时更新）：`ios/jpush_flutter.podspec`（CocoaPods）和 `ios/jpush_flutter/Package.swift` 的 `exact: "x.x.x"`（SPM）。执行后检查脚本输出，确认两处都是 UPDATED，漏掉任何一处会导致 SPM 与 CocoaPods 用户的 SDK 版本不一致。JCore 若也升级，podspec 的 `'JCore','>= x.x.x'` 与 Package.swift 的 `from: "x.x.x"` 需手动同步。
+
 ---
 
 ## 第六步：更新 Native 层代码
@@ -86,7 +88,7 @@ python3 .claude/skills/update-sdk/scripts/plugin_updater.py \
 - 在 `onMethodCall` 的 `when` 分支中添加新方法处理
 - 内部调用 `JPushInterface.newMethod()`
 
-**iOS** — `ios/Classes/JPushPlugin.m`
+**iOS** — `ios/jpush_flutter/Sources/jpush_flutter/JPushPlugin.m`
 - 在 `handleMethodCall:result:` 方法中添加新的 `if` 分支
 - 内部调用 JPush iOS SDK 对应方法
 
@@ -120,8 +122,9 @@ iOS JPush SDK:      旧版本 → 新版本
 修改的文件：
   - android/build.gradle
   - ios/jpush_flutter.podspec
+  - ios/jpush_flutter/Package.swift
   - android/src/.../JPushPlugin.java
-  - ios/Classes/JPushPlugin.m
+  - ios/jpush_flutter/Sources/jpush_flutter/JPushPlugin.m
   - lib/android_ios/...
   - pubspec.yaml
   - CHANGELOG.md
