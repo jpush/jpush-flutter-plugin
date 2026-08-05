@@ -1,3 +1,7 @@
+## 3.5.0 (2026-08-05)
+
+- iOS 插件支持 Swift Package Manager 集成方式（需 Flutter 3.24+，CocoaPods 集成不受影响）。
+
 ## 3.4.9 (2026-07-31)
 
 - 修复 iOS 调用 `stopPush` / `resumePush` 后，`getPushStatus` 返回的 `isStopped` 状态不变的问题。
