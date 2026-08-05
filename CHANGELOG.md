@@ -1,3 +1,7 @@
+## 3.0.6 (2026-08-05)
+
+- iOS 插件支持 Swift Package Manager 集成方式（需 Flutter 3.24+，CocoaPods 集成不受影响）。
+
 ## 3.0.5
 android升级到jpush 6.2.0
 ios升级到jpush 6.2.0 jcore 5.5.0

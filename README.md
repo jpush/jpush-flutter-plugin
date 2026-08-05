@@ -16,8 +16,10 @@ dependencies:
       
 // pub 集成
 dependencies:
-  jpush_google_flutter: 3.0.5
+  jpush_google_flutter: 3.0.6
 ```
+
+> iOS 插件已支持 Swift Package Manager 集成方式（需 Flutter 3.24+ 并启用 SPM），CocoaPods 集成不受影响、无需任何调整。
 
 ### 配置
 
