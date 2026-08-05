@@ -1,4 +1,4 @@
-# jpush_google_flutter 3.0.6 鸿蒙适配 — 发布材料（转人工执行发布）
+# jpush_google_flutter 3.0.7 鸿蒙适配 — 发布材料（转人工执行发布）
 
 ## 背景（TAPD：二三四五 Google 版 SDK 不适配鸿蒙）
 
@@ -6,7 +6,7 @@
 
 ## 版本信息
 
-- 插件：`jpush_google_flutter` 3.0.6（工作分支 `feature/ohos-google`，基于 `dev-3.x-google`）
+- 插件：`jpush_google_flutter` 3.0.7（工作分支 `feature/ohos-google`，基于 `dev-3.x-google`）
 - 鸿蒙原生 SDK：ohpm `@jg/push` 1.4.0（jpush-hmos）
 - Android：`cn.jiguang.sdk:jpush-google:6.2.0`（不变）；iOS：jpush 6.2.0 / jcore 5.5.0（不变）
 - 鸿蒙构建环境：鸿蒙版 Flutter 3.35.8-ohos-1.0.1 + DevEco Studio（`DEVECO_SDK_HOME=/Applications/DevEco-Studio.app/Contents/sdk`）
@@ -31,7 +31,7 @@
 
 1. 补真机验证：鸿蒙真机 + 有效签名证书，跑 example 验证 getRegistrationID、收推送、通知点击回调（可用测试 AppKey 或客户 AppKey）。
 2. 代码评审后合入 `dev-3.x-google` 并 push（本次未 push）。
-3. 打 tag `v3.0.6-google`（沿用仓库既有 tag 规范），干净克隆做 `flutter pub publish --dry-run` 校验后发布 pub.dev（流程参照 wry-flutter-publish-sdk，将分支替换为 dev-3.x-google）。
+3. 打 tag `v3.0.7-google`（沿用仓库既有 tag 规范），干净克隆做 `flutter pub publish --dry-run` 校验后发布 pub.dev（流程参照 wry-flutter-publish-sdk，将分支替换为 dev-3.x-google）。
 4. TAPD 回复客户：
    - 定制 SDK 问题：`jpush-google` 制品本身无安装卸载感知与热更新逻辑，升级新版后无需定制版 jcore，客户现有集成方式（剔除 jcore-google、指定 jcore:5.5.0）可行；
-   - 鸿蒙适配：3.0.6 发布后按 README_Harmony.md 集成，注意入口 API 变更为 `JPush.newJPush()`。
+   - 鸿蒙适配：3.0.7 发布后按 README_Harmony.md 集成，注意入口 API 变更为 `JPush.newJPush()`。

@@ -1,6 +1,6 @@
 # jpush_google_flutter 鸿蒙适配改动清单
 
-对比基线：`origin/dev-3.x`（国内版 jpush_flutter 3.5.0，已支持鸿蒙） vs `origin/dev-3.x-google`（Google 版 jpush_google_flutter 3.0.6-dev）。
+对比基线：`origin/dev-3.x`（国内版 jpush_flutter 3.5.0，已支持鸿蒙） vs `origin/dev-3.x-google`（Google 版 jpush_google_flutter，基线 3.0.6；本次鸿蒙适配单独发 3.0.7）。
 
 以下为国内版鸿蒙适配的完整文件清单，即本次需移植到 Google 版的范围（已剔除与鸿蒙无关的分支差异，如 update-sdk skill、Android 原生升级、iOS SPM 等）。
 

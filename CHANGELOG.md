@@ -1,7 +1,10 @@
-## 3.0.6 (2026-08-05)
+## 3.0.7 (2026-08-05)
 
 - 新增 HarmonyOS（鸿蒙）平台支持：基于 jpush-hmos 原生 SDK（ohpm `@jg/push` 1.4.0），需使用鸿蒙版 Flutter 构建，集成方式见 [README_Harmony.md](./README_Harmony.md)。
 - Dart 层重构为「统一接口 + 平台实现」结构（与国内版 jpush_flutter 3.5.0 对齐）：入口由 `JPush()` 改为 `JPush.newJPush()`（返回 `JPushFlutterInterface`，需额外 `import 'package:jpush_google_flutter/jpush_interface.dart';`），方法签名不变，其余业务调用代码无需改动。
+
+## 3.0.6 (2026-08-05)
+
 - iOS 插件支持 Swift Package Manager 集成方式（需 Flutter 3.24+，CocoaPods 集成不受影响）。
 
 ## 3.0.5
