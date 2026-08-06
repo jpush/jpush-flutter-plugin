@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:jpush_google_flutter/jpush_google_flutter.dart';
-import 'package:jpush_google_flutter/jpush_interface.dart';
+import 'package:jpush_google_ohos_flutter/jpush_google_ohos_flutter.dart';
+import 'package:jpush_google_ohos_flutter/jpush_interface.dart';
 
 void main() => runApp(new MyApp());
 

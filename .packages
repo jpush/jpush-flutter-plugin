@@ -65,4 +65,4 @@ watcher:file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.
 web_socket_channel:file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/web_socket_channel-2.0.0/lib/
 webkit_inspection_protocol:file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/webkit_inspection_protocol-1.0.0/lib/
 yaml:file:///usr/local/Caskroom/flutter/2.10.3/flutter/.pub-cache/hosted/pub.flutter-io.cn/yaml-3.1.0/lib/
-jpush_google_flutter:lib/
+jpush_google_ohos_flutter:lib/

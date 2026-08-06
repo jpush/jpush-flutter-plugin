@@ -1,6 +1,6 @@
 {
   "module": {
-    "name": "jpush_google_flutter",
+    "name": "jpush_google_ohos_flutter",
     "type": "har",
     "deviceTypes": [
       "default",

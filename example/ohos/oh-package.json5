@@ -15,7 +15,7 @@
   "overrides": {
     "@ohos/flutter_ohos": "file:./har/flutter.har",
     "@ohos/flutter_module": "file:./entry",
-    "jpush_google_flutter": "file:./har/jpush_google_flutter.har",
+    "jpush_google_ohos_flutter": "file:./har/jpush_google_ohos_flutter.har",
     "integration_test": "file:./har/integration_test.har"
   }
 }

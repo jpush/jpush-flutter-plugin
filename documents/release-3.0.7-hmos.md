@@ -1,19 +1,20 @@
-# jpush_google_flutter 3.0.7 鸿蒙适配 — 发布材料（转人工执行发布）
+# jpush_google_ohos_flutter 3.0.7 鸿蒙适配 — 发布材料（转人工执行发布）
 
 ## 背景（TAPD：二三四五 Google 版 SDK 不适配鸿蒙）
 
-客户【二三四五】（AppKey `b541e598ef4c7ce598a82450`）为弃用定制版 jcore-custom 4.8.4（关闭安装卸载权限 + 热更新），已改用 `jpush_google_flutter: 3.0.5` + `cn.jiguang.sdk:jcore:5.5.0`，Android 端集成成功；但 Google 版插件不支持鸿蒙。本次将国内版 `jpush_flutter` 3.5.0（dev-3.x）的鸿蒙实现移植到 Google 版（dev-3.x-google）。
+客户【二三四五】（AppKey `b541e598ef4c7ce598a82450`）为弃用定制版 jcore-custom 4.8.4（关闭安装卸载权限 + 热更新），已改用 `jpush_google_flutter: 3.0.5` + `cn.jiguang.sdk:jcore:5.5.0`，Android 端集成成功；但 Google 版插件不支持鸿蒙。本次将国内版 `jpush_flutter` 3.5.0（dev-3.x）的鸿蒙实现移植过来，作为**独立包** `jpush_google_ohos_flutter` 在**独立分支** `dev-3.x-google-ohos` 上维护，不影响原 `jpush_google_flutter` 包与 `dev-3.x-google` 分支。
 
 ## 版本信息
 
-- 插件：`jpush_google_flutter` 3.0.7（工作分支 `feature/ohos-google`，基于 `dev-3.x-google`）
+- 插件：`jpush_google_ohos_flutter` 3.0.7（分支 `dev-3.x-google-ohos`，基于 `dev-3.x-google` 的 3.0.6）
+- 与原包关系：`jpush_google_flutter` 保持不变、继续按原节奏发布；本包是「Google 版 + 鸿蒙」的独立发行，两者不可同时集成（MethodChannel 同名 `jpush`）
 - 鸿蒙原生 SDK：ohpm `@jg/push` 1.4.0（jpush-hmos）
 - Android：`cn.jiguang.sdk:jpush-google:6.2.0`（不变）；iOS：jpush 6.2.0 / jcore 5.5.0（不变）
 - 鸿蒙构建环境：鸿蒙版 Flutter 3.35.8-ohos-1.0.1 + DevEco Studio（`DEVECO_SDK_HOME=/Applications/DevEco-Studio.app/Contents/sdk`）
 
 ## 变更内容
 
-1. 新增 `ohos/` 插件模块（ETS，MethodChannel `"jpush"`，模块名 `jpush_google_flutter`）。
+1. 新增 `ohos/` 插件模块（ETS，MethodChannel `"jpush"`，模块名 `jpush_google_ohos_flutter`）。
 2. Dart 层重构为「统一接口 + 平台实现」：`lib/jpush_interface.dart`（接口 + 默认降级实现）、`lib/android_ios/jpush_flutter_a_i.dart`（原 Google 实现改造）、`lib/harmony/`（4 个文件）、入口 `JPush.newJPush()` 按平台路由。**breaking：入口由 `JPush()` 改为 `JPush.newJPush()`。**
 3. `pubspec.yaml` 增加 `ohos` 平台声明与 `plugin_platform_interface` 依赖。
 4. `example/ohos/` 完整鸿蒙示例工程；`example/lib/main.dart` 同步新入口写法。
@@ -30,8 +31,9 @@
 ## 待人工执行
 
 1. 补真机验证：鸿蒙真机 + 有效签名证书，跑 example 验证 getRegistrationID、收推送、通知点击回调（可用测试 AppKey 或客户 AppKey）。
-2. 代码评审后合入 `dev-3.x-google` 并 push（本次未 push）。
-3. 打 tag `v3.0.7-google`（沿用仓库既有 tag 规范），干净克隆做 `flutter pub publish --dry-run` 校验后发布 pub.dev（流程参照 wry-flutter-publish-sdk，将分支替换为 dev-3.x-google）。
+2. 代码评审后 push 新分支 `dev-3.x-google-ohos`（本次未 push；该分支独立维护，不合入 `dev-3.x-google`）。
+3. 打 tag `v3.0.7-google-ohos`，干净克隆做 `flutter pub publish --dry-run` 校验后发布 pub.dev（流程参照 wry-flutter-publish-sdk，分支替换为 `dev-3.x-google-ohos`）。
+   - **注意**：`jpush_google_ohos_flutter` 是 pub.dev 上的新包，首次发布需确认发布者权限与包名可用性。
 4. TAPD 回复客户：
    - 定制 SDK 问题：`jpush-google` 制品本身无安装卸载感知与热更新逻辑，升级新版后无需定制版 jcore，客户现有集成方式（剔除 jcore-google、指定 jcore:5.5.0）可行；
-   - 鸿蒙适配：3.0.7 发布后按 README_Harmony.md 集成，注意入口 API 变更为 `JPush.newJPush()`。
+   - 鸿蒙适配：改依赖 `jpush_google_ohos_flutter: 3.0.7`（替换原 `jpush_google_flutter`，二者不可并存），按 README_Harmony.md 集成，注意入口 API 变更为 `JPush.newJPush()`。

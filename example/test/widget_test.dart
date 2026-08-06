@@ -9,7 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
 import 'package:jpush_example/main.dart';
-import 'package:jpush_google_flutter/jpush_google_flutter.dart';
+import 'package:jpush_google_ohos_flutter/jpush_google_ohos_flutter.dart';
 
 import 'package:test/test.dart';
 

@@ -1,4 +1,4 @@
-import 'package:jpush_google_flutter/harmony/jpush_harmony_sdk_imp.dart';
+import 'package:jpush_google_ohos_flutter/harmony/jpush_harmony_sdk_imp.dart';
 
 import '../jpush_interface.dart';
 

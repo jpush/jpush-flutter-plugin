@@ -9,14 +9,14 @@
   
 //github  集成
 dependencies:
-  jpush_google_flutter:
+  jpush_google_ohos_flutter:
     git:
       url: git://github.com/jpush/jpush-flutter-plugin.git
-      ref: dev-3.x-google
+      ref: dev-3.x-google-ohos
       
 // pub 集成
 dependencies:
-  jpush_google_flutter: 3.0.7
+  jpush_google_ohos_flutter: 3.0.7
 ```
 
 > iOS 插件已支持 Swift Package Manager 集成方式（需 Flutter 3.24+ 并启用 SPM），CocoaPods 集成不受影响、无需任何调整。
@@ -56,8 +56,8 @@ android: {
 ### 使用
 
 ```dart
-import 'package:jpush_google_flutter/jpush_google_flutter.dart';
-import 'package:jpush_google_flutter/jpush_interface.dart';
+import 'package:jpush_google_ohos_flutter/jpush_google_ohos_flutter.dart';
+import 'package:jpush_google_ohos_flutter/jpush_interface.dart';
 ```
 
 ```dart

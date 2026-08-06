@@ -1,5 +1,5 @@
 import { FlutterEngine, Log } from '@ohos/flutter_ohos';
-import JpushHarmonySdkPlugin from 'jpush_google_flutter';
+import JpushHarmonySdkPlugin from 'jpush_google_ohos_flutter';
 import IntegrationTestPlugin from 'integration_test';
 
 /**

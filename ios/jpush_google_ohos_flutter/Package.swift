@@ -4,12 +4,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "jpush_google_flutter",
+    name: "jpush_google_ohos_flutter",
     platforms: [
         .iOS("13.0")
     ],
     products: [
-        .library(name: "jpush-google-flutter", targets: ["jpush_google_flutter"])
+        .library(name: "jpush-google-ohos-flutter", targets: ["jpush_google_ohos_flutter"])
     ],
     dependencies: [
         .package(name: "FlutterFramework", path: "../FlutterFramework"),
@@ -18,14 +18,14 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "jpush_google_flutter",
+            name: "jpush_google_ohos_flutter",
             dependencies: [
                 .product(name: "FlutterFramework", package: "FlutterFramework"),
                 .product(name: "JCore", package: "jcore-sdk"),
                 .product(name: "JPush", package: "jpush-sdk")
             ],
             cSettings: [
-                .headerSearchPath("include/jpush_google_flutter")
+                .headerSearchPath("include/jpush_google_ohos_flutter")
             ]
         )
     ]

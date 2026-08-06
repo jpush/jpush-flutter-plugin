@@ -1,7 +1,7 @@
 import { UIAbility } from '@kit.AbilityKit';
 import { pushCommon, pushService } from '@kit.PushKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import JpushHarmonySdkPlugin from 'jpush_google_flutter';
+import JpushHarmonySdkPlugin from 'jpush_google_ohos_flutter';
 
 const TAG: string = 'JPUSH-JLog-PushMessageAbility'
 

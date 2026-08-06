@@ -52,7 +52,7 @@ import { FlutterAbility, FlutterEngine } from '@ohos/flutter_ohos';
 import { GeneratedPluginRegistrant } from '../plugins/GeneratedPluginRegistrant';
 import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import Want from '@ohos.app.ability.Want';
-import JpushHarmonySdkPlugin from 'jpush_google_flutter';
+import JpushHarmonySdkPlugin from 'jpush_google_ohos_flutter';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 
 const TAG: string = 'JPUSH-flutter-JLog-EntryAbility'
@@ -132,7 +132,7 @@ export default class EntryAbility extends FlutterAbility {
 import { UIAbility } from '@kit.AbilityKit';
 import { pushCommon, pushService } from '@kit.PushKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import JpushHarmonySdkPlugin from 'jpush_google_flutter';
+import JpushHarmonySdkPlugin from 'jpush_google_ohos_flutter';
 
 const TAG: string = 'JPUSH-JLog-PushMessageAbility'
 
@@ -192,7 +192,7 @@ export default class PushMessageAbility extends UIAbility {
 import { UIAbility } from '@kit.AbilityKit';
 import { pushCommon, pushService } from '@kit.PushKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import JpushHarmonySdkPlugin from 'jpush_google_flutter';
+import JpushHarmonySdkPlugin from 'jpush_google_ohos_flutter';
 
 const TAG: string = 'JPUSH-JLog-PushMessageAbility'
 
@@ -304,7 +304,7 @@ export default class PushMessageAbility extends UIAbility {
 import { UIAbility } from '@kit.AbilityKit';
 import { pushCommon, pushService } from '@kit.PushKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import JpushHarmonySdkPlugin from 'jpush_google_flutter';
+import JpushHarmonySdkPlugin from 'jpush_google_ohos_flutter';
 
 const TAG: string = 'JPUSH-JLog-PushMessageAbility'
 

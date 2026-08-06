@@ -1,6 +1,8 @@
-# jpush_google_flutter 鸿蒙适配改动清单
+# jpush_google_ohos_flutter 鸿蒙适配改动清单
 
-对比基线：`origin/dev-3.x`（国内版 jpush_flutter 3.5.0，已支持鸿蒙） vs `origin/dev-3.x-google`（Google 版 jpush_google_flutter，基线 3.0.6；本次鸿蒙适配单独发 3.0.7）。
+对比基线：`origin/dev-3.x`（国内版 jpush_flutter 3.5.0，已支持鸿蒙） vs `origin/dev-3.x-google`（Google 版 jpush_google_flutter 3.0.6）。
+
+产物：独立包 `jpush_google_ohos_flutter` 3.0.7，独立分支 `dev-3.x-google-ohos`。
 
 以下为国内版鸿蒙适配的完整文件清单，即本次需移植到 Google 版的范围（已剔除与鸿蒙无关的分支差异，如 update-sdk skill、Android 原生升级、iOS SPM 等）。
 
@@ -14,7 +16,7 @@
 - `ohos/build-profile.json5`
 - `ohos/hvigorfile.ts`
 - `ohos/index.ets`
-- `ohos/oh-package.json5`（依赖 `@jg/push: 1.4.0` + `@ohos/flutter_ohos`；`name` 字段需与插件包名一致，移植时改为 `jpush_google_flutter`）
+- `ohos/oh-package.json5`（依赖 `@jg/push: 1.4.0` + `@ohos/flutter_ohos`；`name` 字段需与插件包名一致，移植时改为 `jpush_google_ohos_flutter`）
 - `ohos/src/main/module.json5`
 - `ohos/src/main/ets/components/plugin/JpushHarmonySdkPlugin.ets`（642 行，MethodChannel 名为 `"jpush"`）
 - `ohos/src/main/ets/components/plugin/JpushHelper.ets`
@@ -27,13 +29,13 @@
 国内版将 Dart 层重构为「统一接口 + 平台双实现」：
 
 - `lib/jpush_interface.dart` —— 抽象类 `JPushFlutterInterface`（446 行），所有方法带默认「not implemented」空实现，**平台差异接口的降级由此机制天然完成**
-- `lib/android_ios/jpush_flutter_a_i.dart` —— `JPush_A_I extends JPushFlutterInterface`，即原单文件实现改名（Google 版对应 `lib/jpush_google_flutter.dart` 现有内容）
+- `lib/android_ios/jpush_flutter_a_i.dart` —— `JPush_A_I extends JPushFlutterInterface`，即原单文件实现改名（Google 版对应 `lib/jpush_google_ohos_flutter.dart` 现有内容）
 - `lib/harmony/jpush_harmony_sdk.dart` —— `JpushHarmonySdk extends JPushFlutterInterface`
 - `lib/harmony/jpush_harmony_sdk_imp.dart`
 - `lib/harmony/jpush_harmony_sdk_method_channel.dart`（MethodChannel 同名 `'jpush'`，但方法名与 Android/iOS 不同：`init`/`setAppKey`/`setChannel`…，必须按平台路由）
 - `lib/harmony/jpush_harmony_sdk_platform_interface.dart`
 - `lib/jpush_flutter.dart` —— 入口：`JPush.newJPush()` 按 `Platform.isAndroid/isIOS` 返回 `JPush_A_I`，否则返回 `JpushHarmonySdk`
-- 注意：国内版 import 均为 `package:jpush_flutter/...`，移植时需改为 `package:jpush_google_flutter/...`
+- 注意：国内版 import 均为 `package:jpush_flutter/...`，移植时需改为 `package:jpush_google_ohos_flutter/...`
 
 ### 3. pubspec.yaml
 
@@ -56,7 +58,7 @@ ohos:
 ## 二、example 工程
 
 - `example/ohos/` 整目录（AppScope、entry 模块、EntryAbility/PushMessageAbility/RemoteNotificationExtAbility、GeneratedPluginRegistrant.ets、hvigor 配置等，共 30+ 文件）
-- `example/oh-package.json5` 中 `jpush_flutter` 依赖名需替换为 `jpush_google_flutter`
+- `example/oh-package.json5` 中 `jpush_flutter` 依赖名需替换为 `jpush_google_ohos_flutter`
 - `example/lib/main.dart` 同步国内版写法（`JPush.newJPush()` 返回接口实例）
 - `example/pubspec.yaml` 同步
 
