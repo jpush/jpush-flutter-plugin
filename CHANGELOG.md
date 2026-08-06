@@ -1,7 +1,8 @@
 ## 3.0.7 (2026-08-05)
 
 - 新增 HarmonyOS（鸿蒙）平台支持：基于 jpush-hmos 原生 SDK（ohpm `@jg/push` 1.4.0），需使用鸿蒙版 Flutter 构建，集成方式见 [README_Harmony.md](./README_Harmony.md)。
-- Dart 层重构为「统一接口 + 平台实现」结构（与国内版 jpush_flutter 3.5.0 对齐）：入口由 `JPush()` 改为 `JPush.newJPush()`（返回 `JPushFlutterInterface`，需额外 `import 'package:jpush_google_flutter/jpush_interface.dart';`），方法签名不变，其余业务调用代码无需改动。
+- Dart 层重构为「统一接口 + 平台实现」结构：入口由 `JPush()` 改为 `JPush.newJPush()`（返回 `JPushFlutterInterface`，需额外 `import 'package:jpush_google_flutter/jpush_interface.dart';`），原有 API 的方法名、参数与默认值均不变，其余业务调用代码无需改动。
+- 接口仅暴露本版真实支持的 API：Google 版 3.0.6 已有的 40 个方法全部保留，另新增鸿蒙端的 `setCallBackHarmony`（鸿蒙事件回调）与 `getTags`（鸿蒙分页获取标签）。
 
 ## 3.0.6 (2026-08-05)
 
