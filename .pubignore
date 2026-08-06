@@ -1,0 +1,54 @@
+# 内部材料（含本机路径与发布流程说明），不随包发布
+# 注意：documents/APIs.md 是对外 API 文档，README 有链接，必须保留
+documents/release-3.0.7-hmos.md
+documents/publish-checklist-3.0.7.md
+documents/ohos-adaptation-checklist.md
+
+# 工具生成、不应入库的文件（含构建机本地绝对路径）
+.packages
+example/.flutter-plugins
+example/.flutter-plugins-dependencies
+example/ios/Flutter/flutter_export_environment.sh
+
+# 构建产物与本地缓存
+# 注意：.pubignore 会覆盖同目录的 .gitignore，故根 .gitignore 的关键规则需在此重述
+build/
+.dart_tool/
+bin/
+gen/
+out/
+.gradle/
+local.properties
+example/ohos/.hvigor/
+example/ohos/oh_modules/
+example/ohos/**/build/
+example/ohos/**/oh_modules/
+*.har
+*.apk
+*.dex
+*.log
+
+# iOS / CocoaPods
+Podfile
+Podfile.lock
+Pods/
+example/ios/Pods/
+xcuserdata/
+*.dSYM
+*.hmap
+*.ipa
+
+# lock 文件
+pubspec.lock
+example/pubspec.lock
+
+# IDE 与系统文件
+.idea/
+.atom/
+.vscode/
+*.iml
+.DS_Store
+
+# Agent / 本地工具配置
+.claude/
+.cursor/
