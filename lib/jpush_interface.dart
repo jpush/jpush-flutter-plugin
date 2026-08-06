@@ -57,30 +57,6 @@ abstract class JPushFlutterInterface {
     print(flutter_log + "setSmartPushEnable:has not been implemented.");
   }
 
-  void setDataInsightsEnable({bool enable = true}) {
-    print(flutter_log + "setDataInsightsEnable:has not been implemented.");
-  }
-
-/**
- * 启用SDK本地日志，启动用SDK日志缓存本设备
- *
- * @param enable 是否启用日志（true表示启用，false表示禁用）
- * @param uploadJgToServer 是否将日志上传到极光服务器（true表示上传，false表示不上传）
- */
-  void enableSDKLocalLog({bool enable = false, bool uploadJgToServer = false}) {
-    print(flutter_log + "enableSDKLocalLog:has not been implemented.");
-  }
-
-  ///
-  /// 获取所有进程的新增SDK日志
-  ///
-  /// @param {Function} callback = (String) => {}
-  ///
-  Future<String> readNewLogs() async {
-    print(flutter_log + "readNewLogs:has not been implemented.");
-    return "";
-  }
-
   void setCollectControl({
     bool imsi = true, // only android
     bool mac = true, // only android
@@ -258,15 +234,6 @@ abstract class JPushFlutterInterface {
   }
 
   ///
-  /// 设置最多显示的通知条数
-  /// Android Only
-  /// @param maxNum 最多显示的条数
-  ///
-  Future setLatestNotificationNumber(int maxNum) async {
-    print(flutter_log + "setLatestNotificationNumber:has not been implemented.");
-  }
-
-  ///
   /// 停止接收推送，调用该方法后应用将不再受到推送，如果想要重新收到推送可以调用 resumePush。
   ///
   Future stopPush() async {
@@ -278,15 +245,6 @@ abstract class JPushFlutterInterface {
   ///
   Future resumePush() async {
     print(flutter_log + "resumePush:has not been implemented.");
-  }
-
-  ///
-  /// 检查推送是否已停止。
-  /// Android Only
-  ///
-  Future<bool> isPushStoppedAndroid() async {
-    print(flutter_log + "isPushStoppedAndroid:has not been implemented.");
-    return false;
   }
 
   ///
