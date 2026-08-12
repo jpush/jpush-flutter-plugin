@@ -1,3 +1,7 @@
+## 3.0.7 (2026-08-12)
+
+- 修复 Gradle 9 环境下 Android 构建报 `Could not find method jcenter()` 的问题。
+
 ## 3.0.6 (2026-08-05)
 
 - iOS 插件支持 Swift Package Manager 集成方式（需 Flutter 3.24+，CocoaPods 集成不受影响）。
