@@ -1,4 +1,4 @@
-## 3.5.2 (2026-08-13)
+## 3.5.2 (2026-08-19)
 
 - 鸿蒙新增 `setUserRequestNotificationPermission` 接口，支持由开发者自行控制通知权限申请（用法见 README_Harmony.md）。
 - 鸿蒙 init 时不再由插件重复申请通知权限，统一交由 SDK 处理。
