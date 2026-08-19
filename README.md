@@ -38,6 +38,31 @@ android: {
     ]
   }    
 ```
+
+**注意（Flutter 3.29+ 厂商通道点击白屏问题）**：Flutter 3.29 起 `FlutterActivity` 默认开启深链接（`flutter_deeplinking_enabled` 默认值变为 true）。App 进程被杀后点击厂商通道（如华为）离线推送时，拉起应用的 intent 携带的 URI（含 `n_extra` 参数）会被 Flutter 当作深链接路由解析，路由表中无对应页面导致打开后白屏。若未使用 Flutter 官方深链接功能，请在 `AndroidManifest.xml` 的主 Activity 中显式关闭：
+
+方式一（推荐）：在 `MainActivity` 中重写 `shouldHandleDeeplinking()`：
+
+```kotlin
+class MainActivity : FlutterActivity() {
+    // 禁用 Flutter 自动 deep link 处理，避免厂商通道推送点击时
+    // intent.data 被误当成 Flutter 路由导致打开 App 白屏
+    override fun shouldHandleDeeplinking(): Boolean {
+        return false
+    }
+}
+```
+
+方式二：在 `AndroidManifest.xml` 的主 Activity 中配置（与方式一等价，`shouldHandleDeeplinking()` 默认实现读取的就是该配置）：
+
+```xml
+<activity android:name=".MainActivity" ...>
+    <meta-data
+        android:name="flutter_deeplinking_enabled"
+        android:value="false" />
+</activity>
+```
+
 ##### iOS:
 
 - 在 xcode8 之后需要点开推送选项： TARGETS -> Capabilities -> Push Notification 设为 on 状态
