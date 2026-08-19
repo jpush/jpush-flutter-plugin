@@ -6,6 +6,8 @@
 - [resumePush](#resumepush)
 - [isPushStoppedAndroid](#ispushstoppedandroid)
 - [getPushStatus](#getpushstatus)
+- [turnOffPush](#turnoffpush)
+- [turnOnPush](#turnonpush)
 - [setLatestNotificationNumber](#setlatestnotificationnumber)
 - [requestRequiredPermission](#requestrequiredpermission)
 - [requestSubscribeChannel](#requestsubscribechannel)
@@ -150,6 +152,7 @@ jpush.setCallBackHarmony((eventName, data) async {
    * export class JMessageVoIP {
    * msgId?: string //通知id
    * extraData?: string //VoIP自定义数据
+   * callId?: string //厂商VoIP呼叫标识，由华为侧生成，非华为通道下发时为空（@jg/push 1.4.1 起支持）
    }
    * @param jmVoIP
    */
@@ -409,6 +412,67 @@ Map<dynamic, dynamic> result = await jpush.getPushStatus();
 返回一个 Map，包含以下字段：
 - `code` (int): 结果码，0 表示成功，其他返回码请参考错误码定义
 - `isStopped` (bool): 推送状态，`true` 表示推送已停止，`false` 表示推送功能开启（在 code 为 0 时有效）
+
+#### turnOffPush
+
+停止推送服务（反注册）。
+
+**HarmonyOS Only**
+
+鸿蒙自插件 3.5.3（@jg/push 1.4.2）起支持。
+
+```dart
+JPushFlutterInterface jpush = JPush.newJPush();
+Map<dynamic, dynamic> result = await jpush.turnOffPush();
+if (result['code'] == 0) {
+  // 停止成功，可以初始化另一套推送 SDK
+}
+```
+
+##### 说明
+
+- 与 [stopPush](#stoppush)（服务端推送开关）语义不同
+- 执行内容：断开长连接、停止所有客户端信息上报 → 删除系统 Push Token（旧 Token 在华为侧失效，厂商通道无法再推送到本设备）
+- 停止期间新产生的上报数据直接丢弃，恢复推送后不补报
+- 状态持久化：杀进程重启后依然保持停止（不连接、不上报），直到调用 [turnOnPush](#turnonpush) 恢复
+- 自带上下文，不依赖 setup；重复调用幂等
+- 与 turnOnPush 互斥调度：turnOnPush 执行中调用本接口会排队，待其结束后执行并返回真实结果；排队期间又调用了 turnOnPush 时，本次停止被顶掉、返回 code=4（未执行任何停止动作）。快速交替调用两个接口时，最终状态以最后一次调用为准
+- **【重要】** 删除 Token 是 APP 级操作。必须等本接口返回 code=0 后，才能初始化另一套推送 SDK；另一套 SDK 注册时必须重新获取 Token，不能使用缓存。code 非 0 时不可切换
+
+##### 返回值说明
+
+返回一个 Map，包含以下字段：
+- `code` (int): 结果码
+- `msg` (String): 结果描述
+
+| code | 含义 | 说明 |
+|------|------|------|
+| 0 | 成功 | 可以切换另一套 SDK |
+| 1 | 删除系统 Token 失败（重试耗尽） | 不可切换，状态已回滚为注册态；连接不自动重建，可重试 turnOffPush，或调用 setup/turnOnPush 恢复推送 |
+| 2 | 整体超时 | 不可切换，请重试（重复调用幂等） |
+| 3 | 停止状态落盘失败（重试耗尽） | 不可切换；此时连接未断开、SDK 仍为注册态（推送仍可达），可直接重试 turnOffPush |
+| 4 | 被更晚的 turnOnPush 顶掉 | 不可切换；本次停止未执行任何动作（Token 未删除），SDK 将恢复推送。如仍需停止请重新调用 turnOffPush |
+
+#### turnOnPush
+
+恢复推送服务。
+
+**HarmonyOS Only**
+
+鸿蒙自插件 3.5.3（@jg/push 1.4.2）起支持。
+
+```dart
+JPushFlutterInterface jpush = JPush.newJPush();
+jpush.turnOnPush();
+```
+
+##### 说明
+
+- 恢复被 [turnOffPush](#turnoffpush) 停止的推送服务：重新获取 Token、重新建立长连接
+- 发起即返，不带结果通道；注册/登录结果通过正常回调观察（`addEventHandler` 的 `onConnected` 等），与冷启动一致
+- 注册身份未清除，恢复后 RegistrationID 保持不变
+- 自带上下文，不依赖 setup
+- 与 turnOffPush 互斥调度：停止流程进行中调用本接口会排队，等它完整结束后再执行恢复；排队期间又调用了 turnOffPush 时，本次恢复作废（不恢复连接）。快速交替调用两个接口时，最终状态以最后一次调用为准；短时间重复调用本接口只执行一次
 
 #### setAlias
 

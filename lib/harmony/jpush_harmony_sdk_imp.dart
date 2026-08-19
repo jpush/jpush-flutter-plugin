@@ -74,6 +74,14 @@ class JpushHarmonySdkImp {
     await JpushHarmonySdkPlatform.instance.resumePush();
   }
 
+  Future<Map<dynamic, dynamic>> turnOffPush() {
+    return JpushHarmonySdkPlatform.instance.turnOffPush();
+  }
+
+  turnOnPush() {
+    JpushHarmonySdkPlatform.instance.turnOnPush();
+  }
+
   Future<bool?> isPushStopped() {
     return JpushHarmonySdkPlatform.instance.isPushStopped();
   }

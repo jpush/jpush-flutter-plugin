@@ -9,6 +9,7 @@ import {
   JMobileNumberMessage,
   JPushInterface,
   JPushLocalNotification,
+  JPushResult,
   JTagMessage
 } from '@jg/push';
 import {
@@ -22,7 +23,7 @@ import {
 } from '@ohos/flutter_ohos';
 import { JLog } from './JLog';
 import { Ability, common, Want } from '@kit.AbilityKit';
-import { ArrayList } from '@kit.ArkTS';
+import { ArrayList, HashMap } from '@kit.ArkTS';
 import { pushCommon, RemoteNotificationExtensionAbility } from '@kit.PushKit';
 import { pushService } from '@kit.PushKit';
 import { FlutterConfig } from './config/FlutterConfig';
@@ -274,6 +275,11 @@ class JPushInterfaceImp {
     } else if (call.method == "resumePush") {
       this.resumePush()
       result.success(true)
+    } else if (call.method == "turnOffPush") {
+      this.turnOffPush(result)
+    } else if (call.method == "turnOnPush") {
+      this.turnOnPush()
+      result.success(true)
     } else if (call.method == "isPushStopped") {
       this.isPushStopped(result)
     } else if (call.method == "getPushStatus") {
@@ -314,11 +320,38 @@ class JPushInterfaceImp {
   }
 
   init(uiContext: common.Context) {
+    JPushInterface.init(this.getUIAbilityContext(uiContext))
+  }
+
+  private getUIAbilityContext(uiContext: common.Context): common.UIAbilityContext {
     let uIAbilityContext = FlutterManager.getInstance().getUIAbility()?.context
     if (undefined == uIAbilityContext) {
       uIAbilityContext = uiContext as common.UIAbilityContext
     }
-    JPushInterface.init(uIAbilityContext)
+    return uIAbilityContext
+  }
+
+  /**
+   * 停止推送服务（反注册）：删除系统 Push Token、断开长连接、停止所有上报，状态持久化
+   * 结果 {code, msg} 回传 Dart，code=0 才表示可以切换到另一套推送 SDK
+   */
+  async turnOffPush(result: MethodResult) {
+    // 1.4.2 起支持，自带 context、不依赖 init
+    let r: JPushResult =
+      await JPushInterface.turnOffPush(this.getUIAbilityContext(JPushInterfaceImp.applicationContext))
+    JLog.info(this.TAG, "turnOffPush result:" + JSON.stringify(r))
+    let map = new HashMap<string, Object>();
+    map.set('code', r.code);
+    map.set('msg', r.msg);
+    result.success(map)
+  }
+
+  /**
+   * 恢复推送服务：发起即返，注册/登录结果走 onRegister、onConnected 回调，rid 保持不变
+   */
+  turnOnPush() {
+    // 1.4.2 起支持，自带 context、不依赖 init
+    JPushInterface.turnOnPush(this.getUIAbilityContext(JPushInterfaceImp.applicationContext))
   }
 
   async getRegistrationId(result: MethodResult) {
@@ -586,6 +619,7 @@ class MyCallBackMsg extends CallBackMsg {
    * export class JMessageVoIP {
    * msgId?: string //通知id
    * extraData?: string //VoIP自定义数据
+   * callId?: string //厂商VoIP呼叫标识，由华为侧生成，非华为通道下发时为空（1.4.1 起支持）
    }
    * @param jmVoIP
    */

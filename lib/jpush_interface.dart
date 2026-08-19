@@ -280,6 +280,34 @@ abstract class JPushFlutterInterface {
     print(flutter_log + "resumePush:has not been implemented.");
   }
 
+  /// HarmonyOS Only
+  /// 停止推送服务（反注册），与 stopPush（服务端推送开关）语义不同：
+  /// 删除系统 Push Token（旧 Token 在华为侧失效）、断开长连接、停止所有客户端信息上报，
+  /// 停止期间产生的上报数据直接丢弃，恢复后不补报。
+  /// 状态持久化，杀进程重启后依然保持停止，直到调用 turnOnPush 恢复。
+  /// 自带上下文、不依赖 setup；重复调用幂等。
+  ///
+  /// 返回 {"code":int, "msg":String}，code 含义：
+  /// 0 成功（可以初始化另一套推送 SDK）
+  /// 1 删除系统 Token 失败（重试耗尽），已回滚为注册态，可重试或调用 turnOnPush 恢复
+  /// 2 整体超时，可重试
+  /// 3 停止状态落盘失败（重试耗尽），仍为注册态、推送仍可达，可直接重试
+  /// 4 被更晚的 turnOnPush 顶掉，本次未执行任何停止动作，如仍需停止请重新调用
+  ///
+  /// 注意：删除 Token 是 APP 级操作，必须等本方法返回 code=0 后才能初始化另一套推送 SDK。
+  Future<Map<dynamic, dynamic>> turnOffPush() async {
+    print(flutter_log + "turnOffPush:has not been implemented.");
+    return {};
+  }
+
+  /// HarmonyOS Only
+  /// 恢复被 turnOffPush 停止的推送服务：重新获取 Token、重新建立长连接。
+  /// 发起即返，不带结果通道，注册/登录结果通过 onConnected 等回调观察；
+  /// 注册身份未清除，恢复后 RegistrationID 保持不变。
+  void turnOnPush() {
+    print(flutter_log + "turnOnPush:has not been implemented.");
+  }
+
   ///
   /// 检查推送是否已停止。
   /// Android Only

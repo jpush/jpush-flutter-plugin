@@ -98,6 +98,16 @@ class JpushHarmonySdk extends JPushFlutterInterface {
     await _jpushHarmonySdkPlugin.resumePush();
   }
 
+  Future<Map<dynamic, dynamic>> turnOffPush() async {
+    print(flutter_log + "turnOffPush");
+    return await _jpushHarmonySdkPlugin.turnOffPush();
+  }
+
+  void turnOnPush() {
+    print(flutter_log + "turnOnPush");
+    _jpushHarmonySdkPlugin.turnOnPush();
+  }
+
 //todo weiry
   Future<bool?> isPushStopped() {
     return _jpushHarmonySdkPlugin.isPushStopped();

@@ -1,3 +1,9 @@
+## 3.5.3 (2026-08-20)
+
+- 鸿蒙 SDK 升级至 1.4.2。
+- 鸿蒙新增 `turnOffPush` / `turnOnPush` 接口，支持停止/恢复推送服务（反注册）。
+- 鸿蒙 VoIP 呼叫消息回调 `onJMessageVoIP` 新增 `callId` 字段。
+
 ## 3.5.2 (2026-08-19)
 
 - 鸿蒙新增 `setUserRequestNotificationPermission` 接口，支持由开发者自行控制通知权限申请（用法见 README_Harmony.md）。

@@ -96,6 +96,14 @@ abstract class JpushHarmonySdkPlatform extends PlatformInterface {
     throw UnimplementedError('resumePush() has not been implemented.');
   }
 
+  Future<Map<dynamic, dynamic>> turnOffPush() {
+    throw UnimplementedError('turnOffPush() has not been implemented.');
+  }
+
+  turnOnPush() {
+    throw UnimplementedError('turnOnPush() has not been implemented.');
+  }
+
   Future<bool?> isPushStopped() {
     throw UnimplementedError('isPushStopped() has not been implemented.');
   }

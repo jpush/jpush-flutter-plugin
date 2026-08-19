@@ -98,6 +98,14 @@ class MethodChannelJpushHarmonySdk extends JpushHarmonySdkPlatform {
     methodChannel.invokeMethod("resumePush");
   }
 
+  Future<Map<dynamic, dynamic>> turnOffPush() async {
+    return await methodChannel.invokeMethod("turnOffPush");
+  }
+
+  turnOnPush() {
+    methodChannel.invokeMethod("turnOnPush");
+  }
+
   Future<bool?> isPushStopped() async{
     return await methodChannel.invokeMethod<bool>('isPushStopped');
   }
