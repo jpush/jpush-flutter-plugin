@@ -101,6 +101,8 @@ class _MyAppState extends State<MyApp> {
     }
 
     jpush.setAuth(enable: true);
+    // HarmonyOS Only：设置为 true 后 SDK 不再自动申请通知权限，需自行申请，必须在 setup 之前调用
+    // jpush.setUserRequestNotificationPermission(enable: true);
     jpush.setup(
       appKey: "b266cd5c8544ba09b23733e3", //你自己应用的 AppKey
       channel: "theChannel",

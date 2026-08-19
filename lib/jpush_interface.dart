@@ -363,6 +363,16 @@ abstract class JPushFlutterInterface {
     print(flutter_log + "requestRequiredPermission:has not been implemented.");
   }
 
+  /// HarmonyOS Only
+  /// 设置是否由开发者自己调用通知申请权限。
+  /// enable 为 true 时，极光 SDK 不会主动申请通知权限，需要开发者自行申请；
+  /// 为 false（默认）时，极光 SDK 会在初始化时自动申请通知权限。
+  /// 注意：必须在 setup 之前调用。
+  void setUserRequestNotificationPermission({bool enable = true}) {
+    print(flutter_log +
+        "setUserRequestNotificationPermission:has not been implemented.");
+  }
+
   /// Android Only
   /// 请求订阅小米消息渠道。结果通过 addEventHandler 的 onCommandResult 回调。
   void requestSubscribeChannel(List<String> channelIds) {

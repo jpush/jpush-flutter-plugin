@@ -12,6 +12,11 @@ class JpushHarmonySdk extends JPushFlutterInterface {
     _jpushHarmonySdkPlugin.setCallBack(callBack);
   }
 
+  void setUserRequestNotificationPermission({bool enable = true}) {
+    print(flutter_log + "setUserRequestNotificationPermission:" + "$enable");
+    _jpushHarmonySdkPlugin.setUserRequestNotificationPermission(enable);
+  }
+
   void setup({
     String appKey = '',
     bool production = false,

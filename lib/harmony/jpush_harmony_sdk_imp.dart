@@ -18,6 +18,10 @@ class JpushHarmonySdkImp {
     JpushHarmonySdkPlatform.instance.setChannel(channel);
   }
 
+  setUserRequestNotificationPermission(bool enable) {
+    JpushHarmonySdkPlatform.instance.setUserRequestNotificationPermission(enable);
+  }
+
   init() {
     JpushHarmonySdkPlatform.instance.init();
   }

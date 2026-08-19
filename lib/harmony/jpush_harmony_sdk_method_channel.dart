@@ -39,6 +39,10 @@ class MethodChannelJpushHarmonySdk extends JpushHarmonySdkPlatform {
     methodChannel.invokeMethod("setChannel", channel);
   }
 
+  setUserRequestNotificationPermission(bool enable) {
+    methodChannel.invokeMethod("setUserRequestNotificationPermission", enable);
+  }
+
   init() {
     methodChannel.invokeMethod("init");
   }

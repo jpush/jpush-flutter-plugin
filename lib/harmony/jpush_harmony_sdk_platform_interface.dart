@@ -39,6 +39,11 @@ abstract class JpushHarmonySdkPlatform extends PlatformInterface {
     throw UnimplementedError('setChannel() has not been implemented.');
   }
 
+  setUserRequestNotificationPermission(bool enable) {
+    throw UnimplementedError(
+        'setUserRequestNotificationPermission() has not been implemented.');
+  }
+
   init() {
     throw UnimplementedError('init() has not been implemented.');
   }

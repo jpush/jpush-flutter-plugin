@@ -414,8 +414,38 @@ export default class PushMessageAbility extends UIAbility {
     );
 ```
 
+#### 控制通知权限申请方式（可选）
 
+> 鸿蒙 Only，对应原生接口 `setUserRequestNotificationPermission`（JPush HarmonyOS SDK v1.3.0 起支持）
 
+设置是否由开发者自己调用通知申请权限：
+
+- `enable` 为 `true`：极光 SDK 不会主动申请通知权限，需要开发者在自己的代码中手动申请；
+- `enable` 为 `false`（默认，即不调用该接口时的行为）：极光 SDK 会在初始化时自动申请通知权限。
+
+注意：必须在 `setup` 之前调用。
+
+```
+jpush.setUserRequestNotificationPermission(enable: true);
+
+jpush.setup(
+  appKey: "b266cd5c8544ba09b23733e3", //你自己应用的 AppKey
+  channel: "theChannel",
+  production: false,
+  debug: true, //debug log
+);
+```
+
+如需更早设置（例如在 `AbilityStage#onCreate` 或 `UIAbility#onCreate` 中），也可以直接调用原生静态接口：
+
+```
+import JpushHarmonySdkPlugin from 'jpush_flutter';
+
+  onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
+    JpushHarmonySdkPlugin.setUserRequestNotificationPermission(this.context, true)
+    super.onCreate(want, launchParam)
+  }
+```
 
 ### APIs
 

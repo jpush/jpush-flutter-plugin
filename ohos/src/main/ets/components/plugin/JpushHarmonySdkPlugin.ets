@@ -25,8 +25,6 @@ import { Ability, common, Want } from '@kit.AbilityKit';
 import { ArrayList } from '@kit.ArkTS';
 import { pushCommon, RemoteNotificationExtensionAbility } from '@kit.PushKit';
 import { pushService } from '@kit.PushKit';
-import { notificationManager } from '@kit.NotificationKit';
-import { BusinessError } from '@ohos.base'
 import { FlutterConfig } from './config/FlutterConfig';
 import { JPushHelperAlias, JPushHelperConnected, JPushHelperPushStatus, JPushHelperRid, JPushHelperTag } from './JpushHelper';
 
@@ -109,6 +107,25 @@ export default class JpushHarmonySdkPlugin implements FlutterPlugin, MethodCallH
 
   // static wantListCache = new ArrayList<Want>()
   static isSetAppKey = false
+
+  // 缓存开发者设置的通知权限申请方式；SDK 要求 setAppKey 之后调用才生效（否则被丢弃），故先缓存、init 前再透传
+  static hasUserRequestNotificationPermission = false
+  static userRequestNotificationPermission = false
+
+  /**
+   * 设置是否由开发者自己调用通知申请权限
+   * 可在 AbilityStage(#onCreate) 或 UIAbility(#onCreate) 中调用，需在 init 之前
+   * @param context 上下文
+   * @param enable true：开发者自己申请通知权限，false：SDK 申请通知权限（默认）
+   */
+  static setUserRequestNotificationPermission(context: common.Context, enable: boolean) {
+    JLog.info(JpushHarmonySdkPlugin.TAG_STATIC, "setUserRequestNotificationPermission enable:" + enable)
+    JpushHarmonySdkPlugin.hasUserRequestNotificationPermission = true
+    JpushHarmonySdkPlugin.userRequestNotificationPermission = enable
+    if (JpushHarmonySdkPlugin.isSetAppKey) {
+      JPushInterface.setUserRequestNotificationPermission(context.getApplicationContext(), enable)
+    }
+  }
 
   static setClickWant(want: Want, context: common.UIAbilityContext) {
     // FlutterManager.getInstance().getUIAbility().launchWant
@@ -218,8 +235,17 @@ class JPushInterfaceImp {
     } else if (call.method == "setChannel") {
       this.setChannel(call.args)
       result.success(true)
+    } else if (call.method == "setUserRequestNotificationPermission") {
+      this.setUserRequestNotificationPermission(call.args)
+      result.success(true)
     } else if (call.method == "init") {
-      this.requestEnableNotification()
+      // 通知权限申请由 SDK 在 init 时处理（受 setUserRequestNotificationPermission 开关控制），插件不再自行弹窗
+      // SDK 要求 setAppKey 之后透传该开关，早于 setAppKey 的调用会被 SDK 丢弃，故在 init 前补一次透传
+      if (JpushHarmonySdkPlugin.hasUserRequestNotificationPermission) {
+        JPushInterface.setUserRequestNotificationPermission(
+          JPushInterfaceImp.applicationContext.getApplicationContext(),
+          JpushHarmonySdkPlugin.userRequestNotificationPermission)
+      }
       this.init(JPushInterfaceImp.applicationContext)
       result.success(true)
     } else if (call.method == "getRegistrationId") {
@@ -283,16 +309,8 @@ class JPushInterfaceImp {
     JPushInterface.setChannel(channel)
   }
 
-  requestEnableNotification() {
-    try {
-      notificationManager.requestEnableNotification(FlutterManager.getInstance().getUIAbility().context).then(() => {
-        JLog.info(this.TAG, "requestEnableNotification success");
-      }).catch((err: BusinessError) => {
-        JLog.info(this.TAG, `requestEnableNotification failed,  ${err.code}, message is ${err.message}`);
-      });
-    } catch (e) {
-      JLog.error(this.TAG, "requestEnableNotification failed", e);
-    }
+  setUserRequestNotificationPermission(enable: boolean) {
+    JpushHarmonySdkPlugin.setUserRequestNotificationPermission(JPushInterfaceImp.applicationContext, enable)
   }
 
   init(uiContext: common.Context) {

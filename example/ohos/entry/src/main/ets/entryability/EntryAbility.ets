@@ -23,10 +23,12 @@ import { hilog } from '@kit.PerformanceAnalysisKit';
 const TAG: string = 'JPUSH-flutter-JLog-EntryAbility'
 
 export default class EntryAbility extends FlutterAbility {
-  onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
+  onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     hilog.info(0x0000, TAG, 'onCreate :' + JSON.stringify(want));
     JpushHarmonySdkPlugin.setClickWant(want, this.context)
-    return super.onCreate(want, launchParam)
+    // 如需由开发者自己申请通知权限，可在此处（或 AbilityStage#onCreate）提前调用，需在 init 之前
+    // JpushHarmonySdkPlugin.setUserRequestNotificationPermission(this.context, true)
+    super.onCreate(want, launchParam)
   }
 
   onNewWant(want: Want, launchParams: AbilityConstant.LaunchParam): void {
