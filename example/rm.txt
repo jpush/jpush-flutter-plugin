@@ -1,5 +1,0 @@
-// 添加 Flutter 引擎依赖
-    compileOnly files('/对应路径/flutter/bin/cache/artifacts/engine/android-arm/flutter.jar')
-
-
-    compileOnly files('/Users/weiruiyang/tool/flutter_3.22.3/flutter/bin/cache/artifacts/engine/android-arm/flutter.jar')
