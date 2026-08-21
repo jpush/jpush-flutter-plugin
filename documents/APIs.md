@@ -36,6 +36,8 @@
 - [pageEnterTo](#pageEnterTo)
 - [pageLeave](#pageLeave)
 - [setBackgroundEnable](#setbackgroundenable)
+- [registerLiveActivityPushToken](#registerliveactivitypushtoken)
+- [registerLiveActivityPushToStartToken](#registerliveactivitypushtostarttoken)
 
 
 [harmony Only]()
@@ -489,6 +491,67 @@ jpush.turnOnPush();
 - iOS 不会自动枚举 ActivityKit 活动或恢复 Live Activity Token，业务应在登录成功后主动重新获取并上报
 - HarmonyOS 会重新获取 Token、建立长连接，RegistrationID 保持不变
 - 快速交错调用时，最终状态以最后一次 `turnOnPush` / `turnOffPush` 为准
+
+#### registerLiveActivityPushToken
+
+注册或更新指定 Live Activity 的 PushToken；传 `null` 表示解绑。仅支持 iOS，原生 JPush SDK 需为 4.9.0 或更高版本。
+
+```dart
+import 'dart:typed_data';
+
+final Uint8List token = activityPushToken;
+final result = await jpush.registerLiveActivityPushToken(
+  liveActivityId: 'order-123',
+  pushToken: token,
+  seq: 1,
+);
+
+// Live Activity 结束或停用 JPush 前，使用绑定时相同的 liveActivityId 解绑。
+final unbindResult = await jpush.registerLiveActivityPushToken(
+  liveActivityId: 'order-123',
+  pushToken: null,
+  seq: 2,
+);
+```
+
+参数说明：
+
+- `liveActivityId`：业务定义的活动标识，解绑时必须与注册时保持一致；最多 64 字节
+- `pushToken`：ActivityKit 提供的 Token；传 `null` 表示解绑
+- `seq`：请求序列号，回调时原样返回
+
+#### registerLiveActivityPushToStartToken
+
+注册或更新某种 `ActivityAttributes` 对应的 Push-to-Start Token；传 `null` 表示解绑。仅支持 iOS，原生 JPush SDK 需为 5.5.0 或更高版本，Token 获取需要 iOS 17.2 及相应版本的 Xcode SDK。
+
+```dart
+final result = await jpush.registerLiveActivityPushToStartToken(
+  activityAttributes: 'OrderActivityAttributes',
+  pushToStartToken: pushToStartToken,
+  seq: 3,
+);
+
+final unbindResult = await jpush.registerLiveActivityPushToStartToken(
+  activityAttributes: 'OrderActivityAttributes',
+  pushToStartToken: null,
+  seq: 4,
+);
+```
+
+参数说明：
+
+- `activityAttributes`：业务中 `ActivityAttributes` 类型的标识；存在多种类型时需分别注册和解绑
+- `pushToStartToken`：ActivityKit 提供的启动 Token；传 `null` 表示解绑
+- `seq`：请求序列号，回调时原样返回
+
+两个接口均返回 Map：
+
+- `code` (`int`)：`0` 表示成功，其它值为原生 SDK 错误码
+- `liveActivityId` (`String`)：原生回调返回的活动或属性类型标识
+- `pushToken` (`Uint8List?`)：原生回调返回的 Token；解绑时可能为 `null`
+- `seq` (`int`)：调用时传入的请求序列号
+
+插件只负责向 JPush 上报或解绑 Token，不负责创建 Live Activity、枚举活动或监听 ActivityKit Token 更新。调用 `turnOffPush` 前应先解绑两类 Token；调用 `turnOnPush` 并收到登录成功通知后，应由业务重新获取并上报当前 Token。
 
 #### setAlias
 

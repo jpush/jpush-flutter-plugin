@@ -493,6 +493,58 @@ class JPush_A_I extends JPushFlutterInterface {
     _channel.invokeMethod('turnOnPush');
   }
 
+  @override
+  Future<Map<dynamic, dynamic>> registerLiveActivityPushToken({
+    required String liveActivityId,
+    Uint8List? pushToken,
+    required int seq,
+  }) async {
+    if (!_isIOS) {
+      return super.registerLiveActivityPushToken(
+        liveActivityId: liveActivityId,
+        pushToken: pushToken,
+        seq: seq,
+      );
+    }
+    print(flutter_log + "registerLiveActivityPushToken:");
+
+    final Map<dynamic, dynamic> result = await _channel.invokeMethod(
+      'registerLiveActivityPushToken',
+      <String, dynamic>{
+        'liveActivityId': liveActivityId,
+        'pushToken': pushToken,
+        'seq': seq,
+      },
+    );
+    return result;
+  }
+
+  @override
+  Future<Map<dynamic, dynamic>> registerLiveActivityPushToStartToken({
+    required String activityAttributes,
+    Uint8List? pushToStartToken,
+    required int seq,
+  }) async {
+    if (!_isIOS) {
+      return super.registerLiveActivityPushToStartToken(
+        activityAttributes: activityAttributes,
+        pushToStartToken: pushToStartToken,
+        seq: seq,
+      );
+    }
+    print(flutter_log + "registerLiveActivityPushToStartToken:");
+
+    final Map<dynamic, dynamic> result = await _channel.invokeMethod(
+      'registerLiveActivityPushToStartToken',
+      <String, dynamic>{
+        'activityAttributes': activityAttributes,
+        'pushToStartToken': pushToStartToken,
+        'seq': seq,
+      },
+    );
+    return result;
+  }
+
   ///
   /// 检查推送是否已停止。
   /// Android Only

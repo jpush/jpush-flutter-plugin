@@ -298,6 +298,32 @@ abstract class JPushFlutterInterface {
     print(flutter_log + "turnOnPush:has not been implemented.");
   }
 
+  /// iOS Only
+  /// 注册或更新指定 Live Activity 的 PushToken，传 null 表示解绑。
+  /// 返回值包含 code、liveActivityId、pushToken 和 seq。
+  Future<Map<dynamic, dynamic>> registerLiveActivityPushToken({
+    required String liveActivityId,
+    Uint8List? pushToken,
+    required int seq,
+  }) async {
+    print(flutter_log +
+        "registerLiveActivityPushToken:has not been implemented.");
+    return {};
+  }
+
+  /// iOS Only
+  /// 注册或更新 ActivityAttributes 类型对应的 Push-to-Start Token，传 null 表示解绑。
+  /// 返回值包含 code、liveActivityId、pushToken 和 seq。
+  Future<Map<dynamic, dynamic>> registerLiveActivityPushToStartToken({
+    required String activityAttributes,
+    Uint8List? pushToStartToken,
+    required int seq,
+  }) async {
+    print(flutter_log +
+        "registerLiveActivityPushToStartToken:has not been implemented.");
+    return {};
+  }
+
   ///
   /// 检查推送是否已停止。
   /// Android Only

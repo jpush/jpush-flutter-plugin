@@ -2,6 +2,7 @@
 
 - iOS JPush SDK 升级至 6.2.2，JCore SDK 最低版本升级至 5.5.1。
 - iOS 支持 `turnOffPush` / `turnOnPush`，用于反注册和恢复推送服务。
+- iOS 支持 Live Activity PushToken 与 Push-to-Start Token 的注册、更新和解绑。
 
 ## 3.5.3 (2026-08-20)
 
