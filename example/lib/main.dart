@@ -1,8 +1,8 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'dart:async';
-
 import 'package:flutter/services.dart';
 import 'package:jpush_flutter/jpush_flutter.dart';
 import 'package:jpush_flutter/jpush_interface.dart';
@@ -141,8 +141,9 @@ class _MyAppState extends State<MyApp> {
         appBar: new AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: new Center(
-            child: new Column(children: [
+        body: new SingleChildScrollView(
+            child: new Center(
+                child: new Column(children: [
           Container(
             margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
             color: Colors.brown,
@@ -387,6 +388,14 @@ class _MyAppState extends State<MyApp> {
                   }),
             ],
           ),
+          LiveActivityTestPanel(
+            jpush: jpush,
+            onResult: (message) {
+              setState(() {
+                debugLable = message;
+              });
+            },
+          ),
           new Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -479,7 +488,270 @@ class _MyAppState extends State<MyApp> {
                   }),
             ],
           ),
-        ])),
+        ]))),
+      ),
+    );
+  }
+}
+
+/// iOS Live Activity Token 注册与解绑测试面板。
+class LiveActivityTestPanel extends StatefulWidget {
+  final JPushFlutterInterface jpush;
+  final ValueChanged<String> onResult;
+  final bool? isIOS;
+
+  const LiveActivityTestPanel({
+    required this.jpush,
+    required this.onResult,
+    this.isIOS,
+  });
+
+  @override
+  State<LiveActivityTestPanel> createState() => _LiveActivityTestPanelState();
+}
+
+class _LiveActivityTestPanelState extends State<LiveActivityTestPanel> {
+  final TextEditingController _liveActivityIdController =
+      TextEditingController(text: 'jpush_flutter_live_activity_demo');
+  final TextEditingController _activityAttributesController =
+      TextEditingController(text: 'OrderActivityAttributes');
+  final TextEditingController _pushTokenController = TextEditingController();
+  final TextEditingController _pushToStartTokenController =
+      TextEditingController();
+  int _seq = 1000;
+  bool _isSubmitting = false;
+  String _resultText = '等待操作';
+
+  @override
+  void dispose() {
+    _liveActivityIdController.dispose();
+    _activityAttributesController.dispose();
+    _pushTokenController.dispose();
+    _pushToStartTokenController.dispose();
+    super.dispose();
+  }
+
+  Uint8List _parseToken(String input) {
+    var normalized = input.replaceAll(RegExp(r'\s'), '');
+    if (normalized.isEmpty) {
+      throw const FormatException('请先粘贴 ActivityKit Token');
+    }
+
+    final lowerCase = normalized.toLowerCase();
+    final hasHexPrefix =
+        lowerCase.startsWith('hex:') || lowerCase.startsWith('0x');
+    final hasBase64Prefix = lowerCase.startsWith('base64:');
+    if (hasHexPrefix) {
+      normalized = normalized.substring(lowerCase.startsWith('hex:') ? 4 : 2);
+      return _decodeHexToken(normalized);
+    }
+    if (hasBase64Prefix) {
+      normalized = normalized.substring(7);
+      return _decodeBase64Token(normalized);
+    }
+
+    final hexWithoutSeparators = normalized.replaceAll(':', '');
+    if (hexWithoutSeparators.length.isEven &&
+        RegExp(r'^[0-9a-fA-F]+$').hasMatch(hexWithoutSeparators)) {
+      return _decodeHexToken(hexWithoutSeparators);
+    }
+    return _decodeBase64Token(normalized);
+  }
+
+  Uint8List _decodeHexToken(String input) {
+    final normalized = input.replaceAll(':', '');
+    if (normalized.isEmpty ||
+        normalized.length.isOdd ||
+        !RegExp(r'^[0-9a-fA-F]+$').hasMatch(normalized)) {
+      throw const FormatException('hex Token 必须是偶数位十六进制字符串');
+    }
+    return Uint8List.fromList(<int>[
+      for (var index = 0; index < normalized.length; index += 2)
+        int.parse(normalized.substring(index, index + 2), radix: 16),
+    ]);
+  }
+
+  Uint8List _decodeBase64Token(String input) {
+    try {
+      final token = base64.decode(base64.normalize(input));
+      if (token.isEmpty) {
+        throw const FormatException('Base64 Token 不能为空');
+      }
+      return token;
+    } on FormatException {
+      throw const FormatException('Token 必须是有效的 hex 或 Base64 字符串');
+    }
+  }
+
+  String _formatResult(String action, Map<dynamic, dynamic> result) {
+    final token = result['pushToken'];
+    final tokenLength = token is Uint8List ? token.length : 0;
+    return '$action: code=${result['code']}, '
+        'liveActivityId=${result['liveActivityId']}, '
+        'seq=${result['seq']}, tokenLength=$tokenLength';
+  }
+
+  void _report(String message) {
+    if (mounted) {
+      setState(() {
+        _resultText = message;
+      });
+      widget.onResult(message);
+    }
+  }
+
+  Future<void> _registerPushToken({required bool unbind}) async {
+    if (_isSubmitting) return;
+    setState(() {
+      _isSubmitting = true;
+      _resultText = unbind ? '正在解绑 PushToken…' : '正在注册 PushToken…';
+    });
+    try {
+      final liveActivityId = _liveActivityIdController.text.trim();
+      if (liveActivityId.isEmpty || utf8.encode(liveActivityId).length > 64) {
+        throw const FormatException('Live Activity ID 必须为 1～64 字节');
+      }
+      final result = await widget.jpush.registerLiveActivityPushToken(
+        liveActivityId: liveActivityId,
+        pushToken: unbind ? null : _parseToken(_pushTokenController.text),
+        seq: _seq++,
+      );
+      _report(_formatResult(
+        unbind ? '解绑 Live Activity PushToken' : '注册 Live Activity PushToken',
+        result,
+      ));
+    } catch (error) {
+      _report('Live Activity PushToken 测试失败: $error');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _registerPushToStartToken({required bool unbind}) async {
+    if (_isSubmitting) return;
+    setState(() {
+      _isSubmitting = true;
+      _resultText =
+          unbind ? '正在解绑 Push-to-Start Token…' : '正在注册 Push-to-Start Token…';
+    });
+    try {
+      final activityAttributes = _activityAttributesController.text.trim();
+      if (activityAttributes.isEmpty) {
+        throw const FormatException('ActivityAttributes 标识不能为空');
+      }
+      final result = await widget.jpush.registerLiveActivityPushToStartToken(
+        activityAttributes: activityAttributes,
+        pushToStartToken:
+            unbind ? null : _parseToken(_pushToStartTokenController.text),
+        seq: _seq++,
+      );
+      _report(_formatResult(
+        unbind
+            ? '解绑 Live Activity Push-to-Start Token'
+            : '注册 Live Activity Push-to-Start Token',
+        result,
+      ));
+    } catch (error) {
+      _report('Live Activity Push-to-Start Token 测试失败: $error');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!(widget.isIOS ?? Platform.isIOS)) {
+      return const SizedBox.shrink();
+    }
+    return Container(
+      width: 350,
+      margin: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          const Text(
+            'iOS Live Activity Token 测试',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const Text('支持 Base64 或 hex Token；解绑无需填写 Token。'),
+          if (_isSubmitting) const LinearProgressIndicator(),
+          Text(
+            _resultText,
+            style: const TextStyle(color: Colors.blueGrey),
+          ),
+          TextField(
+            controller: _liveActivityIdController,
+            decoration: const InputDecoration(labelText: 'Live Activity ID'),
+          ),
+          TextField(
+            key: const ValueKey<String>('liveActivityPushTokenInput'),
+            controller: _pushTokenController,
+            autocorrect: false,
+            decoration:
+                const InputDecoration(labelText: 'PushToken（Base64 / hex）'),
+          ),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 8,
+            children: <Widget>[
+              CustomButton(
+                title: '注册 PushToken',
+                onPressed: _isSubmitting
+                    ? null
+                    : () => _registerPushToken(unbind: false),
+              ),
+              CustomButton(
+                title: '解绑 PushToken',
+                onPressed: _isSubmitting
+                    ? null
+                    : () => _registerPushToken(unbind: true),
+              ),
+            ],
+          ),
+          TextField(
+            controller: _activityAttributesController,
+            decoration:
+                const InputDecoration(labelText: 'ActivityAttributes 标识'),
+          ),
+          TextField(
+            key: const ValueKey<String>('liveActivityPushToStartTokenInput'),
+            controller: _pushToStartTokenController,
+            autocorrect: false,
+            decoration: const InputDecoration(
+                labelText: 'Push-to-Start Token（Base64 / hex）'),
+          ),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 8,
+            children: <Widget>[
+              CustomButton(
+                title: '注册 Push-to-Start',
+                onPressed: _isSubmitting
+                    ? null
+                    : () => _registerPushToStartToken(unbind: false),
+              ),
+              CustomButton(
+                title: '解绑 Push-to-Start',
+                onPressed: _isSubmitting
+                    ? null
+                    : () => _registerPushToStartToken(unbind: true),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

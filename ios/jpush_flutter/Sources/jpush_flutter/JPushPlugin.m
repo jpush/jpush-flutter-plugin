@@ -36,6 +36,31 @@
 
 static NSMutableArray<FlutterResult>* getRidResults;
 
+static NSData *JPushLiveActivityTokenData(id value) {
+    if ([value isKindOfClass:[FlutterStandardTypedData class]]) {
+        return [(FlutterStandardTypedData *)value data];
+    }
+    if ([value isKindOfClass:[NSData class]]) {
+        return value;
+    }
+    return nil;
+}
+
+static NSDictionary *JPushLiveActivityTokenResult(NSInteger code,
+                                                   NSString *liveActivityId,
+                                                   NSData *pushToken,
+                                                   NSInteger seq) {
+    id token = pushToken
+        ? [FlutterStandardTypedData typedDataWithBytes:pushToken]
+        : [NSNull null];
+    return @{
+        @"code": @(code),
+        @"liveActivityId": liveActivityId ?: @"",
+        @"pushToken": token,
+        @"seq": @(seq)
+    };
+}
+
 @implementation JPushPlugin {
     NSDictionary *_launchNotification;
     NSDictionary *_completeLaunchNotification;
@@ -163,6 +188,10 @@ static NSMutableArray<FlutterResult>* getRidResults;
         [self turnOffPush:call result:result];
     } else if([@"turnOnPush" isEqualToString:call.method]) {
         [self turnOnPush:call result:result];
+    } else if([@"registerLiveActivityPushToken" isEqualToString:call.method]) {
+        [self registerLiveActivityPushToken:call result:result];
+    } else if([@"registerLiveActivityPushToStartToken" isEqualToString:call.method]) {
+        [self registerLiveActivityPushToStartToken:call result:result];
     } else if([@"clearAllNotifications" isEqualToString:call.method]) {
         [self clearAllNotifications:call result:result];
     } else if ([@"clearNotification" isEqualToString:call.method]) {
@@ -284,6 +313,56 @@ static NSMutableArray<FlutterResult>* getRidResults;
     JPLog(@"turnOnPush:");
     [JPUSHService turnOnPush];
     result(@(YES));
+}
+
+- (void)registerLiveActivityPushToken:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSDictionary *arguments = call.arguments;
+    NSString *liveActivityId = arguments[@"liveActivityId"];
+    id tokenArgument = arguments[@"pushToken"];
+    NSNumber *seq = arguments[@"seq"];
+    if (![liveActivityId isKindOfClass:[NSString class]] ||
+        ![seq isKindOfClass:[NSNumber class]] ||
+        (tokenArgument != nil && tokenArgument != [NSNull null] &&
+         ![tokenArgument isKindOfClass:[FlutterStandardTypedData class]] &&
+         ![tokenArgument isKindOfClass:[NSData class]])) {
+        result([FlutterError errorWithCode:@"invalid_arguments"
+                                   message:@"Invalid Live Activity PushToken arguments"
+                                   details:nil]);
+        return;
+    }
+
+    JPLog(@"registerLiveActivityPushToken");
+    [JPUSHService registerLiveActivity:liveActivityId
+                             pushToken:JPushLiveActivityTokenData(tokenArgument)
+                            completion:^(NSInteger code, NSString *activityId, NSData *token, NSInteger callbackSeq) {
+        result(JPushLiveActivityTokenResult(code, activityId, token, callbackSeq));
+    }
+                                   seq:[seq integerValue]];
+}
+
+- (void)registerLiveActivityPushToStartToken:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSDictionary *arguments = call.arguments;
+    NSString *activityAttributes = arguments[@"activityAttributes"];
+    id tokenArgument = arguments[@"pushToStartToken"];
+    NSNumber *seq = arguments[@"seq"];
+    if (![activityAttributes isKindOfClass:[NSString class]] ||
+        ![seq isKindOfClass:[NSNumber class]] ||
+        (tokenArgument != nil && tokenArgument != [NSNull null] &&
+         ![tokenArgument isKindOfClass:[FlutterStandardTypedData class]] &&
+         ![tokenArgument isKindOfClass:[NSData class]])) {
+        result([FlutterError errorWithCode:@"invalid_arguments"
+                                   message:@"Invalid Live Activity Push-to-Start Token arguments"
+                                   details:nil]);
+        return;
+    }
+
+    JPLog(@"registerLiveActivityPushToStartToken");
+    [JPUSHService registerLiveActivity:activityAttributes
+                      pushToStartToken:JPushLiveActivityTokenData(tokenArgument)
+                            completion:^(NSInteger code, NSString *activityId, NSData *token, NSInteger callbackSeq) {
+        result(JPushLiveActivityTokenResult(code, activityId, token, callbackSeq));
+    }
+                                   seq:[seq integerValue]];
 }
 
 - (void)setup:(FlutterMethodCall*)call result:(FlutterResult)result {
