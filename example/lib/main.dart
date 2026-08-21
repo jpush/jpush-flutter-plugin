@@ -367,6 +367,31 @@ class _MyAppState extends State<MyApp> {
             children: <Widget>[
               new Text(" "),
               new CustomButton(
+                  title: "turnOffPush",
+                  onPressed: () {
+                    jpush.turnOffPush().then((result) {
+                      setState(() {
+                        debugLable = "turnOffPush: ${result['code']}";
+                      });
+                    }).catchError((error) {
+                      setState(() {
+                        debugLable = "turnOffPush error: $error";
+                      });
+                    });
+                  }),
+              new Text(" "),
+              new CustomButton(
+                  title: "turnOnPush",
+                  onPressed: () {
+                    jpush.turnOnPush();
+                  }),
+            ],
+          ),
+          new Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              new Text(" "),
+              new CustomButton(
                   title: "getPushStatus",
                   onPressed: () {
                     jpush.getPushStatus().then((result) {
