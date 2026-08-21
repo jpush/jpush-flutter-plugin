@@ -2,6 +2,8 @@
 *.class
 .gradle
 /local.properties
+/key.properties
+/release.keystore
 /.idea/workspace.xml
 /.idea/libraries
 .DS_Store

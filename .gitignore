@@ -140,8 +140,10 @@ freeline_project_description.json
 fastlane/screenshots
 fastlane/readme.md
 pubspec.lock
+example/.flutter-plugins
 example/.flutter-plugins-dependencies
 example/pubspec.lock
+example/rm.txt
 .dart_tool/
 # Claude update-sdk skill temp files
 .claude/skills/update-sdk/scripts/.sdk_download_result.json
