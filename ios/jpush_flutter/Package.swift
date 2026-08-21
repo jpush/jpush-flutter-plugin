@@ -13,8 +13,8 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "FlutterFramework", path: "../FlutterFramework"),
-        .package(url: "https://github.com/jpush/jcore-sdk.git", from: "5.5.0"),
-        .package(url: "https://github.com/jpush/jpush-sdk.git", exact: "6.2.0")
+        .package(url: "https://github.com/jpush/jcore-sdk.git", from: "5.5.1"),
+        .package(url: "https://github.com/jpush/jpush-sdk.git", exact: "6.2.2")
     ],
     targets: [
         .target(

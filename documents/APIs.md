@@ -417,9 +417,10 @@ Map<dynamic, dynamic> result = await jpush.getPushStatus();
 
 停止推送服务（反注册）。
 
-**HarmonyOS Only**
+**iOS / HarmonyOS**
 
-鸿蒙自插件 3.5.3（@jg/push 1.4.2）起支持。
+- iOS 自插件 3.5.4（JPush 6.2.2、JCore 5.5.1）起支持。
+- HarmonyOS 自插件 3.5.3（@jg/push 1.4.2）起支持。
 
 ```dart
 JPushFlutterInterface jpush = JPush.newJPush();
@@ -432,18 +433,32 @@ if (result['code'] == 0) {
 ##### 说明
 
 - 与 [stopPush](#stoppush)（服务端推送开关）语义不同
-- 执行内容：断开长连接、停止所有客户端信息上报 → 删除系统 Push Token（旧 Token 在华为侧失效，厂商通道无法再推送到本设备）
-- 停止期间新产生的上报数据直接丢弃，恢复推送后不补报
-- 状态持久化：杀进程重启后依然保持停止（不连接、不上报），直到调用 [turnOnPush](#turnonpush) 恢复
-- 自带上下文，不依赖 setup；重复调用幂等
-- 与 turnOnPush 互斥调度：turnOnPush 执行中调用本接口会排队，待其结束后执行并返回真实结果；排队期间又调用了 turnOnPush 时，本次停止被顶掉、返回 code=4（未执行任何停止动作）。快速交替调用两个接口时，最终状态以最后一次调用为准
-- **【重要】** 删除 Token 是 APP 级操作。必须等本接口返回 code=0 后，才能初始化另一套推送 SDK；另一套 SDK 注册时必须重新获取 Token，不能使用缓存。code 非 0 时不可切换
+- 两个平台的停用状态都会跨 App 重启保持，直到调用 [turnOnPush](#turnonpush) 恢复；重复调用为幂等操作
+- iOS 会解绑当前 APNs Token，暂停连接、自动重连和数据上报，成功后注销系统远程通知；已落盘的历史上报缓存不会删除，恢复后仍可能继续上报
+- iOS 停用期间调用标签、别名、用户属性或 Live Activity Token 接口会返回 `6009`，且不会在恢复后自动补发
+- iOS 不会自动解绑 Live Activity Token；应先解绑相关 Token，再调用本接口
+- HarmonyOS 会删除系统 Push Token、断开长连接并停止客户端信息上报；停止期间新产生的上报数据直接丢弃
+- 快速交错调用时，最终状态以最后一次 `turnOnPush` / `turnOffPush` 为准
 
 ##### 返回值说明
 
-返回一个 Map，包含以下字段：
+返回一个 Map，所有平台均包含：
 - `code` (int): 结果码
-- `msg` (String): 结果描述
+
+HarmonyOS 还包含 `msg` (String) 结果描述。
+
+iOS 错误码：
+
+| code | 含义 |
+|------|------|
+| 0 | APNs Token 已解绑，推送服务已停用 |
+| 6002 | Token 解绑或停用流程超时；SDK 保持停用 |
+| 6009 | JCore 版本不兼容或停用过程发生内部错误 |
+| 6010 | 本次停用被较新的恢复调用取代 |
+| 6011 | 服务端拒绝 APNs Token 解绑，SDK 恢复原状态 |
+| 6012 | JPush 尚未完成初始化 |
+
+HarmonyOS 错误码：
 
 | code | 含义 | 说明 |
 |------|------|------|
@@ -457,9 +472,10 @@ if (result['code'] == 0) {
 
 恢复推送服务。
 
-**HarmonyOS Only**
+**iOS / HarmonyOS**
 
-鸿蒙自插件 3.5.3（@jg/push 1.4.2）起支持。
+- iOS 自插件 3.5.4（JPush 6.2.2、JCore 5.5.1）起支持。
+- HarmonyOS 自插件 3.5.3（@jg/push 1.4.2）起支持。
 
 ```dart
 JPushFlutterInterface jpush = JPush.newJPush();
@@ -468,11 +484,11 @@ jpush.turnOnPush();
 
 ##### 说明
 
-- 恢复被 [turnOffPush](#turnoffpush) 停止的推送服务：重新获取 Token、重新建立长连接
-- 发起即返，不带结果通道；注册/登录结果通过正常回调观察（`addEventHandler` 的 `onConnected` 等），与冷启动一致
-- 注册身份未清除，恢复后 RegistrationID 保持不变
-- 自带上下文，不依赖 setup
-- 与 turnOffPush 互斥调度：停止流程进行中调用本接口会排队，等它完整结束后再执行恢复；排队期间又调用了 turnOffPush 时，本次恢复作废（不恢复连接）。快速交替调用两个接口时，最终状态以最后一次调用为准；短时间重复调用本接口只执行一次
+- 发起即返，不带结果通道；注册/登录结果通过正常回调观察（`addEventHandler` 的 `onConnected` 等）
+- iOS 会恢复网络能力并重新向 APNs 注册，后续 Token 通过既有注册链路自动绑定；已经停用的 SDK 冷启动后也必须显式调用本接口
+- iOS 不会自动枚举 ActivityKit 活动或恢复 Live Activity Token，业务应在登录成功后主动重新获取并上报
+- HarmonyOS 会重新获取 Token、建立长连接，RegistrationID 保持不变
+- 快速交错调用时，最终状态以最后一次 `turnOnPush` / `turnOffPush` 为准
 
 #### setAlias
 

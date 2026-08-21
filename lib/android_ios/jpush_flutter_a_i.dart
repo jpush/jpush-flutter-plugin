@@ -14,9 +14,12 @@ class JPush_A_I extends JPushFlutterInterface {
   factory JPush_A_I() => _instance;
 
   final MethodChannel _channel;
+  final bool _isIOS;
 
   @visibleForTesting
-  JPush_A_I.private(MethodChannel channel) : _channel = channel;
+  JPush_A_I.private(MethodChannel channel, {bool? isIOS})
+      : _channel = channel,
+        _isIOS = isIOS ?? Platform.isIOS;
 
   static final JPush_A_I _instance =
       new JPush_A_I.private(const MethodChannel('jpush'));
@@ -465,6 +468,29 @@ class JPush_A_I extends JPushFlutterInterface {
     print(flutter_log + "resumePush:");
 
     await _channel.invokeMethod('resumePush');
+  }
+
+  @override
+  Future<Map<dynamic, dynamic>> turnOffPush() async {
+    if (!_isIOS) {
+      return super.turnOffPush();
+    }
+    print(flutter_log + "turnOffPush:");
+
+    final Map<dynamic, dynamic> result =
+        await _channel.invokeMethod('turnOffPush');
+    return result;
+  }
+
+  @override
+  void turnOnPush() {
+    if (!_isIOS) {
+      super.turnOnPush();
+      return;
+    }
+    print(flutter_log + "turnOnPush:");
+
+    _channel.invokeMethod('turnOnPush');
   }
 
   ///

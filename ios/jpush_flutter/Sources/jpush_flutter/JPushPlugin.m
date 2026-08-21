@@ -159,6 +159,10 @@ static NSMutableArray<FlutterResult>* getRidResults;
     } else if([@"resumePush" isEqualToString:call.method]) {
         [self resumePush:call result:result];
         //[self applyPushAuthority:call result:result];
+    } else if([@"turnOffPush" isEqualToString:call.method]) {
+        [self turnOffPush:call result:result];
+    } else if([@"turnOnPush" isEqualToString:call.method]) {
+        [self turnOnPush:call result:result];
     } else if([@"clearAllNotifications" isEqualToString:call.method]) {
         [self clearAllNotifications:call result:result];
     } else if ([@"clearNotification" isEqualToString:call.method]) {
@@ -267,6 +271,19 @@ static NSMutableArray<FlutterResult>* getRidResults;
             result(dict);
         });
     }];
+}
+
+- (void)turnOffPush:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"turnOffPush:");
+    [JPUSHService turnOffPush:^(NSInteger iResCode) {
+        result(@{ @"code": @(iResCode) });
+    }];
+}
+
+- (void)turnOnPush:(FlutterMethodCall*)call result:(FlutterResult)result {
+    JPLog(@"turnOnPush:");
+    [JPUSHService turnOnPush];
+    result(@(YES));
 }
 
 - (void)setup:(FlutterMethodCall*)call result:(FlutterResult)result {
