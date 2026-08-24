@@ -16,7 +16,7 @@ dependencies:
       
 // pub 集成
 dependencies:
-  jpush_flutter: 3.5.4
+  jpush_flutter: 3.5.5
 ```
 
 ### 配置
@@ -66,6 +66,16 @@ class MainActivity : FlutterActivity() {
 ##### iOS:
 
 - 在 xcode8 之后需要点开推送选项： TARGETS -> Capabilities -> Push Notification 设为 on 状态
+
+如需使用 no-IDFA 版本，请使用 `jpush_flutter 3.5.5` 或更高版本，并在 Flutter 工程的
+`ios/Podfile` 中显式指定 JCore：
+
+```ruby
+target 'Runner' do
+  pod 'JCore', '5.5.1-noidfa'
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
+```
 
 
 ##### Harmony:
