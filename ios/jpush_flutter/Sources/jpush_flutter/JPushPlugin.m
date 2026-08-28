@@ -925,7 +925,12 @@ static NSDictionary *JPushLiveActivityTokenResult(NSInteger code,
         }
         JPLog(@"iOS10 前台收到本地通知:userInfo：%@",userInfo);
     }
-    if (!self.unShow) completionHandler(notificationTypes);
+//    if (!self.unShow) completionHandler(notificationTypes);
+    if (self.unShow) {
+        completionHandler(UNNotificationPresentationOptionNone);
+    }else {
+        completionHandler(UNNotificationPresentationOptionBadge|UNNotificationPresentationOptionSound|UNNotificationPresentationOptionAlert); // 需要执行这个方法，选择是否提醒用户，有Badge、Sound、Alert三种类型可以设置
+    }
 }
 
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler  API_AVAILABLE(ios(10.0)){

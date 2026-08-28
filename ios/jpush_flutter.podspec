@@ -16,7 +16,7 @@ A new flutter plugin project.
   s.public_header_files = 'jpush_flutter/Sources/jpush_flutter/include/**/*.h'
   s.dependency 'Flutter'
   s.dependency 'JCore','> 5.5.0'
-  s.dependency 'JPush','6.2.3'
+  s.dependency 'JPush','6.2.4'
 
   s.ios.deployment_target = '8.0'
   s.static_framework = true

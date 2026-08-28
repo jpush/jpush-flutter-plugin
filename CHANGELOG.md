@@ -1,3 +1,8 @@
+## 3.5.6 (2026-08-28)
+
+- iOS JPush SDK 升级至 6.2.4，CocoaPods 与 Swift Package Manager 依赖保持一致。
+- 修复 iOS 前台通知在 `unShow` 开启时未调用系统 completion handler 的问题，并明确前台通知展示选项。
+
 ## 3.5.5 (2026-08-24)
 
 - iOS JPush SDK 升级至 6.2.3，JCore SDK 依赖调整为 `> 5.5.0`，支持宿主工程显式选择 5.5.1-noidfa。
