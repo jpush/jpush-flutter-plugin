@@ -216,4 +216,47 @@ void main() {
     expect(find.textContaining('code=0'), findsOneWidget);
     expect(find.textContaining('tokenLength=4'), findsOneWidget);
   });
+
+  test('iOS onConnected 的 int 结果归一化为 bool', () async {
+    final jpush = JPush_A_I.private(channel, isIOS: true);
+    final results = <dynamic>[];
+    jpush.addEventHandler(onConnected: (message) async {
+      results.add(message['result']);
+    });
+
+    Future<void> emit(dynamic result) {
+      return messenger.handlePlatformMessage(
+        channel.name,
+        channel.codec.encodeMethodCall(
+          MethodCall('onConnected', <String, dynamic>{'result': result}),
+        ),
+        (_) {},
+      );
+    }
+
+    await emit(0);
+    await emit(1);
+
+    expect(results, <dynamic>[false, true]);
+    channel.setMethodCallHandler(null);
+  });
+
+  test('Android onConnected 的 bool 结果保持不变', () async {
+    final jpush = JPush_A_I.private(channel, isIOS: false);
+    final results = <dynamic>[];
+    jpush.addEventHandler(onConnected: (message) async {
+      results.add(message['result']);
+    });
+
+    await messenger.handlePlatformMessage(
+      channel.name,
+      channel.codec.encodeMethodCall(
+        const MethodCall('onConnected', <String, dynamic>{'result': true}),
+      ),
+      (_) {},
+    );
+
+    expect(results, <dynamic>[true]);
+    channel.setMethodCallHandler(null);
+  });
 }

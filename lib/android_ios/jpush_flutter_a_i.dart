@@ -245,7 +245,8 @@ class JPush_A_I extends JPushFlutterInterface {
       case "onNotifyMessageUnShow":
         return _onNotifyMessageUnShow!(call.arguments.cast<String, dynamic>());
       case "onConnected":
-        return _onConnected!(call.arguments.cast<String, dynamic>());
+        return _onConnected!(
+            _normalizeConnectedArguments(call.arguments.cast<String, dynamic>()));
       case "onInAppMessageClick":
         return _onInAppMessageClick!(call.arguments.cast<String, dynamic>());
       case "onInAppMessageShow":
@@ -261,6 +262,20 @@ class JPush_A_I extends JPushFlutterInterface {
       default:
         throw new UnsupportedError("Unrecognized Event");
     }
+  }
+
+  ///
+  /// 归一化 onConnected 的连接状态。
+  /// Android 原生侧传的是 boolean，iOS 原生侧传的是 NSNumber(0/1)，
+  /// 这里统一转成 bool，保证上层 message["result"] 在两端类型一致。
+  ///
+  Map<String, dynamic> _normalizeConnectedArguments(
+      Map<String, dynamic> arguments) {
+    final dynamic result = arguments["result"];
+    if (result is bool || result is! num) {
+      return arguments;
+    }
+    return Map<String, dynamic>.from(arguments)..["result"] = result != 0;
   }
 
   ///
