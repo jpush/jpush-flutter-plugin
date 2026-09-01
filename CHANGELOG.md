@@ -1,3 +1,7 @@
+## 3.5.7 (2026-09-01)
+
+- 修复 iOS 端 `onConnected` 回调返回的 `result` 为 int 而非 bool，导致上层解析连接状态失败的问题。
+
 ## 3.5.6 (2026-08-28)
 
 - iOS JPush SDK 升级至 6.2.4，CocoaPods 与 Swift Package Manager 依赖保持一致。
