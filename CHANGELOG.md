@@ -1,5 +1,6 @@
-## 未发布
+## 3.5.8 (2026-09-15)
 
+- 修复鸿蒙本地通知 extra 参数在 Map 序列化时丢失的问题。
 - Android JPush SDK 升级至 6.2.1。
 - iOS JPush SDK 升级至 6.2.6，同步 CocoaPods 与 Swift Package Manager 依赖。
 - 保持现有 JCore 依赖范围及各平台最低系统要求。
