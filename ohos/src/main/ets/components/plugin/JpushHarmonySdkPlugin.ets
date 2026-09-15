@@ -460,9 +460,18 @@ class JPushInterfaceImp {
     if (undefined !== content && null !== content) {
       ln.content = content
     }
-    let extra: Record<string, Object> = call.argument("extra")
+    let extra: Map<string, string> | Record<string, Object> = call.argument("extra")
     if (undefined !== extra && null !== extra) {
-      ln.extras = JSON.stringify(extra)
+      if (extra instanceof Map) {
+        // 通道将 Dart Map 解码为 Map；逐项编码也能保留 __proto__ 等字符串键。
+        let entries: string[] = []
+        extra.forEach((value: string, key: string) => {
+          entries.push(JSON.stringify(key) + ':' + JSON.stringify(value))
+        })
+        ln.extras = '{' + entries.join(',') + '}'
+      } else {
+        ln.extras = JSON.stringify(extra)
+      }
     }
     let fireTime: number = call.argument("fireTime")
     if (undefined !== fireTime && null !== fireTime) {
@@ -691,4 +700,3 @@ class SendChannelData {
     this.data = data;
   }
 }
-
