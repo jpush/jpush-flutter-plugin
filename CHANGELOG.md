@@ -1,3 +1,9 @@
+## 未发布
+
+- Android JPush SDK 升级至 6.2.1。
+- iOS JPush SDK 升级至 6.2.6，同步 CocoaPods 与 Swift Package Manager 依赖。
+- 保持现有 JCore 依赖范围及各平台最低系统要求。
+
 ## 3.5.7 (2026-09-01)
 
 - 修复 iOS 端 `onConnected` 回调返回的 `result` 为 int 而非 bool，导致上层解析连接状态失败的问题。
