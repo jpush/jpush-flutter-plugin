@@ -126,8 +126,8 @@ class MethodChannelJpushHarmonySdk extends JpushHarmonySdkPlatform {
     methodChannel.invokeMethod("clearLocalNotifications");
   }
 
-  setBadgeNumber(int badgeNumber) {
-    methodChannel.invokeMethod("setBadgeNumber", badgeNumber);
+  Future<void> setBadgeNumber(int badgeNumber) async {
+    await methodChannel.invokeMethod<void>("setBadgeNumber", badgeNumber);
   }
 
   setHeartbeatTime(int heartbeatTime) {

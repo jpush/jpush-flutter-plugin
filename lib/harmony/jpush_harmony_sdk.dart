@@ -134,6 +134,10 @@ class JpushHarmonySdk extends JPushFlutterInterface {
     _jpushHarmonySdkPlugin.clearLocalNotifications();
   }
 
+  /// 设置鸿蒙应用角标，需先完成初始化。
+  ///
+  /// 等待原生插件回复，不提供业务返回值；正常完成值为 null。
+  /// 通道异常会向调用方抛出，完成不代表角标实际显示成功。
   Future setBadge(int badge) async {
     print(flutter_log + "setBadge");
     await _jpushHarmonySdkPlugin.setBadgeNumber(badge);
