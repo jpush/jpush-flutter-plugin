@@ -102,8 +102,8 @@ class JpushHarmonySdkImp {
     JpushHarmonySdkPlatform.instance.clearLocalNotifications();
   }
 
-  setBadgeNumber(int badgeNumber) {
-    JpushHarmonySdkPlatform.instance.setBadgeNumber(badgeNumber);
+  Future<void> setBadgeNumber(int badgeNumber) {
+    return JpushHarmonySdkPlatform.instance.setBadgeNumber(badgeNumber);
   }
 
   setHBInterval(int hbinterval) {

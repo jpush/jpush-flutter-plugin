@@ -242,13 +242,12 @@ abstract class JPushFlutterInterface {
     return {};
   }
 
+  /// 设置应用角标（Android / iOS / HarmonyOS），需先完成初始化。
   ///
-  /// 设置应用 Badge（小红点）
-  ///
-  /// @param {Int} badge
-  ///
-  /// 注意：如果是 Android 手机，目前仅支持华为手机
-  ///
+  /// Future 在原生插件回复后完成，通道异常会向调用方抛出。
+  /// 不提供业务返回值；正常完成值为 null，不是 Map、角标数或成功标志。
+  /// 实际显示取决于设备、桌面及系统设置；iOS 还会调用 JPush 服务端
+  /// badge 设置接口，但 Future 完成不代表服务端同步成功。
   Future setBadge(int badge) async {
     print(flutter_log + "setBadge:has not been implemented.");
   }

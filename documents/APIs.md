@@ -4,6 +4,7 @@
 - [getRegistrationID](#getregistrationid)
 - [stopPush](#stoppush)
 - [resumePush](#resumepush)
+- [setBadge](#setbadge)
 - [isPushStoppedAndroid](#ispushstoppedandroid)
 - [getPushStatus](#getpushstatus)
 - [turnOffPush](#turnoffpush)
@@ -31,7 +32,6 @@
 [iOS Only]()
 
 - [applyPushAuthority](#applypushauthority)
-- [setBadge](#setbadge)
 - [getLaunchAppNotification](#getlaunchappnotification)
 - [pageEnterTo](#pageEnterTo)
 - [pageLeave](#pageLeave)
@@ -666,6 +666,28 @@ JPushFlutterInterface jpush = JPush.newJPush();
 jpush.clearAllNotifications();
 ```
 
+#### setBadge
+
+设置应用角标，支持 Android、iOS 和 HarmonyOS。请先完成 `setup` 初始化；实际显示效果取决于设备、桌面及系统角标设置。
+
+- iOS：设置本地图标角标，并调用 JPush 服务端 badge 设置接口，供后续推送的 badge 自动增减使用。
+- Android / HarmonyOS：调用对应原生 SDK 的角标接口；不提供上述 iOS 服务端 badge 同步语义。
+- **返回值**：没有业务返回值，不返回 Map、角标数字或成功标志。`Future` 正常完成时值为 `null`，因此 `.then((value) {})` 中的 `value` 为 `null` 不代表设置失败。
+- `Future` 在原生插件回复后完成，通道异常会抛给调用方。完成不能作为角标实际显示成功或服务端同步完成的凭据。
+
+在已初始化的 `jpush` 实例上，在异步函数中调用：
+
+```dart
+try {
+  await jpush.setBadge(66);
+  // 不读取返回值；如需确认显示效果，请查看设备上的应用角标。
+} catch (error) {
+  print('setBadge 调用异常：$error');
+}
+```
+
+**iOS Only**
+
 #### applyPushAuthority
 
 申请推送权限，注意这个方法只会向用户弹出一次推送权限请求（如果用户不同意，之后只能用户到设置页面里面勾选相应权限），需要开发者选择合适的时机调用。
@@ -678,17 +700,6 @@ jpush.applyPushAuthority(new NotificationSettingsIOS(
       sound: true,
       alert: true,
       badge: true));
-```
-
-**iOS Only**
-
-#### setBadge
-
-设置应用 badge 值，该方法还会同步 JPush 服务器的的 badge 值，JPush 服务器的 badge 值用于推送 badge 自动 +1 时会用到。
-
-```dart
-JPushFlutterInterface jpush = JPush.newJPush();
-jpush.setBadge(66).then((map) {});
 ```
 
 #### setBackgroundEnable

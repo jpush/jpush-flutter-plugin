@@ -432,9 +432,9 @@ class _MyAppState extends State<MyApp> {
               new CustomButton(
                   title: "setBadge",
                   onPressed: () {
-                    jpush.setBadge(66).then((map) {
+                    jpush.setBadge(66).then((_) {
                       setState(() {
-                        debugLable = "setBadge success: $map";
+                        debugLable = "setBadge 调用完成（无返回值）";
                       });
                     }).catchError((error) {
                       setState(() {

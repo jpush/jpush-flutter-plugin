@@ -124,7 +124,7 @@ abstract class JpushHarmonySdkPlatform extends PlatformInterface {
     throw UnimplementedError('clearLocalNotifications() has not been implemented.');
   }
 
-  setBadgeNumber(int badgeNumber) {
+  Future<void> setBadgeNumber(int badgeNumber) {
     throw UnimplementedError('setBadgeNumber() has not been implemented.');
   }
 

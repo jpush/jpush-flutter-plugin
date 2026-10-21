@@ -435,13 +435,11 @@ class JPush_A_I extends JPushFlutterInterface {
     return result;
   }
 
+  /// 设置应用角标，需先完成初始化。
   ///
-  /// 设置应用 Badge（小红点）
-  ///
-  /// @param {Int} badge
-  ///
-  /// 注意：如果是 Android 手机，目前仅支持华为手机
-  ///
+  /// 等待原生插件回复，不提供业务返回值；正常完成值为 null。
+  /// 通道异常会向调用方抛出。Android 的显示效果取决于设备和桌面；
+  /// iOS 同时调用 JPush 服务端 badge 设置接口，完成不代表同步成功。
   Future setBadge(int badge) async {
     print(flutter_log + "setBadge:");
 
