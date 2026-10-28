@@ -1,5 +1,7 @@
 ## 3.6.0
 
+- 补齐 Android onVoipMessage 的 voipSupportStatus 原始整数字段，避免记录 VoIP 载荷。
+
 - Android JPush 升级至 6.3.0，并显式依赖 JCore 5.6.0。
 - iOS JPush 升级至 6.3.0，SPM JCore 起始版本更新为 5.6.0；CocoaPods 保留 noidfa 选择能力。
 - HarmonyOS @jg/push 升级至 1.5.0。

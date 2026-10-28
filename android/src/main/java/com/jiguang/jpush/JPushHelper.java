@@ -185,12 +185,16 @@ public class JPushHelper {
     }
 
     public void transmitVoipMessage(VoipDataMessage voipDataMessage) {
-        Log.d(TAG, "transmitVoipMessage " + "voipDataMessage=" + voipDataMessage);
+        invokeMethod("onVoipMessage", voipPayload(voipDataMessage));
+    }
+
+    static Map<String, Object> voipPayload(VoipDataMessage voipDataMessage) {
         Map<String, Object> msg = new HashMap<>();
         msg.put("messageId", voipDataMessage.getMessageId());
         msg.put("extraData", voipDataMessage.getExtraData());
         msg.put("platform", (int) voipDataMessage.getPlatform());
-        invokeMethod("onVoipMessage", msg);
+        msg.put("voipSupportStatus", voipDataMessage.getVoipSupportStatus());
+        return msg;
     }
 
     public void transmitMessageReceive(CustomMessage customMessage) {

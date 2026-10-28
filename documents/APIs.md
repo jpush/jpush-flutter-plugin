@@ -243,6 +243,7 @@ jpush.addEventHandler(
 | messageId | String | VoIP 消息 ID |
 | extraData | String | VoIP 自定义数据 |
 | platform | int | 平台标识 |
+| voipSupportStatus | int | Android SDK 原始 VoIP 支持状态；保留未知整数，不转换为布尔值 |
 
 
 #### setup
