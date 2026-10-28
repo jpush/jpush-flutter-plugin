@@ -71,6 +71,13 @@ class _MyAppState extends State<MyApp> {
           debugLable = "flutter onInAppMessageShow: $message";
         });
       }, onCommandResult: (Map<String, dynamic> message) async {
+        if (message['cmd'] == 2013) {
+          final extras = Map<String, dynamic>.from(message['extras'] ?? {});
+          if (mounted) setState(() {
+            debugLable = 'subscription: ${message['errorCode']}, ${extras['phase']}, ${extras['reason']}';
+          });
+          return; // Dispatch completion is not subscription authorization.
+        }
         print("flutter onCommandResult: $message");
         setState(() {
           debugLable = "flutter onCommandResult: $message";
@@ -104,7 +111,7 @@ class _MyAppState extends State<MyApp> {
     // HarmonyOS Only：设置为 true 后 SDK 不再自动申请通知权限，需自行申请，必须在 setup 之前调用
     // jpush.setUserRequestNotificationPermission(enable: true);
     jpush.setup(
-      appKey: "b266cd5c8544ba09b23733e3", //你自己应用的 AppKey
+      appKey: "YOUR_APP_KEY", //你自己应用的 AppKey
       channel: "theChannel",
       production: false,
       debug: true,
@@ -388,6 +395,9 @@ class _MyAppState extends State<MyApp> {
                   }),
             ],
           ),
+          SdkUpgradePanel(jpush: jpush, onResult: (message) {
+            if (mounted) setState(() { debugLable = message; });
+          }),
           LiveActivityTestPanel(
             jpush: jpush,
             onResult: (message) {
@@ -781,4 +791,43 @@ class CustomButton extends StatelessWidget {
       ),
     );
   }
+}
+
+
+class SdkUpgradePanel extends StatelessWidget {
+  final JPushFlutterInterface jpush;
+  final ValueChanged<String> onResult;
+  const SdkUpgradePanel({super.key, required this.jpush, required this.onResult});
+
+  Future<void> run(String name, Future<dynamic> Function() action) async {
+    try {
+      final result = await action();
+      onResult('$name: dispatched/completed $result (see native events for business state)');
+    } catch (error) {
+      onResult('$name: $error');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Wrap(children: [
+    if (Platform.isAndroid) ...[
+      TextButton(onPressed: () => run('requestSubscribeChannels',
+          () => jpush.requestSubscribeChannels(['your_channel_id'])),
+          child: const Text('Subscribe (await cmd=2013)')),
+      TextButton(onPressed: () => run('turnOnPushWithResult', jpush.turnOnPushWithResult),
+          child: const Text('Restore with result')),
+      TextButton(onPressed: () => run('initCrashHandler', jpush.initCrashHandler),
+          child: const Text('Enable crash collection explicitly')),
+      TextButton(onPressed: () => run('stopCrashHandler', jpush.stopCrashHandler),
+          child: const Text('Stop crash collection')),
+    ],
+    if (Platform.isIOS) ...[
+      TextButton(onPressed: () => run('diagnostic on',
+          () => jpush.setLiveActivityTokenReportEnabled(true)),
+          child: const Text('Enable LA diagnostics')),
+      TextButton(onPressed: () => run('diagnostic local off',
+          () => jpush.setLiveActivityTokenReportEnabled(false)),
+          child: const Text('Local diagnostic off (server switch independent)')),
+    ],
+  ]);
 }

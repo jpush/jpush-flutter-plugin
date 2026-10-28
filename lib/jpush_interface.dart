@@ -279,7 +279,7 @@ abstract class JPushFlutterInterface {
     print(flutter_log + "resumePush:has not been implemented.");
   }
 
-  /// iOS / HarmonyOS
+  /// Android / iOS / HarmonyOS
   /// 停止推送服务（反注册），与 stopPush（服务端推送开关）语义不同。
   /// 状态持久化，杀进程重启后依然保持停止，直到调用 turnOnPush 恢复。
   /// 重复调用幂等，平台具体行为与错误码见 documents/APIs.md。
@@ -290,11 +290,38 @@ abstract class JPushFlutterInterface {
     return {};
   }
 
-  /// iOS / HarmonyOS
+  /// Android / iOS / HarmonyOS
   /// 恢复被 turnOffPush 停止的推送服务。
   /// 发起即返，不带结果通道，注册/登录结果通过既有回调观察。
   void turnOnPush() {
     print(flutter_log + "turnOnPush:has not been implemented.");
+  }
+
+  /// Android Only. Completion confirms dispatch, not subscription authorization.
+  /// Authorization results arrive through onCommandResult, cmd=2013.
+  Future<void> requestSubscribeChannels(List<String> channelIds) async {
+    throw UnsupportedError('requestSubscribeChannels is supported on Android only.');
+  }
+
+  /// Android Only. Returns the native UPS recovery result (at least code).
+  Future<Map<dynamic, dynamic>> turnOnPushWithResult() async {
+    throw UnsupportedError('turnOnPushWithResult is supported on Android only.');
+  }
+
+  /// Android Only. Explicitly enables crash collection; never called by setup.
+  Future<void> initCrashHandler() async {
+    throw UnsupportedError('initCrashHandler is supported on Android only.');
+  }
+
+  /// Android Only. Stops crash collection through the native SDK.
+  Future<void> stopCrashHandler() async {
+    throw UnsupportedError('stopCrashHandler is supported on Android only.');
+  }
+
+  /// iOS Only. Controls diagnostic events, not Live Activity Token business flow.
+  /// Server configuration is independent: either switch can enable reporting.
+  Future<void> setLiveActivityTokenReportEnabled(bool enabled) async {
+    throw UnsupportedError('setLiveActivityTokenReportEnabled is supported on iOS only.');
   }
 
   /// iOS Only

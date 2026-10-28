@@ -419,8 +419,9 @@ Map<dynamic, dynamic> result = await jpush.getPushStatus();
 
 停止推送服务（反注册）。
 
-**iOS / HarmonyOS**
+**Android / iOS / HarmonyOS**
 
+- Android 自插件 3.6.0（JPush 6.3.0、JCore 5.6.0）起支持。
 - iOS 自插件 3.5.4（JPush 6.2.2、JCore 5.5.1）起支持。
 - HarmonyOS 自插件 3.5.3（@jg/push 1.4.2）起支持。
 
@@ -435,7 +436,7 @@ if (result['code'] == 0) {
 ##### 说明
 
 - 与 [stopPush](#stoppush)（服务端推送开关）语义不同
-- 两个平台的停用状态都会跨 App 重启保持，直到调用 [turnOnPush](#turnonpush) 恢复；重复调用为幂等操作
+- 各平台的停用状态都会跨 App 重启保持，直到调用 [turnOnPush](#turnonpush) 恢复；重复调用为幂等操作
 - iOS 会解绑当前 APNs Token，暂停连接、自动重连和数据上报，成功后注销系统远程通知；已落盘的历史上报缓存不会删除，恢复后仍可能继续上报
 - iOS 停用期间调用标签、别名、用户属性或 Live Activity Token 接口会返回 `6009`，且不会在恢复后自动补发
 - iOS 不会自动解绑 Live Activity Token；应先解绑相关 Token，再调用本接口
@@ -474,8 +475,9 @@ HarmonyOS 错误码：
 
 恢复推送服务。
 
-**iOS / HarmonyOS**
+**Android / iOS / HarmonyOS**
 
+- Android 自插件 3.6.0（JPush 6.3.0、JCore 5.6.0）起支持。
 - iOS 自插件 3.5.4（JPush 6.2.2、JCore 5.5.1）起支持。
 - HarmonyOS 自插件 3.5.3（@jg/push 1.4.2）起支持。
 
@@ -740,3 +742,70 @@ jpush.pageEnterTo("页面名");
 JPushFlutterInterface jpush = JPush.newJPush();
 jpush.pageLeave("页面名");
 ```
+
+
+### 3.6.0 新增接口与迁移
+
+| API | Android | iOS | HarmonyOS |
+| --- | --- | --- | --- |
+| requestSubscribeChannels | 支持 | UnsupportedError | UnsupportedError |
+| turnOffPush / turnOnPush | 补齐支持 | 保持支持 | 保持支持 |
+| turnOnPushWithResult | 支持 | UnsupportedError | UnsupportedError |
+| initCrashHandler / stopCrashHandler | 支持 | UnsupportedError | UnsupportedError |
+| setLiveActivityTokenReportEnabled | UnsupportedError | 支持 | UnsupportedError |
+
+#### requestSubscribeChannels
+
+```dart
+Future<void> requestSubscribeChannels(List<String> channelIds)
+```
+
+Android 6.3.0 新增的统一小米/vivo订阅入口。先完成业务隐私授权、SDK 初始化与对应厂商注册，从当前前台页面调用；频道必须在厂商平台配置。输入为1至3个唯一、非空字符串，不截断、不静默去重；Dart非法值抛ArgumentError，直接channel非法参数返回INVALID_ARGUMENT。没有有效前台Activity返回PlatformException(NO_ACTIVITY)，已卸载的引擎返回PLUGIN_DETACHED。
+
+```dart
+jpush.addEventHandler(onCommandResult: (event) async {
+  if (event['cmd'] != 2013) return; // 旧接口仍使用2012，不能混用错误码
+  final extras = Map<String, dynamic>.from(event['extras'] ?? {});
+  final channels = jsonDecode(extras['channels'] as String? ?? '[]');
+  // code: 0全部成功，1部分成功，2失败，3不支持。
+  // 结合phase/reason及频道明细判断；拉起弹窗并不等于授权成功。
+  debugPrint('subscription result: ${event['errorCode']}, ${extras['phase']}');
+});
+await jpush.requestSubscribeChannels(['your_channel_id']);
+// 此处仅确认发起完成，授权结果继续等待上面的事件。
+```
+
+以上片段需导入 `dart:convert` 及 Flutter foundation。事件外层沿用 `{cmd,errorCode,msg,extras}`。cmd=2013的extras保持原生数据：platform/phase/reason为来源和阶段，channels保持JSON字符串，requestedChannelIds为List<String>，vendorExtra若存在为嵌套Map；vendorCode/vendorMessage/operateResult等可选字段只有原生实际提供时才存在。原生未知对象不以toString伪装数据，缺失字段不补成成功或失败。仅新cmd=2013保型，旧cmd=2012不改变格式。
+
+vivo最终事件按原生最近成功请求记录处理，不保证每次调用与最终事件一一对应。接口不新增requestId，也不返回授权Future；请勿把某次调用Future完成或弹窗展示判定为授权成功。Android设备不支持或缺厂商插件时，原生通过事件业务码3报告，区别于非Android平台的UnsupportedError。
+
+旧 `void requestSubscribeChannel(List<String>)` 仍保留，为小米旧入口，事件cmd=2012及厂商错误码保持；新业务建议迁移到复数方法，不能只修改事件过滤码而保留旧调用。
+
+#### turnOnPushWithResult 与 Android UPS 结果
+
+```dart
+final stopped = await jpush.turnOffPush();
+final restored = await jpush.turnOnPushWithResult(); // Android Only
+```
+
+返回Map至少有code，Android原生提供actionType时同时返回。原生码：0成功、1删除Token失败、2超时、3状态保存失败、4被更新操作覆盖、5参数无效。业务失败保留原生码；通道/参数/卸载错误通过PlatformException区分。每次调用有独立结果，重复原生回调只完成一次；引擎卸载后等待中的调用返回PLUGIN_DETACHED，迟到回调被忽略。
+
+原有 `void turnOnPush()` 保留三端发起式签名，Android新增支持；该方法不提供业务结果，异步通道异常上报Flutter错误机制。需要确认Android恢复结果时用新的Future入口。iOS/鸿蒙无对应原生完成回调，不把onConnected伪装成一一对应结果。
+
+#### initCrashHandler 与 stopCrashHandler
+
+```dart
+await jpush.initCrashHandler(); // Android Only，按业务授权显式开启
+await jpush.stopCrashHandler();
+```
+
+调用JPushInterface公开门面，setup不会隐式开启。Future完成仅表示原生调用正常返回，不代表已产生、上传或收到崩溃报告。与其他崩溃SDK共存及停用状态行为需在宿主验证；不要使用示例人为触发线上崩溃。
+
+#### setLiveActivityTokenReportEnabled
+
+```dart
+await jpush.setLiveActivityTokenReportEnabled(true); // iOS Only
+await jpush.setLiveActivityTokenReportEnabled(false);
+```
+
+只控制Live Activity Token链路诊断埋点，不改变Token绑定、解绑、重试、超时及业务回调。本地开关与服务端开关独立，任一开启即可上报；本地false并不能覆盖服务端true。不会在setup中自动开启，不提高插件既有最低iOS版本。非法原生channel参数返回INVALID_ARGUMENT，正常完成返回null。

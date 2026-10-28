@@ -485,9 +485,6 @@ class JPush_A_I extends JPushFlutterInterface {
 
   @override
   Future<Map<dynamic, dynamic>> turnOffPush() async {
-    if (!_isIOS) {
-      return super.turnOffPush();
-    }
     print(flutter_log + "turnOffPush:");
 
     final Map<dynamic, dynamic> result =
@@ -497,13 +494,62 @@ class JPush_A_I extends JPushFlutterInterface {
 
   @override
   void turnOnPush() {
-    if (!_isIOS) {
-      super.turnOnPush();
-      return;
-    }
-    print(flutter_log + "turnOnPush:");
+    unawaited(_turnOnPushAndReportErrors());
+  }
 
-    _channel.invokeMethod('turnOnPush');
+  Future<void> _turnOnPushAndReportErrors() async {
+    try {
+      if (_isIOS) {
+        await _channel.invokeMethod<dynamic>('turnOnPush');
+      } else {
+        await turnOnPushWithResult();
+      }
+    } catch (error, stack) {
+      FlutterError.reportError(FlutterErrorDetails(
+        exception: error,
+        stack: stack,
+        library: 'jpush_flutter',
+        context: ErrorDescription('while restoring the push service'),
+      ));
+    }
+  }
+
+  @override
+  Future<Map<dynamic, dynamic>> turnOnPushWithResult() async {
+    if (_isIOS) return super.turnOnPushWithResult();
+    return (await _channel.invokeMapMethod<dynamic, dynamic>('turnOnPush'))!;
+  }
+
+  @override
+  Future<void> requestSubscribeChannels(List<String> channelIds) async {
+    if (_isIOS) return super.requestSubscribeChannels(channelIds);
+    if (channelIds.isEmpty || channelIds.length > 3 ||
+        channelIds.any((id) => id.trim().isEmpty) ||
+        channelIds.toSet().length != channelIds.length) {
+      throw ArgumentError.value(channelIds, 'channelIds',
+          'Expected 1-3 unique, non-empty channel IDs.');
+    }
+    await _channel.invokeMethod<void>(
+        'requestSubscribeChannels', {'channelIds': List<String>.of(channelIds)});
+  }
+
+  @override
+  Future<void> initCrashHandler() async {
+    if (_isIOS) return super.initCrashHandler();
+    await _channel.invokeMethod<void>('initCrashHandler');
+  }
+
+  @override
+  Future<void> stopCrashHandler() async {
+    if (_isIOS) return super.stopCrashHandler();
+    await _channel.invokeMethod<void>('stopCrashHandler');
+  }
+
+  @override
+  Future<void> setLiveActivityTokenReportEnabled(bool enabled) async {
+    if (!_isIOS) return super.setLiveActivityTokenReportEnabled(enabled);
+    await _channel.invokeMethod<void>(
+        'setLiveActivityTokenReportEnabled', {'enabled': enabled});
   }
 
   @override

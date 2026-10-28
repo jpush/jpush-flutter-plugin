@@ -450,3 +450,7 @@ import JpushHarmonySdkPlugin from 'jpush_flutter';
 ### APIs
 
 [参考](./documents/APIs.md)
+
+### Flutter 插件 3.6.0
+
+原生依赖更新为 `@jg/push 1.5.0`，保持既有权限、异步 RID、停恢复和通知回调契约。通知覆盖及撤回由 SDK 处理，不新增虚构客户端 API。Android 专属的复数订阅、恢复结果、崩溃开关和 iOS 诊断开关在鸿蒙调用时明确返回 UnsupportedError。

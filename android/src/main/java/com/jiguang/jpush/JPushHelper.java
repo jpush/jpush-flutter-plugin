@@ -312,7 +312,9 @@ public class JPushHelper {
         notification.put("cmd", cmdMessage.cmd);
         notification.put("errorCode", cmdMessage.errorCode);
         notification.put("msg", cmdMessage.msg);
-        notification.put("extras", bundleToMap(cmdMessage.extra));
+        notification.put("extras", cmdMessage.cmd == 2013
+                ? SubscriptionResultCodec.fromBundle(cmdMessage.extra)
+                : bundleToMap(cmdMessage.extra));
         invokeMethod("onCommandResult", notification);
     }
 

@@ -184,6 +184,17 @@ static NSDictionary *JPushLiveActivityTokenResult(NSInteger code,
     } else if([@"resumePush" isEqualToString:call.method]) {
         [self resumePush:call result:result];
         //[self applyPushAuthority:call result:result];
+    } else if ([@"setLiveActivityTokenReportEnabled" isEqualToString:call.method]) {
+        id enabled = [call.arguments isKindOfClass:[NSDictionary class]]
+            ? call.arguments[@"enabled"] : nil;
+        if (enabled == nil || CFGetTypeID((__bridge CFTypeRef)enabled) != CFBooleanGetTypeID()) {
+            result([FlutterError errorWithCode:@"INVALID_ARGUMENT"
+                                      message:@"enabled must be a boolean"
+                                      details:nil]);
+            return;
+        }
+        [JPUSHService setLiveActivityTokenReportEnabled:[enabled boolValue]];
+        result(nil);
     } else if([@"turnOffPush" isEqualToString:call.method]) {
         [self turnOffPush:call result:result];
     } else if([@"turnOnPush" isEqualToString:call.method]) {

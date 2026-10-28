@@ -16,7 +16,7 @@ dependencies:
       
 // pub 集成
 dependencies:
-  jpush_flutter: 3.5.9
+  jpush_flutter: 3.6.0
 ```
 
 ### 配置
@@ -72,7 +72,7 @@ class MainActivity : FlutterActivity() {
 
 ```ruby
 target 'Runner' do
-  pod 'JCore', '5.5.1-noidfa'
+  pod 'JCore', '5.6.0-noidfa'
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 ```
@@ -96,3 +96,19 @@ final JPushFlutterInterface jpush = JPush.newJPush();
 **注意** : 需要先调用 JPush.setup 来初始化插件，才能保证其他功能正常工作。
 
  [参考](./documents/APIs.md)
+
+
+### 3.6.0 原生版本与新增接口
+
+| 平台 | JPush | JCore | 新增或补齐接口 |
+| --- | --- | --- | --- |
+| Android | 6.3.0 | 显式声明 5.6.0 | requestSubscribeChannels、turnOffPush、turnOnPush、turnOnPushWithResult、initCrashHandler、stopCrashHandler |
+| iOS CocoaPods | 6.3.0 | 保留 >5.5.0；建议宿主明确选择 5.6.0 或 5.6.0-noidfa | setLiveActivityTokenReportEnabled |
+| iOS SPM | exact 6.3.0 | from 5.6.0（标准版） | 同上 |
+| HarmonyOS | @jg/push 1.5.0 | 无独立依赖 | 保持既有接口，通知覆盖/撤回由原生 SDK 处理 |
+
+依赖声明范围不等于宿主最终解析版本，请核对 Gradle、Podfile.lock、Package.resolved 和 OHPM 锁文件。平台专有新增方法在其他平台抛出 UnsupportedError。最低平台与工具约束保持原设置。
+
+Android 新订阅接口必须由前台 Activity 调用且已完成 SDK/厂商注册。Future 完成仅代表发起，授权结果由 `onCommandResult` 的 `cmd=2013` 返回。旧单数接口保留原来的 `cmd=2012` 格式；迁移详见 [API 文档](documents/APIs.md#requestsubscribechannels)。
+
+崩溃采集仅在业务显式调用 `initCrashHandler` 后开启。iOS 诊断开关不影响 Live Activity Token 的绑定或解绑，且本地关闭不覆盖服务端开启状态。

@@ -1,3 +1,14 @@
+## 3.6.0
+
+- Android JPush 升级至 6.3.0，并显式依赖 JCore 5.6.0。
+- iOS JPush 升级至 6.3.0，SPM JCore 起始版本更新为 5.6.0；CocoaPods 保留 noidfa 选择能力。
+- HarmonyOS @jg/push 升级至 1.5.0。
+- Android 新增 requestSubscribeChannels，统一订阅结果通过 onCommandResult 的 cmd=2013 返回，保留嵌套数据类型；旧 requestSubscribeChannel/cmd=2012 保持兼容。
+- Android 补齐 turnOffPush/turnOnPush，并新增 turnOnPushWithResult；原生结果按调用隔离，处理重复回调及引擎卸载。
+- Android 新增显式 initCrashHandler/stopCrashHandler；不会由 setup 自动开启。
+- iOS 新增 setLiveActivityTokenReportEnabled，仅控制诊断埋点，服务端开关独立。
+- 新增接口在不支持的平台明确返回 UnsupportedError，更新示例、平台矩阵与回归测试。
+
 ## 3.5.9 (2026-10-21)
 
 - 修复鸿蒙 `setBadge` 提前完成、通道异常未传递给调用方的问题。

@@ -63,19 +63,17 @@ void main() {
     expect(calls.single.method, 'turnOnPush');
   });
 
-  test('Android 保持未实现兜底且不调用 MethodChannel', () async {
+  test('Android 停止与恢复均调用原生 UPS', () async {
     final calls = <MethodCall>[];
     messenger.setMockMethodCallHandler(channel, (call) async {
       calls.add(call);
-      return null;
+      return <String, dynamic>{'code': 0};
     });
     final jpush = JPush_A_I.private(channel, isIOS: false);
-
-    expect(await jpush.turnOffPush(), isEmpty);
+    expect(await jpush.turnOffPush(), <String, dynamic>{'code': 0});
     jpush.turnOnPush();
     await Future<void>.delayed(Duration.zero);
-
-    expect(calls, isEmpty);
+    expect(calls.map((call) => call.method), ['turnOffPush', 'turnOnPush']);
   });
 
   test('iOS 注册 Live Activity PushToken 并透传回调', () async {
