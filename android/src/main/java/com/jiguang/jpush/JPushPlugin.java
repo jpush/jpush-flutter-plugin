@@ -31,6 +31,8 @@ import cn.jpush.android.data.JPushConfig;
 import cn.jiguang.api.JCoreInterface;
 import cn.jiguang.api.utils.JCollectionAuth;
 import cn.jpush.android.api.JPushInterface;
+import cn.jpush.android.ups.JPushUPSManager;
+import cn.jpush.android.ups.UPSTurnCallBack;
 import cn.jpush.android.api.NotificationMessage;
 import cn.jpush.android.data.JPushCollectControl;
 import cn.jpush.android.data.JPushLocalNotification;
@@ -50,6 +52,11 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     private Context context;
     private Activity mActivity;
     private int sequence;
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final PendingResultRegistry serviceResults = new PendingResultRegistry(action -> {
+        if (Looper.myLooper() == Looper.getMainLooper()) action.run();
+        else mainHandler.post(action);
+    });
     
     // 缓存flutterPluginBinding和channel关系
     private static final ConcurrentHashMap<String, MethodChannel> bindingChannelCache = new ConcurrentHashMap<>();
@@ -75,6 +82,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         channel.setMethodCallHandler(this);
 
         context = flutterPluginBinding.getApplicationContext().getApplicationContext();
+        serviceResults.attach();
         // 通过channel回调给Flutter，携带generateBindingId字符串
         new Handler(Looper.getMainLooper()).post(() -> {
             try {
@@ -119,23 +127,29 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 
     @Override
     public void onDetachedFromActivityForConfigChanges() {
+        mActivity = null;
 
         Log.d(TAG,"JPushPlugin onDetachedFromActivityForConfigChanges: " );
     }
 
     @Override
     public void onReattachedToActivityForConfigChanges(ActivityPluginBinding activityPluginBinding) {
+        onAttachedToActivity(activityPluginBinding);
 
         Log.d(TAG,"JPushPlugin onReattachedToActivityForConfigChanges: " +activityPluginBinding);
     }
 
     @Override
     public void onDetachedFromActivity() {
+        mActivity = null;
         Log.d(TAG,"JPushPlugin onDetachedFromActivity: ");
 
     }
     @Override
     public void onDetachedFromEngine(FlutterPluginBinding binding) {
+        serviceResults.detach();
+        mActivity = null;
+        context = null;
         Log.d(TAG,"JPushPlugin onDetachedFromEngine: " + binding);
         
         // 生成传入binding的标识符
@@ -200,6 +214,12 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         } else if (call.method.equals("deleteAlias")) {
             deleteAlias(call, result);
             ;
+        } else if (call.method.equals("turnOffPush") || call.method.equals("turnOnPush")) {
+            turnPushService(call.method.equals("turnOnPush"), result);
+        } else if (call.method.equals("requestSubscribeChannels")) {
+            requestSubscribeChannels(call, result);
+        } else if (call.method.equals("initCrashHandler") || call.method.equals("stopCrashHandler")) {
+            setCrashHandler(call.method.equals("initCrashHandler"), result);
         } else if (call.method.equals("stopPush")) {
             stopPush(call, result);
         } else if (call.method.equals("resumePush")) {
@@ -266,6 +286,85 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             result.notImplemented();
         }
     }
+    private boolean requireAttached(Result result) {
+        if (context != null) return true;
+        result.error("PLUGIN_DETACHED", "Plugin is detached", null);
+        return false;
+    }
+
+    private void turnPushService(boolean enabled, Result result) {
+        if (!requireAttached(result)) return;
+        final PendingResultRegistry.Pending reply = serviceResults.start(result);
+        UPSTurnCallBack callback = nativeResult -> {
+            if (nativeResult == null) {
+                reply.error("NATIVE_EXCEPTION", "Native push service returned no result");
+                return;
+            }
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", nativeResult.getReturnCode());
+            if (nativeResult.getActionType() != null) {
+                response.put("actionType", nativeResult.getActionType());
+            }
+            reply.success(response);
+        };
+        try {
+            if (enabled) JPushUPSManager.turnOnPush(context, callback);
+            else JPushUPSManager.turnOffPush(context, callback);
+        } catch (RuntimeException error) {
+            reply.error("NATIVE_EXCEPTION", "Native push service invocation failed");
+        }
+    }
+
+    private void setCrashHandler(boolean enabled, Result result) {
+        if (!requireAttached(result)) return;
+        try {
+            if (enabled) JPushInterface.initCrashHandler(context);
+            else JPushInterface.stopCrashHandler(context);
+            result.success(null);
+        } catch (RuntimeException error) {
+            result.error("NATIVE_EXCEPTION", "Native crash handler invocation failed", null);
+        }
+    }
+
+    private void requestSubscribeChannels(MethodCall call, Result result) {
+        if (!requireAttached(result)) return;
+        Object arguments = call.arguments();
+        Object ids = arguments instanceof Map ? ((Map<?, ?>) arguments).get("channelIds") : null;
+        if (!(ids instanceof List)) {
+            result.error("INVALID_ARGUMENT", "channelIds must be a list", null);
+            return;
+        }
+        List<?> input = (List<?>) ids;
+        if (input.isEmpty() || input.size() > 3) {
+            result.error("INVALID_ARGUMENT", "Expected 1-3 unique non-empty channel IDs", null);
+            return;
+        }
+        ArrayList<String> channelIds = new ArrayList<>();
+        for (Object id : input) {
+            if (!(id instanceof String) || ((String) id).trim().isEmpty()
+                    || channelIds.contains(id)) {
+                result.error("INVALID_ARGUMENT", "Expected 1-3 unique non-empty channel IDs", null);
+                return;
+            }
+            channelIds.add((String) id);
+        }
+        Activity activity = mActivity;
+        if (activity == null || activity.isFinishing() || activity.isDestroyed()
+                || !activity.hasWindowFocus()) {
+            result.error("NO_ACTIVITY", "A foreground attached Activity is required", null);
+            return;
+        }
+        try {
+            JPushInterface.requestSubscribeChannels(activity, channelIds);
+            // Authorization completes asynchronously through cmd=2013, not this reply.
+            result.success(null);
+        } catch (IllegalArgumentException error) {
+            result.error("INVALID_ARGUMENT", "Native subscription arguments are invalid", null);
+        } catch (RuntimeException error) {
+            result.error("NATIVE_EXCEPTION", "Native subscription invocation failed", null);
+        }
+    }
+
     public void requestRequiredPermission(MethodCall call, Result result){
         JPushInterface.requestRequiredPermission(mActivity);
 

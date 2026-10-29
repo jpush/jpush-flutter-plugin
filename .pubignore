@@ -23,8 +23,9 @@ build/
 .DS_Store
 Thumbs.db
 
-# 排除测试文件（如果需要）
-# test/
+# 测试仅在源码仓库运行，部分测试依赖已排除的 example/
+test/
+android/src/test/
 
 # 排除文档构建文件
 doc/api/

@@ -45,29 +45,36 @@ export class JPushHelperPushStatus {
   }
 
   /**
-   * getPushStatus 的结果经 onCommandResult 回调（cmd 2006 恢复 / 2007 停止）。
-   * 有挂起查询且 cmd 匹配时消费并返回 true，否则返回 false 由调用方继续透传。
-   * 回包格式与 Android/iOS 保持一致：{code, isStopped}
+   * JPush 1.5.0 的查询结果为 cmd 2008，不消费 2006/2007 操作回调。
+   * 支持的状态组合：0 + "not stop"、1 + "stopped"。
+   * errorCode 在该回包中表示状态；Dart code=0 表示查询成功。
+   * 未知或缺失状态显式报错，不猜测 false，也不以本地缓存代替服务器结果。
    */
   static callBackPushStatus(cmdMessage: JCmdMessage): boolean {
-    if (JPushHelperPushStatus.pushStatusList.isEmpty()) {
+    if (JPushHelperPushStatus.pushStatusList.isEmpty() || cmdMessage.cmd !== 2008) {
       return false;
     }
-    if (cmdMessage.cmd !== JCmdMessage.CMD_PUSH_STOP && cmdMessage.cmd !== JCmdMessage.CMD_PUSH_RESUME) {
-      return false;
-    }
-    let code = 0;
-    if (cmdMessage.errorCode !== undefined && cmdMessage.errorCode !== 0) {
-      code = cmdMessage.errorCode;
-    }
-    let isStopped = cmdMessage.cmd === JCmdMessage.CMD_PUSH_STOP;
+    let running = cmdMessage.errorCode === 0 && cmdMessage.msg === 'not stop';
+    let stopped = cmdMessage.errorCode === 1 && cmdMessage.msg === 'stopped';
     while (!JPushHelperPushStatus.pushStatusList.isEmpty()) {
       let result = JPushHelperPushStatus.pushStatusList.removeByIndex(0);
       if (undefined !== result) {
-        let map = new HashMap<string, Object>();
-        map.set('code', code);
-        map.set('isStopped', isStopped);
-        result.success(map);
+        if (!running && !stopped) {
+          let details = new HashMap<string, Object>();
+          details.set('cmd', 2008);
+          if (cmdMessage.errorCode !== undefined) {
+            details.set('nativeCode', cmdMessage.errorCode);
+          }
+          if (cmdMessage.msg !== undefined) {
+            details.set('nativeMessage', cmdMessage.msg);
+          }
+          result.error('PUSH_STATUS_UNAVAILABLE', 'Unrecognized JPush 1.5.0 push status response.', details);
+        } else {
+          let map = new HashMap<string, Object>();
+          map.set('code', 0);
+          map.set('isStopped', stopped);
+          result.success(map);
+        }
       }
     }
     return true;

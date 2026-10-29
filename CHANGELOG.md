@@ -1,3 +1,19 @@
+## 3.6.0
+
+- 修复 HarmonyOS `getPushStatus` 对 1.5.0 查询回包 cmd=2008 的处理，避免操作回调误完成查询；未知或缺失状态抛出 `PlatformException(PUSH_STATUS_UNAVAILABLE)`，原生码和消息保留在 details。
+- 修正鸿蒙示例 `EntryAbility.onCreate` 的异步返回类型。
+
+- 补齐 Android onVoipMessage 的 voipSupportStatus 原始整数字段，避免记录 VoIP 载荷。
+
+- Android JPush 升级至 6.3.0，并显式依赖 JCore 5.6.0。
+- iOS JPush 升级至 6.3.0，SPM JCore 起始版本更新为 5.6.0；CocoaPods 保留 noidfa 选择能力。
+- HarmonyOS @jg/push 升级至 1.5.0。
+- Android 新增 requestSubscribeChannels，统一订阅结果通过 onCommandResult 的 cmd=2013 返回，保留嵌套数据类型；旧 requestSubscribeChannel/cmd=2012 保持兼容。
+- Android 补齐 turnOffPush/turnOnPush，并新增 turnOnPushWithResult；原生结果按调用隔离，处理重复回调及引擎卸载。
+- Android 新增显式 initCrashHandler/stopCrashHandler；不会由 setup 自动开启。
+- iOS 新增 setLiveActivityTokenReportEnabled，仅控制诊断埋点，服务端开关独立。
+- 新增接口在不支持的平台明确返回 UnsupportedError，更新示例、平台矩阵与回归测试。
+
 ## 3.5.9 (2026-10-21)
 
 - 修复鸿蒙 `setBadge` 提前完成、通道异常未传递给调用方的问题。

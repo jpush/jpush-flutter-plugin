@@ -185,12 +185,16 @@ public class JPushHelper {
     }
 
     public void transmitVoipMessage(VoipDataMessage voipDataMessage) {
-        Log.d(TAG, "transmitVoipMessage " + "voipDataMessage=" + voipDataMessage);
+        invokeMethod("onVoipMessage", voipPayload(voipDataMessage));
+    }
+
+    static Map<String, Object> voipPayload(VoipDataMessage voipDataMessage) {
         Map<String, Object> msg = new HashMap<>();
         msg.put("messageId", voipDataMessage.getMessageId());
         msg.put("extraData", voipDataMessage.getExtraData());
         msg.put("platform", (int) voipDataMessage.getPlatform());
-        invokeMethod("onVoipMessage", msg);
+        msg.put("voipSupportStatus", voipDataMessage.getVoipSupportStatus());
+        return msg;
     }
 
     public void transmitMessageReceive(CustomMessage customMessage) {
@@ -312,7 +316,9 @@ public class JPushHelper {
         notification.put("cmd", cmdMessage.cmd);
         notification.put("errorCode", cmdMessage.errorCode);
         notification.put("msg", cmdMessage.msg);
-        notification.put("extras", bundleToMap(cmdMessage.extra));
+        notification.put("extras", cmdMessage.cmd == 2013
+                ? SubscriptionResultCodec.fromBundle(cmdMessage.extra)
+                : bundleToMap(cmdMessage.extra));
         invokeMethod("onCommandResult", notification);
     }
 
@@ -539,7 +545,8 @@ public class JPushHelper {
                     Log.w(TAG, "skip invoking cached message because method is null, data=" + c.getData());
                     continue;
                 }
-                Log.d(TAG, "method:" + c.getMethod() + ",data:" + c.getData());
+                Log.d(TAG, "onVoipMessage".equals(c.getMethod())
+                        ? "method:onVoipMessage" : "method:" + c.getMethod() + ",data:" + c.getData());
                 channel.invokeMethod(c.getMethod(), c.getData());
             }
             calBackMessageCache.clear();
@@ -550,7 +557,8 @@ public class JPushHelper {
             Log.d(TAG, "skip current invoke because method is null");
             return;
         }
-        Log.d(TAG, "method:" + method + ",msg:" + msg);
+        Log.d(TAG, "onVoipMessage".equals(method)
+                ? "method:onVoipMessage" : "method:" + method + ",msg:" + msg);
         channel.invokeMethod(method, msg);
     }
 
