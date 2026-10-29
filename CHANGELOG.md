@@ -1,5 +1,8 @@
 ## 3.6.0
 
+- 修复 HarmonyOS `getPushStatus` 对 1.5.0 查询回包 cmd=2008 的处理，避免操作回调误完成查询；未知或缺失状态抛出 `PlatformException(PUSH_STATUS_UNAVAILABLE)`，原生码和消息保留在 details。
+- 修正鸿蒙示例 `EntryAbility.onCreate` 的异步返回类型。
+
 - 补齐 Android onVoipMessage 的 voipSupportStatus 原始整数字段，避免记录 VoIP 载荷。
 
 - Android JPush 升级至 6.3.0，并显式依赖 JCore 5.6.0。

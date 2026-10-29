@@ -410,6 +410,8 @@ Map<dynamic, dynamic> result = await jpush.getPushStatus();
 
 鸿蒙自插件 3.4.6（@jg/push 1.4.0）起支持，查询的是后台实际推送开关状态，回包格式与 Android/iOS 一致（code、isStopped）。
 
+HarmonyOS `@jg/push 1.5.0` 的查询回包为 `cmd=2008`：将 `errorCode=0,msg="not stop"` 和 `errorCode=1,msg="stopped"` 分别解析为查询成功的 `code=0,isStopped=false/true`。原生此处的 errorCode 表示状态，不直接当作 Dart 业务错误码。2006/2007 是操作事件，不用于完成查询。未知、矛盾或缺失状态通过 Future 抛出 `PlatformException`（code=`PUSH_STATUS_UNAVAILABLE`），details 中保留可用的 `nativeCode`、`nativeMessage`；不会猜为 false 或用本地缓存代替服务器状态。该状态解码规则适用于 `@jg/push 1.5.0`，Android/iOS 保持原有行为。
+
 ##### 返回值说明
 
 返回一个 Map，包含以下字段：

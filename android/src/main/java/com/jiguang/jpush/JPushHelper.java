@@ -545,7 +545,8 @@ public class JPushHelper {
                     Log.w(TAG, "skip invoking cached message because method is null, data=" + c.getData());
                     continue;
                 }
-                Log.d(TAG, "method:" + c.getMethod() + ",data:" + c.getData());
+                Log.d(TAG, "onVoipMessage".equals(c.getMethod())
+                        ? "method:onVoipMessage" : "method:" + c.getMethod() + ",data:" + c.getData());
                 channel.invokeMethod(c.getMethod(), c.getData());
             }
             calBackMessageCache.clear();
@@ -556,7 +557,8 @@ public class JPushHelper {
             Log.d(TAG, "skip current invoke because method is null");
             return;
         }
-        Log.d(TAG, "method:" + method + ",msg:" + msg);
+        Log.d(TAG, "onVoipMessage".equals(method)
+                ? "method:onVoipMessage" : "method:" + method + ",msg:" + msg);
         channel.invokeMethod(method, msg);
     }
 

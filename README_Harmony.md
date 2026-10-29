@@ -369,7 +369,7 @@ export default class PushMessageAbility extends UIAbility {
 > 在本地工程配置极光appKey（极光控制台创建应用后自动生成的应用标识），代码配置 如：
 ```
   jpush.setup(
-      appKey: "b266cd5c8544ba09b23733e3", //你自己应用的 AppKey
+      appKey: "YOUR_APP_KEY", //你自己应用的 AppKey
       channel: "theChannel",
       production: false,
       debug: true, //debug log
@@ -407,7 +407,7 @@ export default class PushMessageAbility extends UIAbility {
       });
       
       jpush.setup(
-      appKey: "b266cd5c8544ba09b23733e3", //你自己应用的 AppKey
+      appKey: "YOUR_APP_KEY", //你自己应用的 AppKey
       channel: "theChannel",
       production: false,
       debug: true, //debug log
@@ -429,7 +429,7 @@ export default class PushMessageAbility extends UIAbility {
 jpush.setUserRequestNotificationPermission(enable: true);
 
 jpush.setup(
-  appKey: "b266cd5c8544ba09b23733e3", //你自己应用的 AppKey
+  appKey: "YOUR_APP_KEY", //你自己应用的 AppKey
   channel: "theChannel",
   production: false,
   debug: true, //debug log
@@ -454,3 +454,8 @@ import JpushHarmonySdkPlugin from 'jpush_flutter';
 ### Flutter 插件 3.6.0
 
 原生依赖更新为 `@jg/push 1.5.0`，保持既有权限、异步 RID、停恢复和通知回调契约。通知覆盖及撤回由 SDK 处理，不新增虚构客户端 API。Android 专属的复数订阅、恢复结果、崩溃开关和 iOS 诊断开关在鸿蒙调用时明确返回 UnsupportedError。
+
+
+## 1.5.0 状态查询兼容
+
+`await jpush.getPushStatus()` 查询后台推送开关，成功返回 `{code: 0, isStopped: bool}`。此版本支持 cmd2008 状态组合（0 / `not stop`、1 / `stopped`），不拿2006/2007操作回调或本地缓存代替查询。未知、缺失或矛盾回应通过 Future 抛出 `PlatformException(PUSH_STATUS_UNAVAILABLE)`；details 保留可用 `nativeCode` / `nativeMessage`。请按异常路径处理，不能假定所有回应都是业务Map。该状态解码规则适用于 `@jg/push 1.5.0`，详见 documents/APIs.md。
