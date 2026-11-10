@@ -1,5 +1,6 @@
 allprojects {
     repositories {
+        maven { url 'https://maven.jiguang.cn/nexus/content/repositories/releases/' }
         google()
         mavenCentral()
         maven {

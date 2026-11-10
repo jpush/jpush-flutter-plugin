@@ -1,3 +1,12 @@
+## 3.6.1
+
+- Android 插件和 Demo 添加极光 Maven 仓库地址，保留其它现有仓库。
+
+- Android JPush 升级至 6.3.1；保留 JCore 5.6.0 显式声明，iOS 原生依赖不变。
+- 修复 iOS UIScene 生命周期下，点击通知冷启动时 `getLaunchAppNotification()` 返回空对象的问题。
+- 保留原 AppDelegate、旧 Flutter 及通知 `extras` 格式；补齐 Scene 通知点击缓存与回调，合并同次跨入口重复投递。
+- iOS 原生 JPush/JCore 依赖版本不变。
+
 ## 3.6.0
 
 - 修复 HarmonyOS `getPushStatus` 对 1.5.0 查询回包 cmd=2008 的处理，避免操作回调误完成查询；未知或缺失状态抛出 `PlatformException(PUSH_STATUS_UNAVAILABLE)`，原生码和消息保留在 details。
