@@ -1,4 +1,10 @@
 #import "JPushPlugin.h"
+#if __has_include(<Flutter/FlutterSceneLifeCycle.h>)
+#import <Flutter/FlutterSceneLifeCycle.h>
+#define JPUSH_HAS_FLUTTER_SCENE 1
+#else
+#define JPUSH_HAS_FLUTTER_SCENE 0
+#endif
 #ifdef NSFoundationVersionNumber_iOS_9_x_Max
 #import <UserNotifications/UserNotifications.h>
 #endif
@@ -23,7 +29,11 @@
 
 
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
-@interface JPushPlugin ()<JPUSHRegisterDelegate,JPUSHInAppMessageDelegate>
+@interface JPushPlugin ()<JPUSHRegisterDelegate,JPUSHInAppMessageDelegate
+#if JPUSH_HAS_FLUTTER_SCENE
+,FlutterSceneLifeCycleDelegate
+#endif
+>
 //在前台时是否展示通知
 @property(assign, nonatomic) BOOL unShow;
 
@@ -66,6 +76,9 @@ static NSDictionary *JPushLiveActivityTokenResult(NSInteger code,
     NSDictionary *_completeLaunchNotification;
     BOOL _isJPushDidLogin;
     JPAuthorizationOptions notificationTypes;
+    NSArray *_lastNotificationResponseIdentity;
+    BOOL _lastNotificationResponseFromScene;
+    NSTimeInterval _lastNotificationResponseTime;
 }
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -79,6 +92,13 @@ static NSDictionary *JPushLiveActivityTokenResult(NSInteger code,
     
     
     [registrar addApplicationDelegate:instance];
+#if JPUSH_HAS_FLUTTER_SCENE
+    if (@available(iOS 13.0, *)) {
+        if ([registrar respondsToSelector:@selector(addSceneDelegate:)]) {
+            [registrar addSceneDelegate:instance];
+        }
+    }
+#endif
     [registrar addMethodCallDelegate:instance channel:channel];
 }
 
@@ -760,6 +780,26 @@ static NSDictionary *JPushLiveActivityTokenResult(NSInteger code,
 }
 
 
+#if JPUSH_HAS_FLUTTER_SCENE
+#pragma mark - SceneDelegate
+
+- (BOOL)scene:(UIScene *)scene
+    willConnectToSession:(UISceneSession *)session
+                 options:(UISceneConnectionOptions *)connectionOptions API_AVAILABLE(ios(13.0)) {
+    UNNotificationResponse *response = connectionOptions.notificationResponse;
+    if (response != nil) {
+        if ([response.notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
+            _launchNotification = [self jpushFormatAPNSDic:response.notification.request.content.userInfo];
+        } else {
+            _launchNotification = [self jpushFromLocalPushDic:response.notification.request];
+        }
+        [self handleNotificationResponse:response fromScene:YES];
+    }
+    // 仅观察通知，不消费同一连接中的 URL、用户活动或其它插件的回调。
+    return NO;
+}
+#endif
+
 #pragma mark - AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -944,43 +984,54 @@ static NSDictionary *JPushLiveActivityTokenResult(NSInteger code,
     }
 }
 
-- (void)jpushNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler  API_AVAILABLE(ios(10.0)){
-    NSDictionary * userInfo = response.notification.request.content.userInfo;
-    JPLog(@"jpushNotificationCenter:didReceiveNotificationResponse::%@",userInfo);
-    if([response.notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
-        JPLog(@"iOS10 点击远程通知 %@",_channel);
-        [JPUSHService handleRemoteNotification:userInfo];
-        if (_hasAddEventHandle) {
-            [_channel invokeMethod:@"onOpenNotification" arguments: [self jpushFormatAPNSDic:userInfo] result:^(id  _Nullable result) {
-                JPLog(@"iOS10 点击远程通知 %@",result);
-            }];
-        }else {
-            JPLog(@"iOS10 点击远程通知, 没有_hasAddEventHandle,缓存起来");
-            [self.storedCallBackMessage addObject:@{
-                @"name": @"onOpenNotification",
-                @"msg": [self jpushFormatAPNSDic:userInfo] ?: @{}
-            }];
-        }
-       
-    }else{
-        // iOS 10 以上点击本地通知
-        JPLog(@"iOS10 点击本地通知");
-        NSDictionary *dic = [self jpushFromLocalPushDic:response.notification.request];
-        if (_hasAddEventHandle) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.channel invokeMethod:@"onOpenNotification" arguments:dic result:^(id  _Nullable result) {
-                    JPLog(@"iOS10 点击本地通知 %@",result);
-                }];
-            });
-        }else {
-            JPLog(@"iOS10 点击本地通知, 没有_hasAddEventHandle,缓存起来");
-            [self.storedCallBackMessage addObject:@{
-                @"name": @"onOpenNotification",
-                @"msg": [dic copy] ?: @{}
-            }];
-        }
-    }
+- (void)jpushNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler API_AVAILABLE(ios(10.0)) {
+    [self handleNotificationResponse:response fromScene:NO];
     completionHandler();
+}
+
+- (void)handleNotificationResponse:(UNNotificationResponse *)response fromScene:(BOOL)fromScene API_AVAILABLE(ios(10.0)) {
+    if (![NSThread isMainThread]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self handleNotificationResponse:response fromScene:fromScene];
+        });
+        return;
+    }
+    // 同一次点击可能同时从 Scene 和通知中心进入。只合并相邻的跨入口投递，
+    // 不按 msgid 永久去重，也不合并同入口的后续点击或通知接收事件。
+    NSArray *identity = @[
+        response.notification.request.identifier ?: @"",
+        response.notification.date ?: [NSNull null],
+        response.actionIdentifier ?: @""
+    ];
+    NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
+    if (_lastNotificationResponseIdentity != nil &&
+        _lastNotificationResponseFromScene != fromScene &&
+        now >= _lastNotificationResponseTime &&
+        now - _lastNotificationResponseTime < 5.0 &&
+        [_lastNotificationResponseIdentity isEqualToArray:identity]) {
+        _lastNotificationResponseIdentity = nil;
+        return;
+    }
+    _lastNotificationResponseIdentity = identity;
+    _lastNotificationResponseFromScene = fromScene;
+    _lastNotificationResponseTime = now;
+
+    UNNotificationRequest *request = response.notification.request;
+    NSDictionary *payload;
+    if ([request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
+        [JPUSHService handleRemoteNotification:request.content.userInfo];
+        payload = [self jpushFormatAPNSDic:request.content.userInfo];
+    } else {
+        payload = [self jpushFromLocalPushDic:request];
+    }
+    if (self.hasAddEventHandle) {
+        [self.channel invokeMethod:@"onOpenNotification" arguments:payload];
+    } else {
+        [self.storedCallBackMessage addObject:@{
+            @"name": @"onOpenNotification",
+            @"msg": payload ?: @{}
+        }];
+    }
 }
 
 - (NSDictionary *)jpushFromLocalPushDic:(UNNotificationRequest *)request {

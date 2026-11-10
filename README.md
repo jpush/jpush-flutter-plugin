@@ -16,7 +16,7 @@ dependencies:
       
 // pub 集成
 dependencies:
-  jpush_flutter: 3.6.0
+  jpush_flutter: 3.6.1
 ```
 
 ### 配置
@@ -63,7 +63,20 @@ class MainActivity : FlutterActivity() {
 </activity>
 ```
 
+Android 的 SDK 依赖仓库需包含极光 Maven 地址，插件和 Demo 已添加。宿主若在 `settings.gradle` 中集中管理依赖仓库，也请在 `dependencyResolutionManagement.repositories` 添加：
+
+```groovy
+maven { url 'https://maven.jiguang.cn/nexus/content/repositories/releases/' }
+```
+
+保留项目其它依赖需要的 `google()`、`mavenCentral()` 等仓库。
+
 ##### iOS:
+
+- 使用 UIScene 生命周期时，`jpush_flutter 3.6.1` 起支持从 Scene 连接通知读取冷启动参数，`getLaunchAppNotification()` 的 `extras` 格式不变。宿主仍需按 [Flutter 官方迁移说明](https://docs.flutter.dev/release/breaking-changes/uiscenedelegate) 接入 `FlutterSceneDelegate`，或正确转发 Scene 生命周期，并在实际引擎初始化点注册插件。
+- 插件继续支持旧 Flutter / AppDelegate 路径。Scene API 使用编译期可用性判断，最低 Flutter 要求不变；仅更换插件不能自动迁移宿主。
+- 同一次点击经 Scene 与通知中心重复投递时，插件在相邻跨入口的 5 秒窗口内合并处理，避免重复点击回调和统计；不会按消息 ID 永久屏蔽后续点击。
+
 
 - 在 xcode8 之后需要点开推送选项： TARGETS -> Capabilities -> Push Notification 设为 on 状态
 
@@ -102,7 +115,7 @@ final JPushFlutterInterface jpush = JPush.newJPush();
 
 | 平台 | JPush | JCore | 新增或补齐接口 |
 | --- | --- | --- | --- |
-| Android | 6.3.0 | 显式声明 5.6.0 | requestSubscribeChannels、turnOffPush、turnOnPush、turnOnPushWithResult、initCrashHandler、stopCrashHandler |
+| Android | 6.3.1 | 显式声明 5.6.0 | requestSubscribeChannels、turnOffPush、turnOnPush、turnOnPushWithResult、initCrashHandler、stopCrashHandler |
 | iOS CocoaPods | 6.3.0 | 保留 >5.5.0；建议宿主明确选择 5.6.0 或 5.6.0-noidfa | setLiveActivityTokenReportEnabled |
 | iOS SPM | exact 6.3.0 | from 5.6.0（标准版） | 同上 |
 | HarmonyOS | @jg/push 1.5.0 | 无独立依赖 | 保持既有接口，通知覆盖/撤回由原生 SDK 处理 |
