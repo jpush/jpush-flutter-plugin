@@ -7,6 +7,7 @@
 - (BOOL)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)options;
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completion;
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result;
+- (void)applicationDidEnterBackground:(UIApplication *)application;
 @end
 
 @interface JPTestRemoteTrigger : NSObject
@@ -50,6 +51,11 @@
 @end
 
 static NSUInteger JPTestStatistics;
+static JPushPlugin *JPTestReadyPlugin(void) {
+    JPushPlugin *plugin = [JPushPlugin new];
+    [plugin setValue:@YES forKey:@"hasSetup"];
+    return plugin;
+}
 static void JPTestHandleRemote(id self, SEL cmd, NSDictionary *payload) { JPTestStatistics++; }
 static NSDictionary *JPTestLaunch(JPushPlugin *plugin) {
     __block NSDictionary *launch;
@@ -88,7 +94,7 @@ BOOL JPushRunSceneTests(void) {
     };
     Method method = class_getClassMethod(NSClassFromString(@"JPUSHService"), NSSelectorFromString(@"handleRemoteNotification:"));
     IMP original = method_setImplementation(method, (IMP)JPTestHandleRemote);
-    JPushPlugin *plugin = [JPushPlugin new];
+    JPushPlugin *plugin = JPTestReadyPlugin();
     check(@"N01-no-notification", !JPTestScene(plugin, nil) && JPTestLaunch(plugin).count == 0);
     JPTestOptions *options = JPTestMake(@"request-one", YES, 100);
     JPTestStatistics = 0;
@@ -99,7 +105,7 @@ BOOL JPushRunSceneTests(void) {
     __block NSUInteger completions = 0;
     [plugin jpushNotificationCenter:nil didReceiveNotificationResponse:(id)options.notificationResponse withCompletionHandler:^{ completions++; }];
     check(@"N04-scene-then-un-deduplicated", JPTestQueue(plugin) == 1 && JPTestStatistics == 1 && completions == 1);
-    JPushPlugin *reverse = [JPushPlugin new];
+    JPushPlugin *reverse = JPTestReadyPlugin();
     JPTestStatistics = 0;
     [reverse jpushNotificationCenter:nil didReceiveNotificationResponse:(id)options.notificationResponse withCompletionHandler:^{}];
     JPTestScene(reverse, options);
@@ -110,20 +116,20 @@ BOOL JPushRunSceneTests(void) {
     [plugin jpushNotificationCenter:nil didReceiveNotificationResponse:(id)options.notificationResponse withCompletionHandler:^{}];
     [plugin jpushNotificationCenter:nil didReceiveNotificationResponse:(id)options.notificationResponse withCompletionHandler:^{}];
     check(@"N07-subsequent-same-source-click", JPTestQueue(plugin) == 5);
-    JPushPlugin *local = [JPushPlugin new];
+    JPushPlugin *local = JPTestReadyPlugin();
     JPTestStatistics = 0;
     JPTestScene(local, JPTestMake(@"local-one", NO, 100));
     check(@"N08-local-format-no-remote-statistics", [JPTestLaunch(local)[@"body"] isEqual:@"test-body"] &&
           [JPTestLaunch(local)[@"extras"][@"route"] isEqual:@"test-detail"] && JPTestStatistics == 0);
-    JPushPlugin *live = [JPushPlugin new];
+    JPushPlugin *live = JPTestReadyPlugin();
     JPTestChannel *channel = [JPTestChannel new];
     live.channel = (id)channel;
     [live setValue:@YES forKey:@"hasAddEventHandle"];
     JPTestScene(live, options);
     check(@"N09-live-event", channel.events.count == 1 && [channel.events.firstObject[@"name"] isEqual:@"onOpenNotification"] && JPTestQueue(live) == 0);
-    [live setValue:@([NSDate timeIntervalSinceReferenceDate] - 6.0) forKey:@"lastNotificationResponseTime"];
+    [live applicationDidEnterBackground:nil];
     [live jpushNotificationCenter:nil didReceiveNotificationResponse:(id)options.notificationResponse withCompletionHandler:^{}];
-    check(@"N10-expired-cross-source-not-suppressed", channel.events.count == 2);
+    check(@"N10-later-background-click-not-suppressed", channel.events.count == 2);
     method_setImplementation(method, original);
     NSLog(@"JPUSH_SCENE_TEST SUMMARY total=10 failed=%lu", (unsigned long)failures);
     return failures == 0;

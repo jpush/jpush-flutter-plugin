@@ -40,6 +40,9 @@
 // flutter端是否添加了EventHandle回调。
 @property (nonatomic, assign) BOOL hasAddEventHandle;
 @property (nonatomic, strong) NSMutableArray *storedCallBackMessage;
+- (BOOL)acceptLaunchNotificationResponse:(UNNotificationResponse *)response
+                                  manual:(BOOL)manual API_AVAILABLE(ios(10.0));
+- (void)flushPendingRemoteNotificationPayloads;
 
 @end
 #endif
@@ -76,9 +79,15 @@ static NSDictionary *JPushLiveActivityTokenResult(NSInteger code,
     NSDictionary *_completeLaunchNotification;
     BOOL _isJPushDidLogin;
     JPAuthorizationOptions notificationTypes;
-    NSArray *_lastNotificationResponseIdentity;
-    BOOL _lastNotificationResponseFromScene;
-    NSTimeInterval _lastNotificationResponseTime;
+    BOOL _hasSetup;
+    BOOL _initialConnectionOpen;
+    BOOL _launchNeedsUNCounterpart;
+    BOOL _launchCorrelationOverflowed;
+    BOOL _detachedFromEngine;
+    NSArray *_sceneLaunchResponseIdentity;
+    NSArray *_manualLaunchResponseIdentity;
+    NSMutableArray<NSArray *> *_earlyUNResponseIdentities;
+    NSMutableArray<NSDictionary *> *_pendingRemoteNotificationPayloads;
 }
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -100,10 +109,26 @@ static NSDictionary *JPushLiveActivityTokenResult(NSInteger code,
     }
 #endif
     [registrar addMethodCallDelegate:instance channel:channel];
+    [registrar publish:instance];
+}
+
++ (BOOL)acceptSceneLaunchNotificationResponse:(UNNotificationResponse *)response
+                                    registry:(NSObject<FlutterPluginRegistry> *)registry {
+    if (![NSThread isMainThread] || response == nil || registry == nil) {
+        return NO;
+    }
+    id instance = [registry valuePublishedByPlugin:@"JPushPlugin"];
+    if (![instance isKindOfClass:[JPushPlugin class]]) {
+        return NO;
+    }
+    return [instance acceptLaunchNotificationResponse:response manual:YES];
 }
 
 - (id)init {
     self = [super init];
+    _initialConnectionOpen = YES;
+    _earlyUNResponseIdentities = [NSMutableArray new];
+    _pendingRemoteNotificationPayloads = [NSMutableArray new];
     notificationTypes = 0;
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
     
@@ -262,21 +287,12 @@ static NSDictionary *JPushLiveActivityTokenResult(NSInteger code,
 
 - (void)addEventHandler:(FlutterMethodCall*)call result:(FlutterResult)result {
     self.hasAddEventHandle = YES;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        if (self.storedCallBackMessage.count > 0) {
-            for (NSDictionary *dic in self.storedCallBackMessage) {
-                NSString *name = dic[@"name"] ?: @"";
-                NSDictionary *msg = dic[@"msg"] ?: @{};
-                JPLog(@"addEventHandler: callback %@ - %@",name, msg);
-                [_channel invokeMethod:name arguments: msg result:^(id  _Nullable result) {
-                    JPLog(@"callback storedCallBackMessage: %@",result);
-                }];
-            }
-            [self.storedCallBackMessage removeAllObjects];
-        }
-        
-    });
+    // 每个引擎独立消费自己的队列，不能共享进程级 once 标记。
+    NSArray *pending = [self.storedCallBackMessage copy];
+    [self.storedCallBackMessage removeAllObjects];
+    for (NSDictionary *entry in pending) {
+        [self.channel invokeMethod:entry[@"name"] arguments:entry[@"msg"]];
+    }
 
     result(nil);
 }
@@ -412,6 +428,9 @@ static NSDictionary *JPushLiveActivityTokenResult(NSInteger code,
                            appKey:arguments[@"appKey"]
                           channel:arguments[@"channel"]
                  apsForProduction:[arguments[@"production"] boolValue]];
+
+    _hasSetup = YES;
+    [self flushPendingRemoteNotificationPayloads];
 
     result(@(YES));
 }
@@ -788,12 +807,7 @@ static NSDictionary *JPushLiveActivityTokenResult(NSInteger code,
                  options:(UISceneConnectionOptions *)connectionOptions API_AVAILABLE(ios(13.0)) {
     UNNotificationResponse *response = connectionOptions.notificationResponse;
     if (response != nil) {
-        if ([response.notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
-            _launchNotification = [self jpushFormatAPNSDic:response.notification.request.content.userInfo];
-        } else {
-            _launchNotification = [self jpushFromLocalPushDic:response.notification.request];
-        }
-        [self handleNotificationResponse:response fromScene:YES];
+        [self acceptLaunchNotificationResponse:response manual:NO];
     }
     // 仅观察通知，不消费同一连接中的 URL、用户活动或其它插件的回调。
     return NO;
@@ -804,7 +818,7 @@ static NSDictionary *JPushLiveActivityTokenResult(NSInteger code,
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     _completeLaunchNotification = launchOptions;
-    if (launchOptions != nil) {
+    if (_launchNotification == nil && launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey] != nil) {
         _launchNotification = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
         _launchNotification = [self jpushFormatAPNSDic:_launchNotification.copy];
     }
@@ -877,6 +891,7 @@ static NSDictionary *JPushLiveActivityTokenResult(NSInteger code,
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
+    [self endInitialNotificationConnection];
     //  _resumingFromBackground = YES;
     JPLog(@"applicationDidEnterBackground: %@  applidelegate:%@",[UNUserNotificationCenter currentNotificationCenter].delegate, [UIApplication sharedApplication].delegate);
 }
@@ -990,36 +1005,91 @@ static NSDictionary *JPushLiveActivityTokenResult(NSInteger code,
 }
 
 - (void)handleNotificationResponse:(UNNotificationResponse *)response fromScene:(BOOL)fromScene API_AVAILABLE(ios(10.0)) {
+    if (response == nil || _detachedFromEngine) {
+        return;
+    }
     if (![NSThread isMainThread]) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [self handleNotificationResponse:response fromScene:fromScene];
         });
         return;
     }
-    // 同一次点击可能同时从 Scene 和通知中心进入。只合并相邻的跨入口投递，
-    // 不按 msgid 永久去重，也不合并同入口的后续点击或通知接收事件。
-    NSArray *identity = @[
-        response.notification.request.identifier ?: @"",
-        response.notification.date ?: [NSNull null],
-        response.actionIdentifier ?: @""
-    ];
-    NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
-    if (_lastNotificationResponseIdentity != nil &&
-        _lastNotificationResponseFromScene != fromScene &&
-        now >= _lastNotificationResponseTime &&
-        now - _lastNotificationResponseTime < 5.0 &&
-        [_lastNotificationResponseIdentity isEqualToArray:identity]) {
-        _lastNotificationResponseIdentity = nil;
+    if (fromScene) {
+        [self acceptLaunchNotificationResponse:response manual:NO];
         return;
     }
-    _lastNotificationResponseIdentity = identity;
-    _lastNotificationResponseFromScene = fromScene;
-    _lastNotificationResponseTime = now;
+    NSArray *identity = [self notificationResponseIdentity:response];
+    if (_launchNeedsUNCounterpart && [_sceneLaunchResponseIdentity isEqualToArray:identity]) {
+        // 仅配对本次初始交接的一次 UN 投递，不依赖交接延迟。
+        _launchNeedsUNCounterpart = NO;
+        return;
+    }
+    if (_sceneLaunchResponseIdentity == nil && _initialConnectionOpen) {
+        if (_earlyUNResponseIdentities.count < 32) {
+            [_earlyUNResponseIdentities addObject:identity];
+        } else {
+            // 来源记录超限时显式拒绝手动交接，不能猜测是否已经处理。
+            _launchCorrelationOverflowed = YES;
+        }
+    }
+    [self dispatchNotificationResponse:response];
+}
+
+- (NSArray *)notificationResponseIdentity:(UNNotificationResponse *)response API_AVAILABLE(ios(10.0)) {
+    NSString *userText = @"";
+    if ([response isKindOfClass:[UNTextInputNotificationResponse class]]) {
+        userText = [(UNTextInputNotificationResponse *)response userText] ?: @"";
+    }
+    return @[
+        response.notification.request.identifier ?: @"",
+        response.notification.date ?: [NSNull null],
+        response.actionIdentifier ?: @"",
+        userText
+    ];
+}
+
+- (BOOL)acceptLaunchNotificationResponse:(UNNotificationResponse *)response
+                                  manual:(BOOL)manual API_AVAILABLE(ios(10.0)) {
+    if (response == nil || _detachedFromEngine) {
+        return NO;
+    }
+    NSArray *identity = [self notificationResponseIdentity:response];
+    if (manual && _manualLaunchResponseIdentity != nil) {
+        return [_manualLaunchResponseIdentity isEqualToArray:identity];
+    }
+    if (manual && (!_initialConnectionOpen || _launchCorrelationOverflowed)) {
+        return NO;
+    }
+    if (manual) {
+        _manualLaunchResponseIdentity = identity;
+    }
+    UNNotificationRequest *request = response.notification.request;
+    _launchNotification = [request.trigger isKindOfClass:[UNPushNotificationTrigger class]]
+        ? [self jpushFormatAPNSDic:request.content.userInfo]
+        : [self jpushFromLocalPushDic:request];
+    if ([_sceneLaunchResponseIdentity isEqualToArray:identity]) {
+        return YES;
+    }
+    BOOL alreadyHandled = [_earlyUNResponseIdentities containsObject:identity];
+    [_earlyUNResponseIdentities removeAllObjects];
+    _sceneLaunchResponseIdentity = identity;
+    _launchNeedsUNCounterpart = !alreadyHandled;
+    if (!alreadyHandled) {
+        [self dispatchNotificationResponse:response];
+    }
+    return YES;
+}
+
+- (void)dispatchNotificationResponse:(UNNotificationResponse *)response API_AVAILABLE(ios(10.0)) {
 
     UNNotificationRequest *request = response.notification.request;
     NSDictionary *payload;
     if ([request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
-        [JPUSHService handleRemoteNotification:request.content.userInfo];
+        if (_hasSetup) {
+            [JPUSHService handleRemoteNotification:request.content.userInfo];
+        } else {
+            [_pendingRemoteNotificationPayloads addObject:[request.content.userInfo copy] ?: @{}];
+        }
         payload = [self jpushFormatAPNSDic:request.content.userInfo];
     } else {
         payload = [self jpushFromLocalPushDic:request];
@@ -1032,6 +1102,39 @@ static NSDictionary *JPushLiveActivityTokenResult(NSInteger code,
             @"msg": payload ?: @{}
         }];
     }
+}
+
+- (void)flushPendingRemoteNotificationPayloads {
+    NSArray *pending = [_pendingRemoteNotificationPayloads copy];
+    [_pendingRemoteNotificationPayloads removeAllObjects];
+    for (NSDictionary *payload in pending) {
+        [JPUSHService handleRemoteNotification:payload];
+    }
+}
+
+- (void)endInitialNotificationConnection {
+    _initialConnectionOpen = NO;
+    _launchNeedsUNCounterpart = NO;
+    [_earlyUNResponseIdentities removeAllObjects];
+}
+
+#if JPUSH_HAS_FLUTTER_SCENE
+- (void)sceneDidEnterBackground:(UIScene *)scene API_AVAILABLE(ios(13.0)) {
+    [self endInitialNotificationConnection];
+}
+#endif
+
+- (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+    _detachedFromEngine = YES;
+    [_pendingRemoteNotificationPayloads removeAllObjects];
+    [self.storedCallBackMessage removeAllObjects];
+    [self endInitialNotificationConnection];
+    _launchNotification = nil;
+    _completeLaunchNotification = nil;
+    _manualLaunchResponseIdentity = nil;
+    _sceneLaunchResponseIdentity = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    self.channel = nil;
 }
 
 - (NSDictionary *)jpushFromLocalPushDic:(UNNotificationRequest *)request {
