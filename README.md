@@ -4,7 +4,7 @@
 
 ### iOS 延迟创建 Flutter 引擎（未发布补丁）
 
-手动 Scene 窗口、active 后才创建 Flutter 引擎的宿主，需先保存原始通知响应，再在同一引擎插件注册完成后、展示 Flutter 页面前同步交接。完整的 Swift 类、安装步骤、Info.plist 差异及失败处理见 [延迟引擎接入示例](example/customer_delayed_engine/README.md)。该新增原生入口不属于已发布的 3.6.1；本地补丁未调整版本或原生 SDK 依赖。
+手动 Scene 窗口、active 后才创建 Flutter 引擎的宿主，需先保存原始通知响应，再在同一引擎插件注册完成后、展示 Flutter 页面前同步交接。通用 Swift/Dart 示例、安装步骤、Scene 配置及接口调用说明见 [延迟引擎接入示例](example/delayed_engine_handoff/README.md)。该新增原生入口不属于已发布的 3.6.1；本地补丁未调整版本或原生 SDK 依赖。
 
 ### 安装
 
