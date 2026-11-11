@@ -4,7 +4,7 @@
 
 ## 使用
 
-1. 宿主依赖包含本补丁的 jpush_flutter 源码（例如 pubspec.yaml 的 path: vendor/jpush_flutter），执行 flutter pub get；CocoaPods 宿主在 ios/ 执行 pod install。目标插件版本为3.6.2，尚未发布；此入口不属于已发布3.6.1。
+1. 宿主依赖包含本补丁的 jpush_flutter 源码（例如 pubspec.yaml 的 path: vendor/jpush_flutter），执行 flutter pub get；CocoaPods 宿主在 ios/ 执行 pod install。此入口自插件3.6.2提供，不属于3.6.1。
 2. 将本目录 AppDelegate.swift、SceneDelegate.swift 加入一个支持 FlutterImplicitEngineDelegate / FlutterSceneDelegate 的 Swift Runner target；合并 SceneManifest.plist 片段，移除该配置的 UISceneStoryboardFile 及 UIMainStoryboardFile，保留 LaunchScreen。已有应用按相同位置合入，不覆盖自己的业务注册。
 3. Swift 采用 import jpush_flutter。若宿主使用桥接头，改为在原桥接头加入 #import <jpush_flutter/JPushPlugin.h> 并移除该 import；保留 GeneratedPluginRegistrant.h。
 4. main.dart 仅为可选的独立验证入口，不需替换实际应用代码。现有 getLaunchAppNotification / onOpenNotification 保持不变，本次接入只需新插件和原生 Scene 交接；保留原 setup、隐私流程及业务导航策略。演示不含凭据、不调用 setup。
