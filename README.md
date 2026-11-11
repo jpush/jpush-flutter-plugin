@@ -2,13 +2,13 @@
 # JPush Flutter Plugin
 > flutter 3.0 请切换至 dev-3.x 分支。
 
-### iOS 延迟创建 Flutter 引擎（未发布补丁）
+### iOS 延迟创建 Flutter 引擎（3.6.2，未发布）
 
-手动 Scene 窗口、active 后才创建 Flutter 引擎的宿主，需先保存原始通知响应，再在同一引擎插件注册完成后、展示 Flutter 页面前同步交接。通用 Swift/Dart 示例、安装步骤、Scene 配置及接口调用说明见 [延迟引擎接入示例](example/delayed_engine_handoff/README.md)。该新增原生入口不属于已发布的 3.6.1；本地补丁未调整版本或原生 SDK 依赖。
+手动 Scene 窗口、active 后才创建 Flutter 引擎的宿主，需先保存原始通知响应，再在同一引擎插件注册完成后、展示 Flutter 页面前同步交接。通用 Swift/Dart 示例、安装步骤、Scene 配置及接口调用说明见 [延迟引擎接入示例](example/delayed_engine_handoff/README.md)。该新增原生入口属于候选版本 3.6.2，尚未发布；原生 SDK 依赖不变。现有 Dart `getLaunchAppNotification()` 和 `onOpenNotification` 逻辑保持不变，本次接入只需使用新插件并在 SceneDelegate 交接通知。
 
 ### 安装
 
-在工程 pubspec.yaml 中加入 dependencies
+在工程 pubspec.yaml 中加入 dependencies。当前 3.6.2 尚未发布，正式发布前使用包含本修复的源码路径或 Git 分支；下面的 pub 版本声明用于发布后集成。
 
 ```
   
@@ -21,7 +21,7 @@ dependencies:
       
 // pub 集成
 dependencies:
-  jpush_flutter: 3.6.1
+  jpush_flutter: 3.6.2
 ```
 
 ### 配置
