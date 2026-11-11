@@ -42,6 +42,8 @@
 - 在flutter自动生成的EntryAbility.ets文件添加JpushHarmonySdkPlugin.setClickWant(want, this.context)代码
 - 在onCreate和onNewWant 两个方法里添加，如下代码例子
 
+沿用当前鸿蒙版 Flutter SDK 生成的生命周期签名，加入 `setClickWant` 调用。下面示例适用于 `onCreate` 返回 `void` 的 SDK；若当前模板声明为 `Promise<void>`，保留该声明，并使用 `return super.onCreate(want, launchParam)` 返回父类调用结果。
+
 ```
 
 import { FlutterAbility, FlutterEngine } from '@ohos/flutter_ohos';
@@ -54,10 +56,10 @@ import { hilog } from '@kit.PerformanceAnalysisKit';
 const TAG: string = 'JPUSH-flutter-JLog-EntryAbility'
 
 export default class EntryAbility extends FlutterAbility {
-  onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
+  onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     hilog.info(0x0000, TAG, 'onCreate :' + JSON.stringify(want));
     JpushHarmonySdkPlugin.setClickWant(want, this.context)//这里添加代码
-    return super.onCreate(want, launchParam)
+    super.onCreate(want, launchParam)
   }
 
   onNewWant(want: Want, launchParams: AbilityConstant.LaunchParam): void {
