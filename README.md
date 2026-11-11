@@ -98,7 +98,7 @@ end
 
 ##### Harmony:
 
-- [Harmony](./README_Harmony.md)
+- 按 [Flutter 鸿蒙集成指南](./README_Harmony.md)完成平台配置，并先在 Flutter 工程根目录使用鸿蒙版 Flutter 执行完整构建，再使用 DevEco Studio 编译或运行 `ohos` 工程。
 
 ### 使用
 

@@ -1,7 +1,98 @@
-# 鸿蒙版Flutter环境搭建指导
-[鸿蒙版Flutter环境搭建指导](https://gitee.com/openharmony-sig/flutter_samples/blob/master/ohos/docs/03_environment/%E9%B8%BF%E8%92%99%E7%89%88Flutter%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E6%8C%87%E5%AF%BC.md)
+# Flutter 鸿蒙集成指南
 
+## 首次集成与构建
 
+### 1. 准备鸿蒙版 Flutter 工程
+
+安装支持鸿蒙的 Flutter SDK 和配套的 DevEco Studio，参考[鸿蒙版 Flutter 环境搭建指导](https://gitee.com/openharmony-sig/flutter_samples/blob/master/ohos/docs/03_environment/%E9%B8%BF%E8%92%99%E7%89%88Flutter%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E6%8C%87%E5%AF%BC.md)。以下 `flutter` 命令均需使用鸿蒙版 Flutter SDK，在包含 `pubspec.yaml` 的 Flutter 工程根目录执行。
+
+已有工程需包含 `ohos/` 目录；新工程可以执行：
+
+```bash
+flutter create --platforms=ohos jpush_harmony_demo
+cd jpush_harmony_demo
+```
+
+### 2. 添加插件依赖
+
+在应用的 `pubspec.yaml` 中添加，保留其他已有依赖：
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  jpush_flutter: 3.6.1
+```
+
+获取依赖：
+
+```bash
+flutter pub get
+```
+
+### 3. 完成平台配置和初始化
+
+按下文完成[字节码编译配置](#配置字节码编译环境)、[鸿蒙平台和签名配置](#配置-hmos平台信息)、[通知跳转配置](#配置通知跳转页)以及[极光平台信息配置](#设置极光平台信息)。包名、签名、华为推送服务配置及极光 AppKey 需对应同一个应用。自定义消息、通知扩展消息或 VoIP 按需配置对应章节。
+
+在 Dart 应用初始化时创建插件对象，先注册鸿蒙回调，再调用 `setup`，执行一次即可：
+
+```dart
+import 'package:jpush_flutter/jpush_flutter.dart';
+import 'package:jpush_flutter/jpush_interface.dart';
+
+final JPushFlutterInterface jpush = JPush.newJPush();
+
+void initJPush() {
+  jpush.setCallBackHarmony((eventName, data) {
+    print('JPush: $eventName, $data');
+  });
+
+  jpush.setup(
+    appKey: 'YOUR_APP_KEY',
+    channel: 'developer-default',
+    debug: true,
+  );
+}
+```
+
+在 Flutter 页面 `initState` 等初始化位置调用 `initJPush()`。更多接口和回调见 [API 文档](./documents/APIs.md)。
+
+### 4. 先执行 Flutter 鸿蒙构建
+
+完成上述配置后，在 Flutter 工程根目录执行：
+
+```bash
+flutter build hap --debug --no-codesign
+```
+
+该命令用于无需配置签名的编译检查；未配置签名时会生成未签名 HAP，用于检查 Dart、插件和鸿蒙原生工程能否一起编译。已配置签名的工程以构建实际产物为准。`flutter pub get` 只获取依赖，不能替代完整构建。鸿蒙版 Flutter 会在构建过程中处理插件模块、插件 HAR 及原生依赖；具体配置文件和中间产物随 Flutter 版本的构建流程而不同，以命令实际输出为准。
+
+构建成功后，可使用 DevEco Studio 打开该工程的 `ohos/` 目录继续编译或调试，并沿用 Flutter 构建生成的依赖和模块配置。新增、升级插件或清理中间产物后，重新执行 Flutter 构建，更新对应的原生依赖。
+
+### 5. 签名并运行到鸿蒙手机
+
+未签名 HAP 不能直接安装到手机。先在 DevEco Studio 中配置该应用的签名，确保调试设备包含在调试签名配置中，然后连接手机、开启调试并完成授权。
+
+在 Flutter 工程根目录查看设备并运行：
+
+```bash
+flutter devices
+flutter run --debug -d <设备ID>
+```
+
+将 `<设备ID>` 替换为 `flutter devices` 列出的鸿蒙设备 ID。启动后检查插件初始化日志、`onConnected` 回调和 `getRegistrationID()` 返回值；通知点击等业务场景需在配置完成后单独验证。
+
+### DevEco Studio 构建报 00309001 时的检查顺序
+
+若错误指向插件内部的相对导入，例如 `JpushHelper.ets` 中的 `./JpushHarmonySdkPlugin`，先保留 `useNormalizedOHMUrl: true`，回到 Flutter 工程根目录执行第 4 步的完整构建，再使用 DevEco Studio 编译。
+
+若完整构建后仍报错，检查实际使用的 Flutter 版本及原生依赖配置：
+
+- 直接依赖插件源码时，该源码模块必须在构建过程中被登记，模块路径应指向实际使用的插件 `ohos/` 目录。
+- 依赖插件 HAR 时，`dependencies` 和 `overrides` 应指向对应 HAR，避免其中一处又指回另一份插件源码。
+- `modules` 中的 `srcPath` 相对于工程级 `build-profile.json5` 所在目录；`file:` 依赖路径相对于声明该依赖的 `oh-package.json5`。使用实际工程路径，不复制其他工程的本地缓存路径。
+
+完整构建后，某些 Flutter 版本会移除临时登记的源码模块并改用生成的 HAR，这是正常的构建流程。应结合依赖形态和报错阶段检查，不能仅凭最终 `modules` 列表是否包含插件判断配置正确与否。
 
 ## 配置
 
@@ -42,22 +133,24 @@
 - 在flutter自动生成的EntryAbility.ets文件添加JpushHarmonySdkPlugin.setClickWant(want, this.context)代码
 - 在onCreate和onNewWant 两个方法里添加，如下代码例子
 
+沿用当前鸿蒙版 Flutter SDK 生成的生命周期签名，加入 `setClickWant` 调用。下面示例适用于 `onCreate` 返回 `void` 的 SDK；若当前模板声明为 `Promise<void>`，保留该声明，并使用 `return super.onCreate(want, launchParam)` 返回父类调用结果。
+
 ```
 
 import { FlutterAbility, FlutterEngine } from '@ohos/flutter_ohos';
 import { GeneratedPluginRegistrant } from '../plugins/GeneratedPluginRegistrant';
 import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import Want from '@ohos.app.ability.Want';
-import JpushHarmonySdkPlugin from 'jpush_harmony_sdk';
+import JpushHarmonySdkPlugin from 'jpush_flutter';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 
 const TAG: string = 'JPUSH-flutter-JLog-EntryAbility'
 
 export default class EntryAbility extends FlutterAbility {
-  onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
+  onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     hilog.info(0x0000, TAG, 'onCreate :' + JSON.stringify(want));
     JpushHarmonySdkPlugin.setClickWant(want, this.context)//这里添加代码
-    return super.onCreate(want, launchParam)
+    super.onCreate(want, launchParam)
   }
 
   onNewWant(want: Want, launchParams: AbilityConstant.LaunchParam): void {
@@ -128,7 +221,7 @@ export default class EntryAbility extends FlutterAbility {
 import { UIAbility } from '@kit.AbilityKit';
 import { pushCommon, pushService } from '@kit.PushKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import JpushHarmonySdkPlugin from 'jpush_harmony_sdk';
+import JpushHarmonySdkPlugin from 'jpush_flutter';
 
 const TAG: string = 'JPUSH-JLog-PushMessageAbility'
 
@@ -188,7 +281,7 @@ export default class PushMessageAbility extends UIAbility {
 import { UIAbility } from '@kit.AbilityKit';
 import { pushCommon, pushService } from '@kit.PushKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import JpushHarmonySdkPlugin from 'jpush_harmony_sdk';
+import JpushHarmonySdkPlugin from 'jpush_flutter';
 
 const TAG: string = 'JPUSH-JLog-PushMessageAbility'
 
@@ -300,7 +393,7 @@ export default class PushMessageAbility extends UIAbility {
 import { UIAbility } from '@kit.AbilityKit';
 import { pushCommon, pushService } from '@kit.PushKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import JpushHarmonySdkPlugin from 'jpush_harmony_sdk';
+import JpushHarmonySdkPlugin from 'jpush_flutter';
 
 const TAG: string = 'JPUSH-JLog-PushMessageAbility'
 
