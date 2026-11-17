@@ -21,7 +21,7 @@ dependencies:
       
 // pub 集成
 dependencies:
-  jpush_flutter: 3.6.2
+  jpush_flutter: 3.6.3
 ```
 
 ### 配置
@@ -48,7 +48,7 @@ android: {
 
 Flutter 3.27 起默认开启深链接。华为通知通过极光 SDK 拉起原生目标页或首页时，目标 Intent 的 `data` 和 `JMessageExtra` 可能携带相同的推送 JSON；Flutter 把 JSON 作为路由交给 GetX 等路由框架后，可能出现 `FormatException`、黑屏或白屏。版本边界见 [Flutter 官方说明](https://docs.flutter.dev/release/breaking-changes/deep-links-flag-change)。
 
-本分支提供定向适配（尚未发布，使用时需构建包含此改动的插件）：
+jpush_flutter 3.6.3 起提供以下自动适配：
 
 - 初始化 Provider 随插件 Manifest 合并，在标准 Flutter 宿主选择初始路由前处理冷启动 Intent；插件的新 Intent 监听处理热启动。
 - 仅处理存在 `JMessageExtra` 字段、且 `data` 去除首尾空白后以 `{` 开头的通知数据；不校验消息 ID、标题等业务字段，也不要求两处内容完全相同。`JMessageExtra` 原值保持不变，只移除用于自动路由解析的 JSON `data`。
