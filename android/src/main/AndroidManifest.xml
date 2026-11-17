@@ -1,6 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jiguang.jpush">
     <application>
+        <!-- Runs before Flutter engine/plugin registration; no SDK initialization here. -->
+        <provider
+            android:name="com.jiguang.jpush.JPushInitProvider"
+            android:authorities="${applicationId}.jpush_flutter.init"
+            android:exported="false" />
 <!--        <receiver-->
 <!--            android:name="com.jiguang.jpush.JPushPlugin$JPushReceiver"-->
 <!--            android:enabled="true"-->

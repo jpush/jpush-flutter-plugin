@@ -44,29 +44,40 @@ android: {
   }    
 ```
 
-**注意（Flutter 3.29+ 厂商通道点击白屏问题）**：Flutter 3.29 起 `FlutterActivity` 默认开启深链接（`flutter_deeplinking_enabled` 默认值变为 true）。App 进程被杀后点击厂商通道（如华为）离线推送时，拉起应用的 intent 携带的 URI（含 `n_extra` 参数）会被 Flutter 当作深链接路由解析，路由表中无对应页面导致打开后白屏。若未使用 Flutter 官方深链接功能，请在 `AndroidManifest.xml` 的主 Activity 中显式关闭：
+#### 通知点击与 Flutter 路由
 
-方式一（推荐）：在 `MainActivity` 中重写 `shouldHandleDeeplinking()`：
+Flutter 3.27 起默认开启深链接。华为通知通过极光 SDK 拉起原生目标页或首页时，目标 Intent 的 `data` 和 `JMessageExtra` 可能携带相同的推送 JSON；Flutter 把 JSON 作为路由交给 GetX 等路由框架后，可能出现 `FormatException`、黑屏或白屏。版本边界见 [Flutter 官方说明](https://docs.flutter.dev/release/breaking-changes/deep-links-flag-change)。
+
+本分支提供定向适配（尚未发布，使用时需构建包含此改动的插件）：
+
+- 初始化 Provider 随插件 Manifest 合并，在标准 Flutter 宿主选择初始路由前处理冷启动 Intent；插件的新 Intent 监听处理热启动。
+- 仅处理存在 `JMessageExtra` 字段、且 `data` 符合华为通知格式的 JSON；不要求两处内容完全相同。`JMessageExtra` 原值保持不变，只移除用于自动路由解析的 JSON `data`。
+- 正常业务 URI 保留，Flutter 全局深链接开关保持原有配置；通知点击继续走 `onOpenNotification`，不会因过滤再产生一次点击事件。
+- 自行在宿主读取推送数据时，请使用 `intent.getStringExtra("JMessageExtra")`。仅有 data、缺少此标记或无法识别的载荷不自动修改。
+
+自定义宿主也可使用同一识别方法，在 `shouldHandleDeeplinking()` 中按通知类型决定是否处理。热启动需先更新宿主 Intent，确保判断读取到本次传入的数据：
 
 ```kotlin
+import android.content.Intent
+import com.jiguang.jpush.JPushNotificationIntent
+import io.flutter.embedding.android.FlutterActivity
+
 class MainActivity : FlutterActivity() {
-    // 禁用 Flutter 自动 deep link 处理，避免厂商通道推送点击时
-    // intent.data 被误当成 Flutter 路由导致打开 App 白屏
     override fun shouldHandleDeeplinking(): Boolean {
-        return false
+        if (JPushNotificationIntent.isHuaweiNotification(intent)) {
+            return false
+        }
+        return super.shouldHandleDeeplinking()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        setIntent(intent)
+        super.onNewIntent(intent)
     }
 }
 ```
 
-方式二：在 `AndroidManifest.xml` 的主 Activity 中配置（与方式一等价，`shouldHandleDeeplinking()` 默认实现读取的就是该配置）：
-
-```xml
-<activity android:name=".MainActivity" ...>
-    <meta-data
-        android:name="flutter_deeplinking_enabled"
-        android:value="false" />
-</activity>
-```
+Provider 默认在声明所在进程运行。独立进程、自定义 embedding 或宿主在标准生命周期之前自行选择路由的场景，需要单独验证，必要时采用上述宿主判断方式。
 
 Android 的 SDK 依赖仓库需包含极光 Maven 地址，插件和 Demo 已添加。宿主若在 `settings.gradle` 中集中管理依赖仓库，也请在 `dependencyResolutionManagement.repositories` 添加：
 
