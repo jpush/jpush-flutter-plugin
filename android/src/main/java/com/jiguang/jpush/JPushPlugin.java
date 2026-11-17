@@ -43,6 +43,7 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.PluginRegistry.NewIntentListener;
 
 /**
  * JPushPlugin
@@ -51,6 +52,12 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     private static String TAG = "| JPUSH | Flutter | Android | ";
     private Context context;
     private Activity mActivity;
+    private ActivityPluginBinding activityBinding;
+    private final NewIntentListener notificationIntentListener = intent -> {
+        // Flutter dispatches this listener before reading the same incoming Intent as a route.
+        JPushNotificationIntent.sanitize(mActivity, intent);
+        return false;
+    };
     private int sequence;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private final PendingResultRegistry serviceResults = new PendingResultRegistry(action -> {
@@ -120,14 +127,28 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     @Override
     public void onAttachedToActivity(ActivityPluginBinding activityPluginBinding) {
         Log.d(TAG,"JPushPlugin onAttachedToActivity: " +activityPluginBinding);
+        detachActivityBinding();
         if(activityPluginBinding!=null){
+            activityBinding = activityPluginBinding;
             mActivity = activityPluginBinding.getActivity();
+            activityBinding.addOnNewIntentListener(notificationIntentListener);
+            // Also cover attachment to a host with a pre-existing engine. The Provider
+            // is responsible for interception before a standard host's cold-start route.
+            JPushNotificationIntent.sanitize(mActivity, mActivity.getIntent());
         }
+    }
+
+    private void detachActivityBinding() {
+        if (activityBinding != null) {
+            activityBinding.removeOnNewIntentListener(notificationIntentListener);
+            activityBinding = null;
+        }
+        mActivity = null;
     }
 
     @Override
     public void onDetachedFromActivityForConfigChanges() {
-        mActivity = null;
+        detachActivityBinding();
 
         Log.d(TAG,"JPushPlugin onDetachedFromActivityForConfigChanges: " );
     }
@@ -141,14 +162,14 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 
     @Override
     public void onDetachedFromActivity() {
-        mActivity = null;
+        detachActivityBinding();
         Log.d(TAG,"JPushPlugin onDetachedFromActivity: ");
 
     }
     @Override
     public void onDetachedFromEngine(FlutterPluginBinding binding) {
         serviceResults.detach();
-        mActivity = null;
+        detachActivityBinding();
         context = null;
         Log.d(TAG,"JPushPlugin onDetachedFromEngine: " + binding);
         

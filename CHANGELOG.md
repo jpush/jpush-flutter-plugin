@@ -1,3 +1,10 @@
+## 3.6.3 (2026-11-17)
+
+- Android 修复厂商通知点击导致的 Flutter 路由异常，保留通知参数、业务深链接及点击回调。
+- Android 新增原生通知数据识别方法及可选宿主示例，标准 FlutterActivity 接入无需修改 MainActivity。
+- 完善 Flutter 鸿蒙集成、构建与真机接入文档。
+- 修正 Flutter 默认开启深链接的版本说明为 3.27。
+
 ## 3.6.2
 
 - 新增 iOS 原生 `acceptSceneLaunchNotificationResponse:registry:`，供延迟创建引擎的宿主在 Dart 启动前向目标引擎同步交接启动通知。
