@@ -31,7 +31,7 @@ public class JPushNotificationIntentTest {
 
     @Test public void recognitionDoesNotModifyTheIntentUsedByHostDeepLinkChecks() {
         Intent intent = notificationIntent();
-        assertTrue(JPushNotificationIntent.isHuaweiNotification(intent));
+        assertTrue(JPushNotificationIntent.isJPushNotificationData(intent));
         assertEquals(PAYLOAD, intent.getDataString());
         assertEquals(PAYLOAD, intent.getStringExtra("JMessageExtra"));
     }
@@ -71,11 +71,7 @@ public class JPushNotificationIntentTest {
         inputs.add(new Intent());
         inputs.add(new Intent(Intent.ACTION_MAIN, Uri.parse(PAYLOAD)));
         for (String json : new String[]{
-                "{broken", "{\"customer\":\"json\"}", PAYLOAD.replace("\"rom_type\":2", "\"rom_type\":1"),
-                PAYLOAD.replace("\"msg_id\":123456789", "\"msg_id\":null"),
-                PAYLOAD.replace("\"msg_id\":123456789", "\"msg_id\":\" \""),
-                PAYLOAD.replace("\"n_title\":\"Demo\",", ""),
-                PAYLOAD.replace("\"n_content\":\"Notification\"", "\"n_content\":null")}) {
+                "", "   ", "[]", "null", "app://order/123", "https://example.com/order/123"}) {
             inputs.add(new Intent(Intent.ACTION_MAIN, Uri.parse(json)).putExtra("JMessageExtra", json));
         }
         for (Intent intent : inputs) {
@@ -83,7 +79,18 @@ public class JPushNotificationIntentTest {
             assertFalse(JPushNotificationIntent.sanitize(new FlutterActivity(), intent));
             assertEquals(original, intent.getDataString());
         }
-        assertFalse(JPushNotificationIntent.isHuaweiNotification(null));
+        assertFalse(JPushNotificationIntent.isJPushNotificationData(null));
+    }
+
+    @Test public void routeFilteringDoesNotDependOnNotificationBusinessFieldsOrJsonParsing() {
+        for (String json : new String[]{"{}", "{broken", " \n {\"customer\":1}",
+                "{\"rom_type\":1}", "{\"msg_id\":null,\"n_title\":null}"}) {
+            Intent intent = new Intent(Intent.ACTION_MAIN, Uri.parse(json))
+                    .putExtra("JMessageExtra", "marker");
+            assertTrue(JPushNotificationIntent.sanitize(new FlutterActivity(), intent));
+            assertNull(intent.getData());
+            assertEquals("marker", intent.getStringExtra("JMessageExtra"));
+        }
     }
 
     @Test public void extraPresenceIsEnoughAndItsExistingValueIsNeverReplaced() {
@@ -93,7 +100,7 @@ public class JPushNotificationIntentTest {
         assertEquals("{\"customer\":1}", different.getStringExtra("JMessageExtra"));
 
         Intent nonString = notificationIntent().putExtra("JMessageExtra", 7);
-        assertTrue(JPushNotificationIntent.isHuaweiNotification(nonString));
+        assertTrue(JPushNotificationIntent.isJPushNotificationData(nonString));
         assertTrue(JPushNotificationIntent.sanitize(new FlutterActivity(), nonString));
         assertEquals(7, nonString.getIntExtra("JMessageExtra", -1));
     }
