@@ -5,13 +5,10 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.android.FlutterFragmentActivity;
 
-/** Identifies Huawei notification JSON carried by JPush target intents. */
+/** Identifies JSON-shaped notification data carried by JPush target intents. */
 public final class JPushNotificationIntent {
     private static final String TAG = "JPushNotificationIntent";
     private static final String MESSAGE_EXTRA = "JMessageExtra";
@@ -19,30 +16,23 @@ public final class JPushNotificationIntent {
     private JPushNotificationIntent() {}
 
     /**
-     * Whether data is Huawei notification JSON accompanied by a JMessageExtra field.
+     * Whether data looks like a JSON object and is marked by JMessageExtra.
      *
-     * This only identifies the SDK transport format; it does not dispatch a click callback.
+     * This is a route guard, not notification payload validation or click dispatch.
      * Hosts with a custom embedding can use this in shouldHandleDeeplinking().
      * JMessageExtra is a presence marker; its contents need not equal data.
      */
-    public static boolean isHuaweiNotification(Intent intent) {
+    public static boolean isJPushNotificationData(Intent intent) {
         if (intent == null) {
             return false;
         }
         try {
-            String data = intent.getDataString();
-            if (!intent.hasExtra(MESSAGE_EXTRA)
-                    || TextUtils.isEmpty(data) || !data.trim().startsWith("{")) {
+            if (!intent.hasExtra(MESSAGE_EXTRA)) {
                 return false;
             }
-            JSONObject payload = new JSONObject(data);
-            Object messageId = payload.opt("msg_id");
-            return payload.optInt("rom_type", -1) == 2
-                    && (messageId instanceof String || messageId instanceof Number)
-                    && !payload.optString("msg_id", "").trim().isEmpty()
-                    && payload.opt("n_title") instanceof String
-                    && payload.opt("n_content") instanceof String;
-        } catch (JSONException | RuntimeException ignored) {
+            String data = intent.getDataString();
+            return !TextUtils.isEmpty(data) && data.trim().startsWith("{");
+        } catch (RuntimeException ignored) {
             // Intent extras may fail to unparcel. Do not change data on an uncertain match.
             return false;
         }
@@ -53,13 +43,13 @@ public final class JPushNotificationIntent {
                 && !(activity instanceof FlutterFragmentActivity)) {
             return false;
         }
-        if (!isHuaweiNotification(intent)) {
+        if (!isJPushNotificationData(intent)) {
             return false;
         }
         // Keep the existing JMessageExtra and other Intent fields unchanged. Only remove
         // the JSON consumed by Flutter as a route, preserving the original MIME type.
         intent.setDataAndType(null, intent.getType());
-        Log.d(TAG, "Removed Huawei notification JSON from Flutter route data");
+        Log.d(TAG, "Removed JPush notification JSON from Flutter route data");
         return true;
     }
 }

@@ -51,11 +51,15 @@ Flutter 3.27 起默认开启深链接。华为通知通过极光 SDK 拉起原�
 本分支提供定向适配（尚未发布，使用时需构建包含此改动的插件）：
 
 - 初始化 Provider 随插件 Manifest 合并，在标准 Flutter 宿主选择初始路由前处理冷启动 Intent；插件的新 Intent 监听处理热启动。
-- 仅处理存在 `JMessageExtra` 字段、且 `data` 符合华为通知格式的 JSON；不要求两处内容完全相同。`JMessageExtra` 原值保持不变，只移除用于自动路由解析的 JSON `data`。
+- 仅处理存在 `JMessageExtra` 字段、且 `data` 去除首尾空白后以 `{` 开头的通知数据；不校验消息 ID、标题等业务字段，也不要求两处内容完全相同。`JMessageExtra` 原值保持不变，只移除用于自动路由解析的 JSON `data`。
 - 正常业务 URI 保留，Flutter 全局深链接开关保持原有配置；通知点击继续走 `onOpenNotification`，不会因过滤再产生一次点击事件。
 - 自行在宿主读取推送数据时，请使用 `intent.getStringExtra("JMessageExtra")`。仅有 data、缺少此标记或无法识别的载荷不自动修改。
 
-自定义宿主也可使用同一识别方法，在 `shouldHandleDeeplinking()` 中按通知类型决定是否处理。热启动需先更新宿主 Intent，确保判断读取到本次传入的数据：
+**标准 FlutterActivity 接入时，客户无需修改 MainActivity，插件会自动处理冷启动和热启动。**
+
+##### 可选：自定义宿主
+
+以下方法供特殊宿主复用，不是标准接入的必填配置。自定义宿主可在 `shouldHandleDeeplinking()` 中决定是否处理；热启动先更新宿主 Intent，确保判断读取本次传入的数据：
 
 ```kotlin
 import android.content.Intent
@@ -64,7 +68,7 @@ import io.flutter.embedding.android.FlutterActivity
 
 class MainActivity : FlutterActivity() {
     override fun shouldHandleDeeplinking(): Boolean {
-        if (JPushNotificationIntent.isHuaweiNotification(intent)) {
+        if (JPushNotificationIntent.isJPushNotificationData(intent)) {
             return false
         }
         return super.shouldHandleDeeplinking()

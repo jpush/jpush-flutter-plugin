@@ -1,7 +1,7 @@
 ## Unreleased
 
 - Android 插件在标准 Flutter 宿主冷启动及热启动时，定向过滤带有 JMessageExtra 标记的华为通知 JSON 路由数据；保留已有 extras、正常业务深链接与通知点击回调。
-- 新增原生 JPushNotificationIntent.isHuaweiNotification，供自定义宿主在 shouldHandleDeeplinking 中复用判断；修正 Flutter 默认开启深链接的版本说明为 3.27。
+- 新增原生 JPushNotificationIntent.isJPushNotificationData，供自定义宿主在 shouldHandleDeeplinking 中复用判断；修正 Flutter 默认开启深链接的版本说明为 3.27。
 
 ## 3.6.2
 
