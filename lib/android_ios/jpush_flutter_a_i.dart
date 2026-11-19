@@ -655,7 +655,8 @@ class JPush_A_I extends JPushFlutterInterface {
   ///
   void clearNotification({int notificationId = 0}) {
     print(flutter_log + "clearNotification:");
-    _channel.invokeListMethod("clearNotification", notificationId);
+    // Android / iOS 原生返回 bool，不能按列表解析。
+    _channel.invokeMethod("clearNotification", notificationId);
   }
 
   ///
