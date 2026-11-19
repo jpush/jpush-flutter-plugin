@@ -21,7 +21,7 @@ dependencies:
       
 // pub 集成
 dependencies:
-  jpush_flutter: 3.6.3
+  jpush_flutter: 3.6.4
 ```
 
 ### 配置
