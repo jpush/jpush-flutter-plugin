@@ -1,0 +1,32 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode
+
+// Project scripts run after settingsEvaluated. Gradle 8.7/9 exposes the settings
+// object here, though it is not a member of the public Gradle interface. Fail
+// explicitly if that access changes; never alter the host's repository mode.
+def hostSettings
+try {
+    hostSettings = gradle.settings
+} catch (MissingPropertyException exception) {
+    throw new GradleException('JPush could not read the host repository mode. '
+        + 'Use a supported Gradle version and configure the Jiguang SDK repository '
+        + 'in dependencyResolutionManagement.repositories; see the plugin README.', exception)
+}
+def repositoryMode = hostSettings.dependencyResolutionManagement.repositoriesMode.get()
+if (repositoryMode == RepositoriesMode.PREFER_PROJECT) {
+    repositories {
+        def jiguangRepository = maven {
+            url = uri('https://maven.jiguang.cn/nexus/content/repositories/releases/')
+        }
+        // A host allprojects block may have already added Central to this
+        // project's list. Prioritize only within this plugin project.
+        remove(jiguangRepository)
+        addFirst(jiguangRepository)
+        // Preserve the plugin's existing Central-before-Google ordering.
+        mavenCentral()
+        google()
+    }
+} else if (repositoryMode != RepositoriesMode.PREFER_SETTINGS
+        && repositoryMode != RepositoriesMode.FAIL_ON_PROJECT_REPOS) {
+    throw new GradleException('Unsupported JPush host repository mode: ' + repositoryMode)
+}
+// Settings-managed hosts must add the SDK repository in settings.gradle(.kts).

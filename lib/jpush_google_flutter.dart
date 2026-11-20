@@ -348,6 +348,27 @@ class JPush {
     return result;
   }
 
+  /// Submits a persistent country-code setting to the Android SDK.
+  ///
+  /// Accepts two ASCII letters, trims whitespace and sends uppercase (e.g. US).
+  /// Completion only means the native call was submitted; it does not confirm
+  /// persistence, first-login ordering, SDK authorization or server acceptance.
+  /// Call after privacy consent and SDK authorization, as early as possible.
+  /// Do not mix with `testCountryCode`, whose temporary value can take priority.
+  /// Throws [UnsupportedError] on platforms other than Android.
+  Future<void> setCountryCode(String code) async {
+    if (defaultTargetPlatform != TargetPlatform.android) {
+      throw UnsupportedError('setCountryCode is only supported on Android');
+    }
+    final trimmedCode = code.trim();
+    if (!RegExp(r'^[a-zA-Z]{2}$').hasMatch(trimmedCode)) {
+      throw ArgumentError.value(code, 'code', 'Expected two ASCII letters');
+    }
+    await _channel.invokeMethod<void>('setCountryCode', trimmedCode.toUpperCase());
+  }
+
+  /// Temporary test setting. Does not persist across process death.
+  @Deprecated('Use setCountryCode on Android; do not mix the two APIs')
   void testCountryCode(String code) {
     print(flutter_log + "testCountryCode:" + code);
     _channel.invokeMethod('testCountryCode', code);

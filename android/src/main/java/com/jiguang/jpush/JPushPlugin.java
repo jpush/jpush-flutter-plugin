@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -144,6 +145,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             setWakeEnable(call, result);
         } else if (call.method.equals("setAuth")) {
             setAuth(call, result);
+        } else if (call.method.equals("setCountryCode")) {
+            setCountryCode(call, result);
         } else if (call.method.equals("testCountryCode")) {
             testCountryCode(call, result);
         }else if (call.method.equals("enableAutoWakeup")) {
@@ -349,6 +352,31 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         }
         JCollectionAuth.setAuth(context,enable);
     }
+    private void setCountryCode(MethodCall call, Result result) {
+        Object argument = call.arguments;
+        if (!(argument instanceof String)) {
+            result.error("INVALID_ARGUMENT", "code must be two ASCII letters", null);
+            return;
+        }
+        String code = ((String) argument).trim();
+        if (!code.matches("[a-zA-Z]{2}")) {
+            result.error("INVALID_ARGUMENT", "code must be two ASCII letters", null);
+            return;
+        }
+        if (context == null) {
+            result.error("NOT_ATTACHED", "Plugin is not attached to an engine", null);
+            return;
+        }
+        try {
+            JCoreInterface.setCountryCode(context, code.toUpperCase(Locale.ROOT));
+        } catch (RuntimeException exception) {
+            result.error("NATIVE_ERROR", "Could not submit country code to the SDK", null);
+            return;
+        }
+        // SDK API is void: this does not acknowledge IPC, disk or server state.
+        result.success(null);
+    }
+
     private void testCountryCode(MethodCall call, Result result){
         String code = call.arguments();
         Log.d(TAG,"testCountryCode code="+code);

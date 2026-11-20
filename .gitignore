@@ -144,3 +144,7 @@ example/.flutter-plugins-dependencies
 example/pubspec.lock
 example/ios/Flutter/flutter_export_environment.sh
 .dart_tool/
+# Generated Flutter integration and local signing material
+example/ios/Flutter/ephemeral/
+*.keystore
+*.jks

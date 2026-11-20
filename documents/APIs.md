@@ -2,6 +2,8 @@
 
 - [addEventHandler](#addeventhandler)
 - [setup](#setup)
+- [setCountryCode（Android Only）](#setcountrycode)
+- [testCountryCode（临时测试，已废弃）](#testcountrycode)
 - [getRegistrationID](#getregistrationid)
 - [stopPush](#stoppush)
 - [resumePush](#resumepush)
@@ -24,7 +26,7 @@
 - [pageEnterTo](#pageEnterTo)
 - [pageLeave](#pageLeave)
 
-**注意：addEventHandler 方法建议放到 setup 之前，其他方法需要在 setup 方法之后调用，**
+**注意：addEventHandler 可在 setup 前注册；setCountryCode 需在隐私同意并满足 SDK 授权条件后尽早提交，其它业务方法按初始化要求在 setup 后调用。调用顺序不构成原生异步登录前屏障。**
 
 ####  addEventHandler
 
@@ -78,6 +80,29 @@ jpush.applyPushAuthority(new NotificationSettingsIOS(
       alert: true,
       badge: true));
 ```
+
+#### setCountryCode
+
+Android 正式国家码设置：`Future<void> setCountryCode(String code)`。去首尾空格，验证两个 ASCII 字母后转大写并调用 `JCoreInterface.setCountryCode`；这是格式校验，不保证国家码受服务端支持。
+
+```dart
+// 仅在 Android、用户同意隐私且满足 SDK 授权后执行。
+await jpush.setCountryCode('us');
+```
+
+Future 完成只表示调用已提交，不代表授权检查、跨进程应用、落盘、首次登录或服务端完成。
+原生 SDK 承担持久化/后续登录读取；插件不新增缓存或假确认回调。无法保证返回后立即杀进程可靠保存。
+`setAuth` 等方法可能提前初始化，await 不能证明首次登录使用此值。
+
+- Dart 非法格式：`ArgumentError`，不调用原生；非 Android：`UnsupportedError`。
+- 原生非法参数（包括非字符串）：`PlatformException` / `INVALID_ARGUMENT`。
+- 缺引擎上下文：`NOT_ATTACHED`；同步 SDK 调用异常：`NATIVE_ERROR`。
+- iOS 不调用此接口，也不返回虚假的设置成功。
+
+#### testCountryCode
+
+`void testCountryCode(String code)` 仍调用旧临时测试接口，已标记废弃，行为不变，不持久化。
+迁移到正式接口后不要混用，临时值可能优先覆盖正式值；应在冷启动和保存后原生后台恢复场景验证。
 
 #### getRegistrationID
 
