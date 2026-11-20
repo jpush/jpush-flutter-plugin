@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,11 +15,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String? debugLable = 'Unknown';
   final JPush jpush = new JPush();
+  bool _privacyConsent = false;
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
+    // Dart initialization starts after the explicit consent action below.
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -78,7 +80,17 @@ class _MyAppState extends State<MyApp> {
       platformVersion = 'Failed to get platform version.';
     }
 
+    // Invoke this initialization only after the user has granted privacy consent.
     jpush.setAuth(enable: true);
+    if (Platform.isAndroid) {
+      try {
+        await jpush.setCountryCode('US');
+      } catch (error) {
+        if (mounted) setState(() => debugLable = 'Country code submission failed');
+        return;
+      }
+      // Completion acknowledges submission, not persistence or first-login order.
+    }
     jpush.setup(
       appKey: "xxxxx", //你自己应用的 AppKey
       channel: "theChannel",
@@ -117,7 +129,18 @@ class _MyAppState extends State<MyApp> {
         appBar: new AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: new Center(
+        body: !_privacyConsent
+            ? Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Replace with your app's privacy policy and consent flow.
+                    setState(() => _privacyConsent = true);
+                    initPlatformState();
+                  },
+                  child: const Text('同意隐私并初始化推送'),
+                ),
+              )
+            : new Center(
             child: new Column(children: [
           Container(
             margin: EdgeInsets.fromLTRB(10, 10, 10, 10),

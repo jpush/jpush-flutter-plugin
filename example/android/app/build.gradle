@@ -22,7 +22,7 @@ android {
 
 //        applicationId "com.jiguang.jpushexample"
         applicationId "com.HuananThirdPush.cn"
-        minSdk = flutter.minSdkVersion
+        minSdkVersion 21
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -31,7 +31,7 @@ android {
 
         ndk {
             //选择要添加的对应 cpu 类型的 .so 库。
-            abiFilters 'armeabi', 'armeabi-v7a', 'x86', 'x86_64', 'mips', 'mips64', 'arm64-v8a'
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
             // 还可以添加
         }
 

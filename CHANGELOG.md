@@ -1,3 +1,12 @@
+## 3.0.8 (2026-11-20)
+
+- Android 更新为 JPush Google 6.3.1 / JCore Google 5.6.0，严格约束精确版本。
+- 新增 Android 正式 `setCountryCode`，规范化与校验国家码；Future 成功仅表示原生调用已提交，不确认持久化、首次登录或服务端生效。iOS 明确不支持。
+- 保留并废弃标记 `testCountryCode`；它仍是临时测试接口，迁移后应停止混用。
+- 增加极光官方 Maven 源 `https://maven.jiguang.cn/nexus/content/repositories/releases/`，只解析两个 Google SDK 模块，优先于 Central，保留 Google/Central。
+- 不再跨项目注入仓库；集中管理仓库的宿主须按 README 在 settings 中配置，兼容 PREFER_SETTINGS / FAIL_ON_PROJECT_REPOS，不保证所有宿主仅升级插件即可生效，也不保证源网络故障自动回退。
+- Android 最低声明对齐 SDK 既有要求 API 21；示例移除现代 NDK 已不支持的 armeabi/mips/mips64 声明，更新隐私同意后的示例、集成说明和行为测试。
+
 ## 3.0.7 (2026-08-12)
 
 - 修复 Gradle 9 环境下 Android 构建报 `Could not find method jcenter()` 的问题。
