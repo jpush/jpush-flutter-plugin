@@ -148,3 +148,7 @@ example/ios/Flutter/flutter_export_environment.sh
 example/ios/Flutter/ephemeral/
 *.keystore
 *.jks
+
+# Generated plugin paths and local Android signing configuration
+example/.flutter-plugins
+example/android/key.properties
