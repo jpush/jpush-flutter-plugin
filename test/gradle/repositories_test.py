@@ -12,18 +12,12 @@ SOURCE = 'https://maven.jiguang.cn/nexus/content/repositories/releases/'
 SCRIPT = Path(__file__).resolve().parents[2] / 'android/repositories.gradle'
 HASHES = {
     'jpush-google': 'c340a61ff9a09f66a466545f6b9c0621f63e30197659facdfa1d78c5ae8880a1',
-    'jcore-google': 'bd74c6245518b24edf83e2da90bab7391369d7a4da208d0e62422a7ccecd3f4a',
 }
 REPOSITORIES = """
 repositories {
     maven {
         name = 'JiguangReleases'
         url = uri('%s')
-        content {
-            includeModule('cn.jiguang.sdk', 'jpush-google')
-            includeModule('cn.jiguang.sdk', 'jcore-google')
-        }
-        mavenContent { releasesOnly() }
     }
     google()
     mavenCentral()
@@ -32,8 +26,7 @@ repositories {
 VERIFY = """
 configurations { sdk }
 dependencies {
-    sdk('cn.jiguang.sdk:jpush-google:6.3.1') { version { strictly '6.3.1' } }
-    sdk('cn.jiguang.sdk:jcore-google:5.6.0') { version { strictly '5.6.0' } }
+    sdk 'cn.jiguang.sdk:jpush-google:6.3.1'
     sdk 'junit:junit:4.13.2'
 }
 tasks.register('verifySdk') {
@@ -98,8 +91,10 @@ def run_case(args, name, mode, *, missing=False, override=None, failure=False):
         assert digest in output, name + ': unexpected artifact ' + module
     if not override:
         assert SOURCE + 'cn/jiguang/sdk/jpush-google/6.3.1/' in output, name + ': source unproven'
-        assert SOURCE + 'cn/jiguang/sdk/jcore-google/5.6.0/' in output, name + ': source unproven'
-    assert SOURCE + 'junit/' not in output, name + ': unrelated dependency queried in SDK repository'
+        assert SOURCE + 'cn/jiguang/sdk/jcore-google/' in output, name + ': transitive source unproven'
+    resolved = [line.removeprefix('VERIFIED_SDK ') for line in output.splitlines() if line.startswith('VERIFIED_SDK ')]
+    assert any(line.startswith('cn.jiguang.sdk:jcore-google:') for line in resolved), name + ': transitive JCore missing'
+    (case / 'resolved-sdk.json').write_text(json.dumps(resolved, indent=2) + '\n')
     print(name + ': passed (fresh cache, SDK hashes and project isolation)', flush=True)
 
 
@@ -132,14 +127,14 @@ def main():
     try:
         url = 'http://127.0.0.1:' + str(server.server_port) + '/'
         run_case(args, 'missing-module-central-candidate', 'PREFER_PROJECT', override=url)
-        assert requests and all('/cn/jiguang/sdk/' in path for path in requests), requests
+        assert any('/cn/jiguang/sdk/' in path for path in requests), requests
         requests.clear()
         Handler.status = 500
         run_case(args, 'source-server-error', 'PREFER_PROJECT', override=url, failure=True)
-        assert requests and all('/cn/jiguang/sdk/' in path for path in requests), requests
+        assert any('/cn/jiguang/sdk/' in path for path in requests), requests
     finally:
         server.shutdown()
-    print('All repository mode, filtering, missing-module and server-error checks passed')
+    print('All repository mode, transitive SDK, missing-module and server-error checks passed')
 
 
 if __name__ == '__main__':

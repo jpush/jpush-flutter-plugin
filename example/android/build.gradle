@@ -3,11 +3,6 @@ allprojects {
         maven {
             name = 'JiguangReleases'
             url = uri('https://maven.jiguang.cn/nexus/content/repositories/releases/')
-            content {
-                includeModule('cn.jiguang.sdk', 'jpush-google')
-                includeModule('cn.jiguang.sdk', 'jcore-google')
-            }
-            mavenContent { releasesOnly() }
         }
         google()
         mavenCentral()

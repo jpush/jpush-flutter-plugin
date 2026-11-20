@@ -16,11 +16,6 @@ if (repositoryMode == RepositoriesMode.PREFER_PROJECT) {
     repositories {
         def jiguangRepository = maven {
             url = uri('https://maven.jiguang.cn/nexus/content/repositories/releases/')
-            content {
-                includeModule('cn.jiguang.sdk', 'jpush-google')
-                includeModule('cn.jiguang.sdk', 'jcore-google')
-            }
-            mavenContent { releasesOnly() }
         }
         // A host allprojects block may have already added Central to this
         // project's list. Prioritize only within this plugin project.

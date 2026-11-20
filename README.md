@@ -10,7 +10,9 @@ dependencies:
 ```
 
 源码集成使用 `https://github.com/jpush/jpush-flutter-plugin.git` 的 `dev-3.x-google` 分支。
-Android 依赖固定为 JPush Google 6.3.1 / JCore Google 5.6.0，最低 Android 5.0（API 21）。
+Android 仅声明 JPush Google 6.3.1，由其 POM 传递解析 JCore Google，最低 Android 5.0（API 21）。
+JCore 实际版本受 POM 范围、宿主约束/force、锁文件、仓库元数据与 Gradle 缓存影响，
+不保证每次构建都获取最新发布版本。
 旧版插件曾声明 minSdk 19，但所用 JPush Google 6.2.0 已要求 API 21；本版对齐声明。
 iOS 依赖保持不变；Swift Package Manager 需 Flutter 3.24+ 并启用 SPM，CocoaPods 集成继续支持。
 
@@ -20,7 +22,7 @@ iOS 依赖保持不变；Swift Package Manager 需 Flutter 3.24+ 并启用 SPM�
 
 `https://maven.jiguang.cn/nexus/content/repositories/releases/`
 
-极光源仅解析 `jpush-google` / `jcore-google`，放在 Maven Central 前；保留 Google 与
+极光源仅配置仓库地址，不限制模块或版本类型，放在 Maven Central 前；保留 Google 与
 Central 解析其它依赖。插件不再通过 `rootProject.allprojects` 给宿主其它项目注入仓库。
 
 ### settings 集中管理（推荐）
@@ -37,11 +39,6 @@ dependencyResolutionManagement {
         maven {
             name = "JiguangReleases"
             url = uri("https://maven.jiguang.cn/nexus/content/repositories/releases/")
-            content {
-                includeModule("cn.jiguang.sdk", "jpush-google")
-                includeModule("cn.jiguang.sdk", "jcore-google")
-            }
-            mavenContent { releasesOnly() }
         }
         google()
         mavenCentral()
@@ -66,7 +63,7 @@ SDK 源不是 Gradle 插件源，只添加到 `buildscript.repositories` 或 `pl
 
 Central 保留为后续候选，不代表超时、TLS、5xx 或选定元数据来源后的 AAR 缺失会自动切源。
 遇到源故障请保留错误并核网络/配置；临时切源时确认精确坐标和产物，不关闭 TLS 校验。
-严格依赖约束发生冲突时应解决宿主版本组合，不自动升级或降级 JCore。
+插件不显式声明或严格锁定 JCore；宿主存在版本约束时，请检查实际依赖图和所选 SDK 组合。
 
 ## Android 配置
 
